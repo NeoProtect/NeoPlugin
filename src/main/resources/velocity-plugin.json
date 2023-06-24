@@ -1,0 +1,9 @@
+{
+  "id":"neoprotect",
+  "name":"NeoProtect",
+  "version":"v${project.version}:${buildNumber}",
+  "authors":["EinfacheSache"],
+  "url":"https://einfachesache.de/discord",
+  "main":"de.cubeattack.neoprotect.velocity.NeoProtectVelocity",
+  "description":"A Plugin for interact with the intern NeoProtect system"
+}

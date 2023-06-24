@@ -1,0 +1,6 @@
+main: de.cubeattack.neoprotect.bungee.NeoProtectBungee
+name: NeoProtect
+version: 'v${project.version}:${buildNumber}'
+author: CubeAttack
+website: einfachesache.de/discord
+description: A Plugin for interact with the intern NeoProtect system

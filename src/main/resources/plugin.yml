@@ -1,0 +1,12 @@
+main: de.cubeattack.neoprotect.spigot.NeoProtectSpigot
+name: NeoProtect
+version: '${project.version}:${buildNumber}'
+api-version: 1.13
+author: CubeAttack
+website: https://einfachesache.de/discord
+description: A Plugin for interact with the intern NeoProtect system
+commands:
+  neoprotect:
+    description: Main NeoProtect command
+    aliases: np
+    permission: neoprotect.admin
