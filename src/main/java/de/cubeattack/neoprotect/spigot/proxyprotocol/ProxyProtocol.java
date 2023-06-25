@@ -1,10 +1,11 @@
 package de.cubeattack.neoprotect.spigot.proxyprotocol;
 
+import de.cubeattack.neoprotect.core.Config;
+import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
 import io.netty.channel.*;
 import io.netty.handler.codec.haproxy.HAProxyMessage;
 import io.netty.handler.codec.haproxy.HAProxyMessageDecoder;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.net.InetSocketAddress;
@@ -43,41 +44,51 @@ public class ProxyProtocol {
 	private ChannelInitializer<Channel> beginInitProtocol;
 	private ChannelInitializer<Channel> endInitProtocol;
 
-	protected Plugin plugin;
+	protected NeoProtectSpigot instance;
 
 	/**
 	 * Construct a new instance of TinyProtocol, and start intercepting packets for all connected clients and future clients.
 	 * <p>
 	 * You can construct multiple instances per plugin.
 	 * 
-	 * @param plugin - the plugin.
+	 * @param instance - the plugin.
 	 */
-	public ProxyProtocol(final Plugin plugin) {
-		this.plugin = plugin;
+	public ProxyProtocol(NeoProtectSpigot instance) {
+		this.instance = instance;
 
 		try {
-			plugin.getLogger().info("Proceeding with the server channel injection...");
+			instance.getLogger().info("Proceeding with the server channel injection...");
 			registerChannelHandler();
 		} catch (IllegalArgumentException ex) {
 			// Damn you, late bind
-			plugin.getLogger().info("Delaying server channel injection due to late bind.");
+			instance.getLogger().info("Delaying server channel injection due to late bind.");
 
 			new BukkitRunnable() {
 				@Override
 				public void run() {
 					registerChannelHandler();
-					plugin.getLogger().info("Late bind injection successful.");
+					instance.getLogger().info("Late bind injection successful.");
 				}
-			}.runTask(plugin);
+			}.runTask(instance);
 		}
 	}
 
 	private void createServerChannelHandler() {
 		// Handle connected channels
 		endInitProtocol = new ChannelInitializer<Channel>() {
-
 			@Override
 			protected void initChannel(Channel channel) {
+
+				if(!instance.getCore().getRestAPI().getNeoServerIPs().toList().
+						contains(channel.remoteAddress().toString().substring(1).split(":")[0])){
+					channel.close();
+					return;
+				}
+
+				if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+					return;
+				}
+
 				try {
 					synchronized (networkManagers) {
 						// Adding the decoder to the pipeline
@@ -85,8 +96,8 @@ public class ProxyProtocol {
 						// Adding the proxy message handler to the pipeline too
 						channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", HAPROXY_MESSAGE_HANDLER);
 					}
-				} catch (Exception e) {
-					plugin.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, e);
+				} catch (Exception ex) {
+					instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
 				}
 			}
 
@@ -130,7 +141,7 @@ public class ProxyProtocol {
 				serverChannel.pipeline().addFirst(serverChannelHandler);
 				looking = false;
 
-				plugin.getLogger().info("Found the server channel and added the handler. Injection successfully!");
+				this.instance.getLogger().info("Found the server channel and added the handler. Injection successfully!");
 			}
 		}
 	}
@@ -156,7 +167,7 @@ public class ProxyProtocol {
 				ctx.channel().close();
 
 				// Logging for the lovely server admins :)
-				plugin.getLogger().warning("Error: The server was unable to set the IP address from the 'HAProxyMessage'. Therefore we closed the channel.");
+				instance.getLogger().warning("Error: The server was unable to set the IP address from the 'HAProxyMessage'. Therefore we closed the channel.");
 				exception.printStackTrace();
 			}
 		}

@@ -1,6 +1,8 @@
 package de.cubeattack.neoprotect.bungee.proxyprotocol;
 
 import de.cubeattack.api.utils.JavaUtils;
+import de.cubeattack.neoprotect.bungee.NeoProtectBungee;
+import de.cubeattack.neoprotect.core.Config;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -15,6 +17,7 @@ import sun.misc.Unsafe;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.InetSocketAddress;
+import java.util.logging.Level;
 
 public class ProxyProtocol {
 
@@ -22,31 +25,45 @@ public class ProxyProtocol {
     private final ChannelInitializer<Channel> bungeeChannelInitializer = PipelineUtils.SERVER_CHILD;
     private final Reflection.MethodInvoker initChannelMethod = Reflection.getMethod(bungeeChannelInitializer.getClass(), "initChannel", Channel.class);
 
-    public ProxyProtocol() {
+    public ProxyProtocol(NeoProtectBungee instance) {
+        instance.getLogger().info("Proceeding with the server channel injection...");
         try {
             ChannelInitializer<Channel> channelInitializer = new ChannelInitializer<Channel>() {
                 @Override
                 protected void initChannel(Channel channel) {
 
-                    initChannelMethod.invoke(bungeeChannelInitializer, channel);
-
-                    channel.pipeline().names().forEach((n) ->{
-                        if(n.equals("HAProxyMessageDecoder#0"))
-                            channel.pipeline().remove("HAProxyMessageDecoder#0");
-                    });
-
-                    channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
-                    channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {
-                        @Override
-                        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                            if (msg instanceof HAProxyMessage) {
-                                HAProxyMessage message = (HAProxyMessage) msg;
-                                channelWrapperAccessor.get(channel.pipeline().get(HandlerBoss.class)).setRemoteAddress( new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
-                            } else {
-                                super.channelRead(ctx, msg);
-                            }
+                    try {
+                        if (!instance.getCore().getRestAPI().getNeoServerIPs().toList().
+                                contains(channel.remoteAddress().toString().substring(1).split(":")[0])) {
+                            channel.close();
+                            return;
                         }
-                    });
+
+                        channel.pipeline().names().forEach((n) -> {
+                            if (n.equals("HAProxyMessageDecoder#0"))
+                                channel.pipeline().remove("HAProxyMessageDecoder#0");
+                        });
+
+                        if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+                            return;
+                        }
+
+                        initChannelMethod.invoke(bungeeChannelInitializer, channel);
+                        channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
+                        channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {
+                            @Override
+                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                if (msg instanceof HAProxyMessage) {
+                                    HAProxyMessage message = (HAProxyMessage) msg;
+                                    channelWrapperAccessor.get(channel.pipeline().get(HandlerBoss.class)).setRemoteAddress(new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
+                                } else {
+                                    super.channelRead(ctx, msg);
+                                }
+                            }
+                        });
+                    } catch (Exception ex) {
+                        instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
+                    }
                 }
             };
 
@@ -66,8 +83,11 @@ public class ProxyProtocol {
                 Unsafe unsafe = (Unsafe) unsafeField.get(null);
                 unsafe.putObject(unsafe.staticFieldBase(serverChild), unsafe.staticFieldOffset(serverChild), channelInitializer);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            instance.getLogger().info("Found the server channel and added the handler. Injection successfully!");
+
+        } catch (Exception ex) {
+            instance.getLogger().log(Level.SEVERE, "An unknown error has occurred", ex);
         }
     }
 }

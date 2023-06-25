@@ -182,6 +182,13 @@ public class RestAPIManager {
                 return new Formatter().format("/profile/generalInformation", values).toString();
             }
 
+            case GET_NEO_SERVER_IPS : {
+                return new Formatter().format("/public/servers", values).toString();
+            }
+            case GET_NEO_SERVER_REGIONS : {
+                return new Formatter().format("/public/regions", values).toString();
+            }
+
             case GET_VULNERABILITIES_GAMESHIELD : {
                 return new Formatter().format("/vulnerabilities/%s", values).toString();
             }

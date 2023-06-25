@@ -1,15 +1,12 @@
 package de.cubeattack.neoprotect.core.request;
 
-import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
-import de.cubeattack.neoprotect.core.request.requestbodyjson.BackendUpdateRequest;
-import de.cubeattack.neoprotect.core.request.requestbodyjson.GameshieldUpdateRequest;
+import de.cubeattack.neoprotect.core.JsonBuilder;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -20,7 +17,8 @@ public class RestAPIRequests {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final String ipGetter = "https://api4.my-ip.io/ip.json";
-    private boolean started = false;
+    private JSONArray neoServerIPs = null;
+    private boolean setup = false;
     private final Core core;
     private final RestAPIManager rest;
 
@@ -28,65 +26,65 @@ public class RestAPIRequests {
         this.core = core;
         this.rest = new RestAPIManager(core);
 
-        tests();
-
-        attackCheck();
+        testCredentials();
+        attackCheckSchedule();
+        getNeoServerIPsSchedule();
 
         if(Config.isUpdateIP()){
-            backendUpdater();
+            backendServerIPUpdater();
         }
     }
 
-    public String getIpv4(){
-        try {
-            return new ResponseManager(rest.callRequest(new Request.Builder().url(ipGetter).build())).getResponseBodyObject().getString("ip");
-        }catch (JSONException ignored){}
-        return null;
+    private String getIpv4(){
+        return new ResponseManager(rest.callRequest(new Request.Builder().url(ipGetter).build())).getResponseBodyObject().getString("ip");
     }
 
-    public boolean testAPIInvalid(){
+    private JSONArray getNeoIPs(){
+        return new ResponseManager(rest.callRequest(rest.defaultBuilder().url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_NEO_SERVER_IPS)).build())).getResponseBodyArray();
+    }
+
+    public boolean isAPIInvalid(){
         return !new ResponseManager(rest.callRequest(rest.defaultBuilder().url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_ATTACKS)).build())).checkCode(200);
     }
-    public boolean testGameShieldFound(){
+
+    private boolean isGameshieldFound(){
         return new ResponseManager(rest.callRequest(rest.defaultBuilder().url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_GAMESHIELD_INFO, Config.getGameShieldID())).build())).checkCode(200);
     }
 
-    public boolean testBackendFound(){
+    private boolean isBackendFound(){
         return getBackends().containsKey(Config.getBackendID());
     }
 
-    public void tests(){
-
-        if(testAPIInvalid()){
-            core.severe("API is not Valid!");
-            started = false;
-            return;
-        }else if(!testGameShieldFound()){
-            core.severe("Gameshield is not Valid!");
-            started = false;
-            return;
-        }else if(!testBackendFound()) {
-            core.severe("Backend is not Valid!");
-            started = false;
-            return;
-        }
-
-        this.started = true;
-        toggleProxyProtocol(Config.isProxyProtocol());
-    }
-
-    public boolean isAttack(){
+    private boolean isAttack(){
         return rest.request(RequestType.GET_GAMESHIELD_ISUNDERATTACK, null, Config.getGameShieldID()).getResponseBody().equals("true");
     }
 
-    public boolean updateBackend(RequestBody formBody){
+    private boolean updateBackend(RequestBody formBody){
         return rest.request(RequestType.POST_GAMESHIELD_BACKEND_UPDATE, formBody, Config.getGameShieldID(), Config.getBackendID()).checkCode(200);
     }
 
-    public void toggleProxyProtocol(boolean setting){
-        rest.request(RequestType.POST_GAMESHIELD_UPDATE,
-                RequestBody.create(MediaType.parse("application/json"), new Gson().toJson(new GameshieldUpdateRequest(setting))),
-                Config.getGameShieldID());
+    public void setProxyProtocol(boolean setting){
+        rest.request(RequestType.POST_GAMESHIELD_UPDATE, RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("proxyProtocol", String.valueOf(setting)).build().toString()), Config.getGameShieldID());
+    }
+
+    public void testCredentials(){
+
+        if(isAPIInvalid()){
+            core.severe("API is not Valid!");
+            setup = false;
+            return;
+        }else if(!isGameshieldFound()){
+            core.severe("Gameshield is not Valid!");
+            setup = false;
+            return;
+        }else if(!isBackendFound()) {
+            core.severe("Backend is not Valid!");
+            setup = false;
+            return;
+        }
+
+        this.setup = true;
+        setProxyProtocol(Config.isProxyProtocol());
     }
 
     public boolean togglePanicMode(){
@@ -109,9 +107,9 @@ public class RestAPIRequests {
     public HashMap<String, String> getGameshields(){
         HashMap<String, String> map = new HashMap<>();
 
-        JSONArray backends = rest.request(RequestType.GET_GAMESHIELDS, null).getResponseBodyArray();
+        JSONArray gameshields = rest.request(RequestType.GET_GAMESHIELDS, null).getResponseBodyArray();
 
-        for (Object object : backends) {
+        for (Object object : gameshields) {
             JSONObject jsonObject = (JSONObject) object;
             map.put(jsonObject.get("id").toString(), jsonObject.get("name").toString());
         }
@@ -132,36 +130,19 @@ public class RestAPIRequests {
         return map;
     }
 
-    public void backendUpdater(){
+    private void getNeoServerIPsSchedule(){
 
-        core.info("BackendIpUpdate scheduler started");
+        core.info("NeoServerIPsUpdate scheduler started");
 
         new Timer().schedule(new TimerTask() {
-            String currentIp = getBackends().get(Config.getBackendID());
             @Override
             public void run() {
-
-                if(!started)return;
-
-                String ip = getIpv4();
-
-                if(ip == null) return;
-                if(ip.equals(currentIp)) return;
-
-                RequestBody formBody = RequestBody.create(MediaType.parse("application/json"),
-                        new Gson().toJson(new BackendUpdateRequest(ip)));
-
-                if(!updateBackend(formBody)){
-                    core.info("Update backend IP failed ID '" + Config.getBackendID() + "' to IP '" + ip + "'");
-                }else {
-                    core.info("Update backend IP success ID '" + Config.getBackendID() + "' to IP '" + ip + "'");
-                    currentIp = ip;
-                }
+                neoServerIPs = getNeoIPs();
             }
-        }, 0, 1000*30);
+        }, 1000 * 10, 1000 * 10);
     }
 
-    public void attackCheck(){
+    private void attackCheckSchedule(){
 
         core.info("AttackCheck scheduler started");
 
@@ -171,7 +152,7 @@ public class RestAPIRequests {
             @Override
             public void run() {
 
-                if(!started)return;
+                if(!setup)return;
 
                 if(!isAttack()) {
                     attackRunning[0] = false;
@@ -187,7 +168,39 @@ public class RestAPIRequests {
         }, 1000 * 5, 1000 * 10);
     }
 
-    public boolean isStarted() {
-        return started;
+    private void backendServerIPUpdater(){
+
+        core.info("BackendServerIPUpdate scheduler started");
+
+        new Timer().schedule(new TimerTask() {
+            String currentIp = getBackends().get(Config.getBackendID());
+            @Override
+            public void run() {
+
+                if(!setup)return;
+
+                String ip = getIpv4();
+
+                if(ip == null) return;
+                if(ip.equals(currentIp)) return;
+
+                RequestBody formBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("ipv4", ip).build().toString());
+
+                if(!updateBackend(formBody)){
+                    core.info("Update backendserver IP failed ID '" + Config.getBackendID() + "' to IP '" + ip + "'");
+                }else {
+                    core.info("Update backendserver IP success ID '" + Config.getBackendID() + "' to IP '" + ip + "'");
+                    currentIp = ip;
+                }
+            }
+        }, 0, 1000*30);
+    }
+
+    public JSONArray getNeoServerIPs() {
+        return neoServerIPs;
+    }
+
+    public boolean isSetup() {
+        return setup;
     }
 }

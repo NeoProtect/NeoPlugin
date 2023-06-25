@@ -64,7 +64,7 @@ public class Core {
     }
 
     public boolean isSetup() {
-        return restAPIRequests.isStarted();
+        return restAPIRequests.isSetup();
     }
 
 }

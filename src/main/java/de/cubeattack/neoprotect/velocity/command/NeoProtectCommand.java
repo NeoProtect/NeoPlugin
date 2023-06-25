@@ -104,13 +104,10 @@ public class NeoProtectCommand implements SimpleCommand {
                     Config.setBackendID(invocation.arguments()[1]);
 
                     instance.sendMessage(invocation.source(), localization.get("set.backend", invocation.arguments()[1]));
-                    instance.getCore().getRestAPI().tests();
+                    instance.getCore().getRestAPI().testCredentials();
 
                     if(ChatListener.PLAYER_IN_SETUP.remove(invocation.source())){
                         instance.sendMessage(invocation.source(), localization.get("setup.finished"));
-                        if(Config.isProxyProtocol()){
-                            instance.sendMessage(invocation.source(), localization.get("setup.restart.required"));
-                        }
                     }
                 }else {
                     instance.sendMessage(invocation.source(), localization.get("usage.setbackend"));

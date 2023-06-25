@@ -2,8 +2,6 @@ package de.cubeattack.neoprotect.velocity;
 
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.EventManager;
-import com.velocitypowered.proxy.VelocityServer;
-import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.velocity.command.NeoProtectCommand;
 import de.cubeattack.neoprotect.velocity.listener.ChatListener;
 import de.cubeattack.neoprotect.velocity.listener.DisconnectListener;
@@ -14,11 +12,9 @@ import de.cubeattack.neoprotect.velocity.proxyprotocol.ProxyProtocol;
 
 public class Startup {
 
-    private boolean proxyProtocol = false;
-
     public Startup(NeoProtectVelocity instance){
         register(instance);
-        runProxyProtocol(instance);
+        new ProxyProtocol(instance);
     }
 
     private void register(NeoProtectVelocity instance){
@@ -32,12 +28,5 @@ public class Startup {
         em.register(instance, new DisconnectListener());
         em.register(instance, new JoinListener(instance));
         em.register(instance, new SessionChatListener(instance));
-    }
-
-    public void runProxyProtocol(NeoProtectVelocity instance){
-        if(Config.isProxyProtocol() & instance.getCore().isSetup() & !proxyProtocol) {
-            new ProxyProtocol((VelocityServer)instance.getProxy());
-            proxyProtocol = true;
-        }
     }
 }

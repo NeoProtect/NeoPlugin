@@ -23,6 +23,7 @@ public class NeoProtectCommand extends Command {
         this.instance = instance;
         this.localization = instance.getCore().getLocalization();
     }
+
     @Override
     public void execute(CommandSender sender, String[] args) {
 
@@ -102,13 +103,10 @@ public class NeoProtectCommand extends Command {
                     Config.setBackendID(args[1]);
 
                     instance.sendMessage(sender, localization.get("set.backend", args[1]));
-                    instance.getCore().getRestAPI().tests();
+                    instance.getCore().getRestAPI().testCredentials();
 
                     if(ChatListener.PLAYER_IN_SETUP.remove(sender)){
                         instance.sendMessage(sender, localization.get("setup.finished"));
-                        if(Config.isProxyProtocol()){
-                            instance.sendMessage(sender, localization.get("setup.restart.required"));
-                        }
                     }
                 }else {
                     instance.sendMessage(sender, localization.get("usage.setbackend"));

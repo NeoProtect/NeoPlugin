@@ -107,10 +107,9 @@ public class NeoProtectCommand implements CommandExecutor {
                     Config.setBackendID(args[1]);
 
                     instance.sendMessage(player,  localization.get("set.backend", args[1]));
-                    instance.getCore().getRestAPI().tests();
+                    instance.getCore().getRestAPI().testCredentials();
 
                     if(ChatListener.PLAYER_IN_SETUP.remove(sender)){
-                        instance.getStartup().runProxyProtocol(instance);
                         instance.sendMessage(player, localization.get("setup.finished", args[0]));
                     }
                 }else {

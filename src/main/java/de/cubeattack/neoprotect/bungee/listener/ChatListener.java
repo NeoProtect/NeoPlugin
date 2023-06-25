@@ -39,7 +39,7 @@ public class ChatListener implements Listener {
         CompletableFuture.runAsync(() -> {
             Config.setAPIKey(event.getMessage());
 
-            if(instance.getCore().getRestAPI().testAPIInvalid()){
+            if(instance.getCore().getRestAPI().isAPIInvalid()){
                 instance.sendMessage(sender, localization.get("apikey.invalid"));
                 return;
             }
