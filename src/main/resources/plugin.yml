@@ -7,6 +7,6 @@ website: https://einfachesache.de/discord
 description: A Plugin for interact with the intern NeoProtect system
 commands:
   neoprotect:
-    description: Main NeoProtect command
+    description: Administer and configure the NeoProtect system
     aliases: np
     permission: neoprotect.admin
