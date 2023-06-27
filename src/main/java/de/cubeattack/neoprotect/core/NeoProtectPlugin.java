@@ -10,4 +10,5 @@ public interface NeoProtectPlugin {
     void sendAdminMessage(String text, Object clickEvent, Object hoverEvent);
 
     Logger getLogger();
+    String getVersion();
 }

@@ -45,4 +45,9 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     public void sendAdminMessage(String text, Object clickEvent, Object hoverEvent) {
         getProxy().getPlayers().forEach(pp -> {if(pp.hasPermission("neoprotect.admin")) sendMessage(pp, text, clickEvent, hoverEvent);});
     }
+
+    @Override
+    public String getVersion() {
+        return getDescription().getVersion();
+    }
 }

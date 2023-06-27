@@ -66,4 +66,9 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     public Logger getLogger() {
         return logger;
     }
+
+    @Override
+    public String getVersion() {
+        return proxy.getPluginManager().ensurePluginContainer(this).getDescription().getVersion().orElse("");
+    }
 }

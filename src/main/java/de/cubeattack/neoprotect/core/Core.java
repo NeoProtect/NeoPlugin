@@ -1,13 +1,13 @@
 package de.cubeattack.neoprotect.core;
 
 import de.cubeattack.api.language.Localization;
+import de.cubeattack.api.logger.LogManager;
 import de.cubeattack.api.utils.FileUtils;
+import de.cubeattack.api.utils.VersionUtils;
 import de.cubeattack.neoprotect.core.request.RestAPIRequests;
 
 import java.io.File;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 public class Core {
@@ -16,13 +16,13 @@ public class Core {
     private final String prefix = "§8[§5NEOPROTECT§8] §b";
     private final RestAPIRequests restAPIRequests;
     private final NeoProtectPlugin plugin;
-    private final Logger logger;
     private final Localization localization;
 
     public Core(NeoProtectPlugin plugin) {
         this.plugin = plugin;
-        this.logger = plugin.getLogger();
 
+        LogManager.getLogger().setLogger(plugin.getLogger());
+        VersionUtils.checkVersion("NeoProtect", "NeoPlugin", plugin.getVersion());
         FileUtils config = new FileUtils(Core.class.getResourceAsStream("/config.yml"), "plugins/NeoProtect", "config.yml", false);
         FileUtils languageEN = new FileUtils(Core.class.getResourceAsStream("/language_en.properties"), "plugins/NeoProtect/languages", "language_en.properties", true);
         FileUtils languageDE = new FileUtils(Core.class.getResourceAsStream("/language_de.properties"), "plugins/NeoProtect/languages", "language_de.properties", true);
@@ -35,16 +35,16 @@ public class Core {
     }
 
     public void debug(String output){
-        logger.log(Level.CONFIG,output);
+        LogManager.getLogger().debug(output);
     }
     public void info(String output){
-        logger.log(Level.INFO,output);
+        LogManager.getLogger().info(output);
     }
     public void warn(String output){
-        logger.log(Level.WARNING,output);
+        LogManager.getLogger().warn(output);
     }
     public void severe(String output){
-        logger.log(Level.SEVERE,output);
+        LogManager.getLogger().error(output);
     }
 
     public String getPrefix() {

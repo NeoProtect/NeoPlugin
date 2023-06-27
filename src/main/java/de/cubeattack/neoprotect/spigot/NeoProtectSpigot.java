@@ -11,7 +11,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
 
     private static Core core;
-    private static Startup startup;
 
     @Override
     public void onLoad() {
@@ -21,15 +20,11 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     @Override
     public void onEnable() {
         core = new Core(this);
-        startup = new Startup(this);
+        new Startup(this);
     }
 
     public Core getCore() {
         return core;
-    }
-
-    public Startup getStartup() {
-        return startup;
     }
 
     @Override
@@ -49,5 +44,10 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     @Override
     public void sendAdminMessage(String text, Object clickEvent, Object hoverEvent) {
         getServer().getOnlinePlayers().forEach(pp -> {if(pp.hasPermission("neoprotect.admin"))sendMessage(pp, text, clickEvent, hoverEvent);});
+    }
+
+    @Override
+    public String getVersion() {
+        return getDescription().getVersion();
     }
 }
