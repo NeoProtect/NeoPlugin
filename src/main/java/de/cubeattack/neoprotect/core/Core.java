@@ -22,7 +22,7 @@ public class Core {
         this.plugin = plugin;
 
         LogManager.getLogger().setLogger(plugin.getLogger());
-        VersionUtils.checkVersion("NeoProtect", "NeoPlugin", plugin.getVersion());
+        VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + plugin.getVersion());
         FileUtils config = new FileUtils(Core.class.getResourceAsStream("/config.yml"), "plugins/NeoProtect", "config.yml", false);
         FileUtils languageEN = new FileUtils(Core.class.getResourceAsStream("/language_en.properties"), "plugins/NeoProtect/languages", "language_en.properties", true);
         FileUtils languageDE = new FileUtils(Core.class.getResourceAsStream("/language_de.properties"), "plugins/NeoProtect/languages", "language_de.properties", true);
