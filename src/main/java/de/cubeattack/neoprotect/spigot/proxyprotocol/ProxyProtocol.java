@@ -95,7 +95,6 @@ public class ProxyProtocol {
 			@Override
 			protected void initChannel(Channel channel) {
 				channel.pipeline().addLast(endInitProtocol);
-				if(Reflection.isNewerPackage())channel.pipeline().addLast(new CLOSED());
 			}
 
 		};
@@ -168,34 +167,6 @@ public class ProxyProtocol {
 			// Prepare to initialize ths channel
 			channel.pipeline().addFirst(beginInitProtocol);
 			ctx.fireChannelRead(msg);
-		}
-	}
-	@ChannelHandler.Sharable
-	static
-	class CLOSED extends ChannelInboundHandlerAdapter {
-		@Override
-		public void channelRead(ChannelHandlerContext channelHandlerContext, Object o) {
-			channelHandlerContext.close();
-		}
-
-		@Override
-		public void channelActive(ChannelHandlerContext channelHandlerContext) {
-			channelHandlerContext.close();
-		}
-
-		@Override
-		public void channelRegistered(ChannelHandlerContext channelHandlerContext) {
-			channelHandlerContext.close();
-		}
-
-		@Override
-		public void channelUnregistered(ChannelHandlerContext channelHandlerContext) {
-			channelHandlerContext.close();
-		}
-
-		@Override
-		public void exceptionCaught(ChannelHandlerContext channelHandlerContext, Throwable throwable) {
-			channelHandlerContext.close();
 		}
 	}
 }
