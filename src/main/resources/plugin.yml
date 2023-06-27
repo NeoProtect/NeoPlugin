@@ -8,5 +8,5 @@ description: A Plugin for interact with the intern NeoProtect system
 commands:
   neoprotect:
     description: Administer and configure the NeoProtect system
-    aliases: np
     permission: neoprotect.admin
+    aliases: np

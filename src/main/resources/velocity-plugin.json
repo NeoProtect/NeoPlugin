@@ -1,7 +1,7 @@
 {
   "id":"neoprotect",
   "name":"NeoProtect",
-  "version":"v${project.version}:${buildNumber}",
+  "version":"${project.version}:${buildNumber}",
   "authors":["EinfacheSache"],
   "url":"https://einfachesache.de/discord",
   "main":"de.cubeattack.neoprotect.velocity.NeoProtectVelocity",
