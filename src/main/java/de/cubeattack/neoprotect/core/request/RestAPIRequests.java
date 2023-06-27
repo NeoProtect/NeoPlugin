@@ -139,7 +139,7 @@ public class RestAPIRequests {
             public void run() {
                 neoServerIPs = getNeoIPs();
             }
-        }, 1000 * 10, 1000 * 10);
+        }, 0, 1000 * 10);
     }
 
     private void attackCheckSchedule(){
@@ -165,7 +165,7 @@ public class RestAPIRequests {
                     attackRunning[0] = true;
                 }
             }
-        }, 1000 * 5, 1000 * 10);
+        }, 0, 1000 * 10);
     }
 
     private void backendServerIPUpdater(){
