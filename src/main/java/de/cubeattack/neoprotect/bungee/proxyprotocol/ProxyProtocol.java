@@ -39,6 +39,8 @@ public class ProxyProtocol {
                             return;
                         }
 
+                        initChannelMethod.invoke(bungeeChannelInitializer, channel);
+
                         channel.pipeline().names().forEach((n) -> {
                             if (n.equals("HAProxyMessageDecoder#0"))
                                 channel.pipeline().remove("HAProxyMessageDecoder#0");
@@ -48,7 +50,6 @@ public class ProxyProtocol {
                             return;
                         }
 
-                        initChannelMethod.invoke(bungeeChannelInitializer, channel);
                         channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
                         channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {
                             @Override
