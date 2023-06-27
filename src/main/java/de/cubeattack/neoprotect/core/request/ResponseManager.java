@@ -49,9 +49,15 @@ public class ResponseManager {
         return responseBody;
     }
     public JSONObject getResponseBodyObject() {
-        return new JSONObject(responseBody);
+        try {
+            return new JSONObject(responseBody);
+        }catch (JSONException ignored){}
+        return new JSONObject();
     }
     public JSONArray getResponseBodyArray() {
-        return new JSONArray(responseBody);
+        try {
+            return new JSONArray(responseBody);
+        }catch (JSONException ignored){}
+        return new JSONArray();
     }
 }
