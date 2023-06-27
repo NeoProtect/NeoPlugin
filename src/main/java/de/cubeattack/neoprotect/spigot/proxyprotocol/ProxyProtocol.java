@@ -27,19 +27,12 @@ public class ProxyProtocol {
 	private final Class<Object> serverConnectionClass = Reflection.getUntypedClass("{nms}" + (Reflection.isNewerPackage() ? ".network" : "") + ".ServerConnection");
 	private final Reflection.FieldAccessor<Object> getMinecraftServer = Reflection.getField("{obc}.CraftServer", minecraftServerClass, 0);
 	private final Reflection.FieldAccessor<Object> getServerConnection = Reflection.getField(minecraftServerClass, serverConnectionClass, 0);
-	private final Reflection.MethodInvoker getNetworkMarkers;
-	private final Reflection.FieldAccessor<List> networkManagersFieldAccessor;
-
-	{
-		getNetworkMarkers = !Reflection.isNewerPackage() && !Reflection.VERSION.contains("16") ? Reflection.getTypedMethod(serverConnectionClass, null, List.class, serverConnectionClass) : null;
-		networkManagersFieldAccessor = Reflection.isNewerPackage() || Reflection.VERSION.contains("16") ? Reflection.getField(serverConnectionClass, List.class, 0) : null;
-	}
-
+	private final Reflection.MethodInvoker getNetworkMarkers = !Reflection.isNewerPackage() && !Reflection.VERSION.contains("16") ? Reflection.getTypedMethod(serverConnectionClass, null, List.class, serverConnectionClass) : null;
+	private final Reflection.FieldAccessor<List> networkManagersFieldAccessor = Reflection.isNewerPackage() || Reflection.VERSION.contains("16") ? Reflection.getField(serverConnectionClass, List.class, 0) : null;
 	private final Class<Object> networkManager = Reflection.getUntypedClass(Reflection.isNewerPackage() ? "net.minecraft.network.NetworkManager" : "{nms}.NetworkManager");
 	private final Reflection.FieldAccessor<SocketAddress> socketAddressFieldAccessor = Reflection.getField(networkManager, SocketAddress.class, 0);
-	// List of network markers
-	private List<Object> networkManagers;
 
+	private List<Object> networkManagers;
 	private ServerChannelInitializer serverChannelHandler;
 	private ChannelInitializer<Channel> beginInitProtocol;
 	private ChannelInitializer<Channel> endInitProtocol;
@@ -78,13 +71,6 @@ public class ProxyProtocol {
 		endInitProtocol = new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel channel) {
-
-				if(!instance.getCore().getRestAPI().getNeoServerIPs().toList().
-						contains(channel.remoteAddress().toString().substring(1).split(":")[0])){
-					channel.close();
-					return;
-				}
-
 				if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
 					return;
 				}
@@ -109,6 +95,7 @@ public class ProxyProtocol {
 			@Override
 			protected void initChannel(Channel channel) {
 				channel.pipeline().addLast(endInitProtocol);
+				if(Reflection.isNewerPackage())channel.pipeline().addLast(new CLOSED());
 			}
 
 		};
@@ -181,6 +168,34 @@ public class ProxyProtocol {
 			// Prepare to initialize ths channel
 			channel.pipeline().addFirst(beginInitProtocol);
 			ctx.fireChannelRead(msg);
+		}
+	}
+	@ChannelHandler.Sharable
+	static
+	class CLOSED extends ChannelInboundHandlerAdapter {
+		@Override
+		public void channelRead(ChannelHandlerContext channelHandlerContext, Object o) {
+			channelHandlerContext.close();
+		}
+
+		@Override
+		public void channelActive(ChannelHandlerContext channelHandlerContext) {
+			channelHandlerContext.close();
+		}
+
+		@Override
+		public void channelRegistered(ChannelHandlerContext channelHandlerContext) {
+			channelHandlerContext.close();
+		}
+
+		@Override
+		public void channelUnregistered(ChannelHandlerContext channelHandlerContext) {
+			channelHandlerContext.close();
+		}
+
+		@Override
+		public void exceptionCaught(ChannelHandlerContext channelHandlerContext, Throwable throwable) {
+			channelHandlerContext.close();
 		}
 	}
 }
