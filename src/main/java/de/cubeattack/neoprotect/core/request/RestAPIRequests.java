@@ -124,7 +124,7 @@ public class RestAPIRequests {
 
         for (Object object : backends) {
             JSONObject jsonObject = (JSONObject) object;
-            map.put(jsonObject.get("id").toString(), jsonObject.get("ipv4").toString());
+            map.put(jsonObject.get("id").toString(), jsonObject.get("ipv4").toString() + ":" + jsonObject.get("port").toString());
         }
 
         return map;
