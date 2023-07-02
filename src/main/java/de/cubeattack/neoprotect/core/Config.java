@@ -12,6 +12,8 @@ public class Config {
     private static String BackendID;
     private static boolean updateIP;
 
+    private static String geyserServerIP;
+
     private static FileUtils fileUtils;
 
     public static void loadConfig(Core core, FileUtils config) {
@@ -24,6 +26,7 @@ public class Config {
         GameShieldID = config.getString("gameshield.serverId", "");
         BackendID = config.getString("gameshield.backendId", "");
         updateIP = config.getBoolean("gameshield.autoUpdateIP", false);
+        geyserServerIP = config.getString("geyserServerIP", "local");
 
         if(APIKey.length() != 64){
             core.severe("Failed to load API-Key. Key is null or not valid");
@@ -51,6 +54,18 @@ public class Config {
         return language;
     }
 
+    public static String getGameShieldID() {
+        return GameShieldID;
+    }
+
+    public static String getBackendID() {
+        return BackendID;
+    }
+
+    public static String getGeyserServerIP() {
+        return geyserServerIP;
+    }
+
     public static boolean isProxyProtocol() {
         return proxyProtocol;
     }
@@ -59,13 +74,6 @@ public class Config {
         return updateIP;
     }
 
-    public static String getGameShieldID() {
-        return GameShieldID;
-    }
-
-    public static String getBackendID() {
-        return BackendID;
-    }
 
     public static void setAPIKey(String key) {
         fileUtils.set("APIKey", key);

@@ -165,6 +165,9 @@ public class ProxyProtocol {
 			Channel channel = (Channel) msg;
 
 			// Prepare to initialize ths channel
+
+			if(channel.localAddress().toString().startsWith(Config.getGeyserServerIP()))return;
+
 			channel.pipeline().addFirst(beginInitProtocol);
 			ctx.fireChannelRead(msg);
 		}

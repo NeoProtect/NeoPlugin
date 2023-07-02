@@ -4,3 +4,6 @@ version: '${project.version}:${buildNumber}'
 author: CubeAttack
 website: https://einfachesache.de/discord
 description: A Plugin for interact with the intern NeoProtect system
+softDepends:
+  - Geyser-BungeeCord
+  - floodgate

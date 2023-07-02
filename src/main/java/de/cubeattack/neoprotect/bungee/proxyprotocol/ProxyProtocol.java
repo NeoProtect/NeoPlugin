@@ -26,29 +26,35 @@ public class ProxyProtocol {
     private final Reflection.MethodInvoker initChannelMethod = Reflection.getMethod(bungeeChannelInitializer.getClass(), "initChannel", Channel.class);
 
     public ProxyProtocol(NeoProtectBungee instance) {
+
         instance.getLogger().info("Proceeding with the server channel injection...");
+
         try {
             ChannelInitializer<Channel> channelInitializer = new ChannelInitializer<Channel>() {
                 @Override
                 protected void initChannel(Channel channel) {
 
                     try {
+
+                        initChannelMethod.invoke(bungeeChannelInitializer, channel);
+
+                        if(channel.localAddress().toString().startsWith(Config.getGeyserServerIP()))return;
+
                         if (!instance.getCore().getRestAPI().getNeoServerIPs().toList().
                                 contains(channel.remoteAddress().toString().substring(1).split(":")[0])) {
                             channel.close();
                             return;
                         }
 
-                        initChannelMethod.invoke(bungeeChannelInitializer, channel);
+                        if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+                            return;
+                        }
 
                         channel.pipeline().names().forEach((n) -> {
                             if (n.equals("HAProxyMessageDecoder#0"))
                                 channel.pipeline().remove("HAProxyMessageDecoder#0");
                         });
 
-                        if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
-                            return;
-                        }
 
                         channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
                         channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {

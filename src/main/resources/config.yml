@@ -6,3 +6,4 @@ gameshield:
   serverId: '' # The serverID is set automatically during setup
   backendId: '' # The backendID is set automatically during setup
   autoUpdateIP: false # This setting automatically sets the IP of the NeoProtect backend every 30 seconds
+geyserServerIP: local # If your GeyserServer is on the same server as your Minecraft server leave it on 'local', otherwise put the IP of your GeyserServer here

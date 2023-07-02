@@ -27,7 +27,9 @@ public class ProxyProtocol {
     private final Reflection.FieldAccessor<ServerChannelInitializerHolder> serverChannelInitializerHolderFieldAccessor = Reflection.getField(ConnectionManager.class, ServerChannelInitializerHolder.class, 0);
 
     public ProxyProtocol(NeoProtectVelocity instance) {
+
         instance.getLogger().info("Proceeding with the server channel injection...");
+
         try {
 
             VelocityServer velocityServer = (VelocityServer)instance.getProxy();
@@ -39,14 +41,21 @@ public class ProxyProtocol {
                 protected void initChannel(Channel channel)  {
 
                     try {
+
+                        initChannelMethod.getMethod().setAccessible(true);
+                        initChannelMethod.invoke(oldInitializer, channel);
+
+                        if(channel.localAddress().toString().startsWith(Config.getGeyserServerIP()))return;
+
                         if (!instance.getCore().getRestAPI().getNeoServerIPs().toList().
-                                contains(channel.remoteAddress().toString().substring(1).split(":")[0])) {
+                                contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
                             channel.close();
                             return;
                         }
 
-                        initChannelMethod.getMethod().setAccessible(true);
-                        initChannelMethod.invoke(oldInitializer, channel);
+                        if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+                            return;
+                        }
 
                         channel.pipeline().names().forEach((n) -> {
                             if (n.equals("HAProxyMessageDecoder#0"))
@@ -54,10 +63,6 @@ public class ProxyProtocol {
                             if (n.equals("ProxyProtocol$1#0"))
                                 channel.pipeline().remove("ProxyProtocol$1#0");
                         });
-
-                        if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
-                            return;
-                        }
 
                         channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
                         channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {
