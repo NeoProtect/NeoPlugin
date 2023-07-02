@@ -83,7 +83,7 @@ public class NeoProtectCommand implements SimpleCommand {
 
                     for (Backend backend : backends) {
                         instance.sendMessage(invocation.source(), "§5" + backend.getIp() + ":" + backend.getPort() + localization.get("utils.click"),
-                                ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/np setbackend " + backend),
+                                ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/np setbackend " + backend.getId()),
                                 HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, Component.text(localization.get("hover.backend", backend.getIp(), backend.getPort(), backend.getId()))));
                     }
                 }else {
