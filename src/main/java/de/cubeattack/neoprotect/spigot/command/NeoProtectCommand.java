@@ -2,17 +2,21 @@ package de.cubeattack.neoprotect.spigot.command;
 
 import de.cubeattack.api.language.Localization;
 import de.cubeattack.neoprotect.core.Config;
+import de.cubeattack.neoprotect.core.objects.Backend;
 import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
 import de.cubeattack.neoprotect.spigot.listener.ChatListener;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class NeoProtectCommand implements CommandExecutor {
@@ -80,12 +84,12 @@ public class NeoProtectCommand implements CommandExecutor {
                     instance.sendMessage(player, localization.get("set.gameshield", args[1]));
                     instance.sendMessage(player, localization.get("select.backend"));
 
-                    HashMap<String, String> backend = instance.getCore().getRestAPI().getBackends();
+                    ArrayList<Backend> backends = instance.getCore().getRestAPI().getBackends();
 
-                    for (Object set: backend.keySet()) {
-                        instance.sendMessage(player, "§5" + backend.get(set.toString()) + localization.get("utils.click"),
-                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/np setbackend " + set),
-                                new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(localization.get("hover.backend", backend.get(set.toString()), set)).create()));
+                    for (Backend backend : backends) {
+                        instance.sendMessage(sender, "§5" + backend.getIp() + ":" + backend.getPort() + localization.get("utils.click"),
+                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/np setbackend " + backend.getId()),
+                                new HoverEvent(HoverEvent.Action.SHOW_TEXT, Collections.singletonList(new Text(localization.get("hover.backend", backend.getIp(), backend.getPort(), backend.getId())))));
                     }
                 }else {
                     instance.sendMessage(player, localization.get("usage.setgameshield"));
@@ -96,12 +100,12 @@ public class NeoProtectCommand implements CommandExecutor {
                 if(args.length == 1){
                     instance.sendMessage(player, localization.get("select.backend"));
 
-                    HashMap<String, String> backend = instance.getCore().getRestAPI().getBackends();
+                    ArrayList<Backend> backends = instance.getCore().getRestAPI().getBackends();
 
-                    for (Object set: backend.keySet()) {
-                        instance.sendMessage(player, "§5" + backend.get(set.toString()) + localization.get("utils.click"),
-                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/np setbackend " + set),
-                                new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(localization.get("hover.backend", backend.get(set.toString()), set)).create()));
+                    for (Backend backend : backends) {
+                        instance.sendMessage(sender, "§5" + backend.getIp() + ":" + backend.getPort() + localization.get("utils.click"),
+                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/np setbackend " + backend.getId()),
+                                new HoverEvent(HoverEvent.Action.SHOW_TEXT, Collections.singletonList(new Text(localization.get("hover.backend", backend.getIp(), backend.getPort(), backend.getId())))));
                     }
                 } else if (args.length == 2) {
                     Config.setBackendID(args[1]);

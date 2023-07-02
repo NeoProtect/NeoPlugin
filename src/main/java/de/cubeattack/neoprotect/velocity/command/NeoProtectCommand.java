@@ -5,12 +5,14 @@ import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import de.cubeattack.api.language.Localization;
 import de.cubeattack.neoprotect.core.Config;
+import de.cubeattack.neoprotect.core.objects.Backend;
 import de.cubeattack.neoprotect.velocity.NeoProtectVelocity;
 import de.cubeattack.neoprotect.velocity.listener.ChatListener;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -77,12 +79,12 @@ public class NeoProtectCommand implements SimpleCommand {
                     instance.sendMessage(invocation.source(),  localization.get("set.gameshield", invocation.arguments()[1]));
                     instance.sendMessage(invocation.source(), localization.get("select.backend"));
 
-                    HashMap<String, String> backend = instance.getCore().getRestAPI().getBackends();
+                    ArrayList<Backend> backends = instance.getCore().getRestAPI().getBackends();
 
-                    for (Object set: backend.keySet()) {
-                        instance.sendMessage(invocation.source(), "§5" + backend.get(set.toString()) + localization.get("utils.click"),
-                                ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/np setbackend " + set),
-                                HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, Component.text(localization.get("hover.backend", backend.get(set.toString()), set))));
+                    for (Backend backend : backends) {
+                        instance.sendMessage(invocation.source(), "§5" + backend.getIp() + ":" + backend.getPort() + localization.get("utils.click"),
+                                ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/np setbackend " + backend),
+                                HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, Component.text(localization.get("hover.backend", backend.getIp(), backend.getPort(), backend.getId()))));
                     }
                 }else {
                     instance.sendMessage(invocation.source(), localization.get("usage.setgameshield"));
@@ -93,12 +95,12 @@ public class NeoProtectCommand implements SimpleCommand {
                 if(invocation.arguments().length == 1){
                     instance.sendMessage(invocation.source(), localization.get("select.backend"));
 
-                    HashMap<String, String> backend = instance.getCore().getRestAPI().getBackends();
+                    ArrayList<Backend> backends = instance.getCore().getRestAPI().getBackends();
 
-                    for (Object set: backend.keySet()) {
-                        instance.sendMessage(invocation.source(), "§5" + backend.get(set.toString()) + localization.get("utils.click"),
-                                ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/np setbackend " + set),
-                                HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, Component.text(localization.get("hover.backend", backend.get(set.toString()), set))));
+                    for (Backend backend : backends) {
+                        instance.sendMessage(invocation.source(), "§5" + backend.getIp() + ":" + backend.getPort() + localization.get("utils.click"),
+                                ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/np setbackend " + backend.getId()),
+                                HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, Component.text(localization.get("hover.backend", backend.getIp(), "25565", backend.getId()))));
                     }
                 }else if (invocation.arguments().length == 2){
                     Config.setBackendID(invocation.arguments()[1]);
