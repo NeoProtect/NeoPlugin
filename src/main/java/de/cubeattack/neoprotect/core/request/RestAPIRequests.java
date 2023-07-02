@@ -72,15 +72,15 @@ public class RestAPIRequests {
     public void testCredentials(){
 
         if(isAPIInvalid(Config.getAPIKey())){
-            core.severe("API is not Valid!");
+            core.severe("API is not valid! Please run /neoprotect setup to set the API Key");
             setup = false;
             return;
         }else if(!isGameshieldFound()){
-            core.severe("Gameshield is not Valid!");
+            core.severe("Gameshield is not valid! Please run /neoprotect setgameshield to set the gameshield");
             setup = false;
             return;
         }else if(!isBackendFound()) {
-            core.severe("Backend is not Valid!");
+            core.severe("Backend is not valid! Please run /neoprotect setbackend to set the backend");
             setup = false;
             return;
         }
@@ -190,9 +190,9 @@ public class RestAPIRequests {
                 RequestBody formBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("ipv4", ip).build().toString());
 
                 if(!updateBackend(formBody)){
-                    core.info("Update backendserver IP failed ID '" + Config.getBackendID() + "' to IP '" + ip + "'");
+                    core.warn("Update backendserver ID '" + Config.getBackendID() + "' to IP '" + ip + "' failed");
                 }else {
-                    core.info("Update backendserver IP success ID '" + Config.getBackendID() + "' to IP '" + ip + "'");
+                    core.info("Update backendserver ID '" + Config.getBackendID() + "' to IP '" + ip + "' success");
                     backend.setIp(ip);
                 }
             }
