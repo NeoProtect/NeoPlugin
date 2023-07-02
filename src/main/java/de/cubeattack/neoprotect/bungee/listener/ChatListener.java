@@ -2,6 +2,7 @@ package de.cubeattack.neoprotect.bungee.listener;
 
 import de.cubeattack.api.language.Localization;
 import de.cubeattack.neoprotect.bungee.NeoProtectBungee;
+import de.cubeattack.neoprotect.core.Config;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -41,6 +42,8 @@ public class ChatListener implements Listener {
                 instance.sendMessage(sender, localization.get("apikey.invalid"));
                 return;
             }
+
+            Config.setAPIKey(event.getMessage());
 
             instance.sendMessage(sender, localization.get("apikey.valid"));
 
