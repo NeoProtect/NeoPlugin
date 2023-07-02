@@ -40,13 +40,13 @@ public class ProxyProtocol {
 
                         if(channel.localAddress().toString().startsWith(Config.getGeyserServerIP()))return;
 
-                        if (!instance.getCore().getRestAPI().getNeoServerIPs().toList().
-                                contains(channel.remoteAddress().toString().substring(1).split(":")[0])) {
-                            channel.close();
+                        if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
                             return;
                         }
 
-                        if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+                        if (!instance.getCore().getRestAPI().getNeoServerIPs().toList().
+                                contains(channel.remoteAddress().toString().substring(1).split(":")[0])) {
+                            channel.close();
                             return;
                         }
 

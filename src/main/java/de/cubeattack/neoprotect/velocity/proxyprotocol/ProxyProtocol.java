@@ -47,13 +47,13 @@ public class ProxyProtocol {
 
                         if(channel.localAddress().toString().startsWith(Config.getGeyserServerIP()))return;
 
-                        if (!instance.getCore().getRestAPI().getNeoServerIPs().toList().
-                                contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
-                            channel.close();
+                        if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
                             return;
                         }
 
-                        if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+                        if (!instance.getCore().getRestAPI().getNeoServerIPs().toList().
+                                contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
+                            channel.close();
                             return;
                         }
 
