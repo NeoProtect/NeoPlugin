@@ -1,7 +1,6 @@
 package de.cubeattack.neoprotect.spigot.listener;
 
 import de.cubeattack.api.language.Localization;
-import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -39,9 +38,8 @@ public class ChatListener implements Listener {
         event.setCancelled(true);
 
         CompletableFuture.runAsync(() -> {
-            Config.setAPIKey(event.getMessage());
 
-            if (instance.getCore().getRestAPI().isAPIInvalid()) {
+            if (instance.getCore().getRestAPI().isAPIInvalid(event.getMessage())) {
                 instance.sendMessage(player, localization.get("apikey.invalid"));
                 return;
             }

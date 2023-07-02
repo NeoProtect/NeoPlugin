@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Objects;
 
-public class ResponseManager {
+public class ResponseManager extends JSONObject{
 
     private final String responseBody;
     private final Response response;
@@ -59,5 +59,10 @@ public class ResponseManager {
             return new JSONArray(responseBody);
         }catch (JSONException ignored){}
         return new JSONArray();
+    }
+
+    @Override
+    public String getString(String key) {
+        return super.getString(key);
     }
 }

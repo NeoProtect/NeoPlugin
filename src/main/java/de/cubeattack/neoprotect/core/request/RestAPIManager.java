@@ -50,9 +50,13 @@ public class RestAPIManager {
     }
 
     protected Request.Builder defaultBuilder(){
+        return defaultBuilder(Config.getAPIKey());
+    }
+
+    protected Request.Builder defaultBuilder(String apiKey){
        return new Request.Builder()
                .addHeader("accept", "*/*")
-               .addHeader("Authorization", "Bearer " + Config.getAPIKey())
+               .addHeader("Authorization", "Bearer " + apiKey)
                .addHeader("Content-Type", "application/json");
     }
 

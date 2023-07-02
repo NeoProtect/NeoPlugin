@@ -5,7 +5,6 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
 import de.cubeattack.api.language.Localization;
-import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.velocity.NeoProtectVelocity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -38,9 +37,8 @@ public class ChatListener {
         event.setResult(PlayerChatEvent.ChatResult.denied());
 
         CompletableFuture.runAsync(() -> {
-            Config.setAPIKey(event.getMessage());
 
-            if (instance.getCore().getRestAPI().isAPIInvalid()) {
+            if (instance.getCore().getRestAPI().isAPIInvalid(event.getMessage())) {
                 instance.sendMessage(player, localization.get("apikey.invalid"));
                 return;
             }

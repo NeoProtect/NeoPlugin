@@ -6,9 +6,11 @@ import com.squareup.okhttp.RequestBody;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.JsonBuilder;
+import de.cubeattack.neoprotect.core.objects.Backend;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,8 +45,8 @@ public class RestAPIRequests {
         return new ResponseManager(rest.callRequest(rest.defaultBuilder().url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_NEO_SERVER_IPS)).build())).getResponseBodyArray();
     }
 
-    public boolean isAPIInvalid(){
-        return !new ResponseManager(rest.callRequest(rest.defaultBuilder().url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_ATTACKS)).build())).checkCode(200);
+    public boolean isAPIInvalid(String apiKey){
+        return !new ResponseManager(rest.callRequest(rest.defaultBuilder(apiKey).url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_ATTACKS)).build())).checkCode(200);
     }
 
     private boolean isGameshieldFound(){
@@ -52,7 +54,7 @@ public class RestAPIRequests {
     }
 
     private boolean isBackendFound(){
-        return getBackends().containsKey(Config.getBackendID());
+        return getBackends().stream().anyMatch(e -> e.compareById(Config.getBackendID()));
     }
 
     private boolean isAttack(){
@@ -69,7 +71,7 @@ public class RestAPIRequests {
 
     public void testCredentials(){
 
-        if(isAPIInvalid()){
+        if(isAPIInvalid(Config.getAPIKey())){
             core.severe("API is not Valid!");
             setup = false;
             return;
@@ -117,14 +119,13 @@ public class RestAPIRequests {
         return map;
     }
 
-    public HashMap<String, String> getBackends(){
-        HashMap<String, String> map = new HashMap<>();
-
+    public ArrayList<Backend> getBackends(){
+        ArrayList<Backend> map = new ArrayList<>();
         JSONArray backends = rest.request(RequestType.GET_GAMESHIELD_BACKENDS, null, Config.getGameShieldID()).getResponseBodyArray();
 
         for (Object object : backends) {
             JSONObject jsonObject = (JSONObject) object;
-            map.put(jsonObject.get("id").toString(), jsonObject.get("ipv4").toString());
+            map.add(new Backend(jsonObject.getString("id"), jsonObject.getString("ipv4"), String.valueOf(jsonObject.getInt("port"))));
         }
 
         return map;
@@ -173,16 +174,18 @@ public class RestAPIRequests {
         core.info("BackendServerIPUpdate scheduler started");
 
         new Timer().schedule(new TimerTask() {
-            String currentIp = getBackends().get(Config.getBackendID());
+
+            final Backend backend = getBackends().stream().filter(backend -> backend.compareById(Config.getBackendID())).findAny().orElse(null);
+
             @Override
             public void run() {
 
-                if(!setup)return;
+                if(!setup | backend == null)return;
 
                 String ip = getIpv4();
 
                 if(ip == null) return;
-                if(ip.equals(currentIp)) return;
+                if(ip.equals(backend.getIp())) return;
 
                 RequestBody formBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("ipv4", ip).build().toString());
 
@@ -190,7 +193,7 @@ public class RestAPIRequests {
                     core.info("Update backendserver IP failed ID '" + Config.getBackendID() + "' to IP '" + ip + "'");
                 }else {
                     core.info("Update backendserver IP success ID '" + Config.getBackendID() + "' to IP '" + ip + "'");
-                    currentIp = ip;
+                    backend.setIp(ip);
                 }
             }
         }, 0, 1000*30);
