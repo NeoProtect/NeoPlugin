@@ -175,12 +175,12 @@ public class RestAPIRequests {
 
         new Timer().schedule(new TimerTask() {
 
-            final Backend backend = getBackends().stream().filter(backend -> backend.compareById(Config.getBackendID())).findAny().orElse(null);
-
             @Override
             public void run() {
 
-                if(!setup | backend == null)return;
+                Backend backend = getBackends().stream().filter(unFilteredBackend -> unFilteredBackend.compareById(Config.getBackendID())).findAny().orElse(null);
+
+                if(!setup | backend == null) return;
 
                 String ip = getIpv4();
 
@@ -196,7 +196,7 @@ public class RestAPIRequests {
                     backend.setIp(ip);
                 }
             }
-        }, 0, 1000*30);
+        }, 1000, 1000*10);
     }
 
     public JSONArray getNeoServerIPs() {
