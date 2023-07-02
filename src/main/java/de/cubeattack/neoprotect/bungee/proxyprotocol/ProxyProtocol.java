@@ -38,7 +38,7 @@ public class ProxyProtocol {
 
                         initChannelMethod.invoke(bungeeChannelInitializer, channel);
 
-                        if(channel.localAddress().toString().startsWith(Config.getGeyserServerIP()))return;
+                        if(channel.localAddress().toString().startsWith("local:"))return;
 
                         if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
                             return;

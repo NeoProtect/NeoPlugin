@@ -45,7 +45,7 @@ public class ProxyProtocol {
                         initChannelMethod.getMethod().setAccessible(true);
                         initChannelMethod.invoke(oldInitializer, channel);
 
-                        if(channel.localAddress().toString().startsWith(Config.getGeyserServerIP()))return;
+                        if(channel.localAddress().toString().startsWith("local:"))return;
 
                         if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
                             return;

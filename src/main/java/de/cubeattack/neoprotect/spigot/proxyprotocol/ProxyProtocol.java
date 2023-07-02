@@ -164,10 +164,9 @@ public class ProxyProtocol {
 		public void channelRead(ChannelHandlerContext ctx, Object msg) {
 			Channel channel = (Channel) msg;
 
+			if(channel.localAddress().toString().startsWith("local:"))return;
+
 			// Prepare to initialize ths channel
-
-			if(channel.localAddress().toString().startsWith(Config.getGeyserServerIP()))return;
-
 			channel.pipeline().addFirst(beginInitProtocol);
 			ctx.fireChannelRead(msg);
 		}
