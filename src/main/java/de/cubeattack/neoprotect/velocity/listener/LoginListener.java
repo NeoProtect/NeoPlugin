@@ -21,7 +21,7 @@ public class LoginListener {
 
         Player player = event.getPlayer();
 
-        if(!player.hasPermission("neoprotect.admin") || instance.getCore().isSetup() || !ChatListener.PLAYER_IN_SETUP.isEmpty()) return;
+        if(!player.hasPermission("neoprotect.admin") || instance.getCore().isSetup() || !instance.getCore().getPLAYER_IN_SETUP().isEmpty()) return;
 
         instance.sendMessage(player, localization.get("setup.required.first"));
         instance.sendMessage(player, localization.get("setup.required.second"));

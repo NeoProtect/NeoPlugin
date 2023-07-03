@@ -12,6 +12,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public class NeoProtectVelocity implements NeoProtectPlugin {
@@ -45,21 +46,24 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
 
     @Override
     public void sendMessage(Object sender, String text) {
-        sendMessage(sender, text, null, null);
+        sendMessage(sender, text, null, null, null, null);
     }
 
     @Override
-    public void sendMessage(Object sender, String text, Object clickEvent, Object hoverEvent) {
+    @SuppressWarnings("unchecked")
+    public void sendMessage(Object sender, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         TextComponent msg = Component.text(core.getPrefix() + text);
 
-        if(clickEvent instanceof ClickEvent) msg = msg.clickEvent((ClickEvent) clickEvent);
-        if(hoverEvent instanceof HoverEvent) msg = msg.hoverEvent((HoverEvent<?>) hoverEvent);
+        if(clickAction != null) msg = msg.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
+        if(hoverAction != null) msg = msg.hoverEvent(HoverEvent.hoverEvent((HoverEvent.Action<Object>) Objects.requireNonNull(HoverEvent.Action.NAMES.value(hoverAction.toLowerCase())),
+                Component.text(hoverMsg)));
+
         if(sender instanceof CommandSource) ((CommandSource) sender).sendMessage(msg);
     }
 
     @Override
-    public void sendAdminMessage(String text, Object clickEvent, Object hoverEvent) {
-        getProxy().getAllPlayers().forEach(pp -> {if(pp.hasPermission("neoprotect.admin"))sendMessage(pp, text, clickEvent, hoverEvent);});
+    public void sendAdminMessage(String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
+        getProxy().getAllPlayers().forEach(pp -> {if(pp.hasPermission("neoprotect.admin")) sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);});
     }
 
     @Override

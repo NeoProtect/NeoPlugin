@@ -21,6 +21,6 @@ public class Startup {
 
         pm.registerListener(instance, new ChatListener(instance));
         pm.registerListener(instance, new LoginListener(instance));
-        pm.registerListener(instance, new DisconnectListener());
+        pm.registerListener(instance, new DisconnectListener(instance));
     }
 }

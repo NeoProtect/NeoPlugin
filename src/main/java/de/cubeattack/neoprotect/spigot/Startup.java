@@ -23,6 +23,6 @@ public class Startup {
 
         pm.registerEvents(new ChatListener(instance), instance);
         pm.registerEvents(new LoginListener(instance), instance);
-        pm.registerEvents(new DisconnectListener(), instance);
+        pm.registerEvents(new DisconnectListener(instance), instance);
     }
 }

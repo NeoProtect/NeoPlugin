@@ -7,6 +7,8 @@ import de.cubeattack.api.utils.VersionUtils;
 import de.cubeattack.neoprotect.core.request.RestAPIRequests;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @SuppressWarnings("unused")
@@ -17,6 +19,8 @@ public class Core {
     private final RestAPIRequests restAPIRequests;
     private final NeoProtectPlugin plugin;
     private final Localization localization;
+
+    private final List<Object> PLAYER_IN_SETUP = new ArrayList<>();
 
     public Core(NeoProtectPlugin plugin) {
         this.plugin = plugin;
@@ -66,6 +70,10 @@ public class Core {
 
     public boolean isSetup() {
         return restAPIRequests.isSetup();
+    }
+
+    public List<Object> getPLAYER_IN_SETUP() {
+        return PLAYER_IN_SETUP;
     }
 
 }

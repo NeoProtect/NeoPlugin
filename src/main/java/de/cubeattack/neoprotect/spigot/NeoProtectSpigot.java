@@ -5,8 +5,11 @@ import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Collections;
 
 public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
 
@@ -29,21 +32,21 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
 
     @Override
     public void sendMessage(Object sender, String text) {
-        sendMessage(sender, text, null, null);
+        sendMessage(sender, text, null, null, null, null);
     }
 
     @Override
-    public void sendMessage(Object sender, String text, Object clickEvent, Object hoverEvent) {
+    public void sendMessage(Object sender, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         TextComponent msg = new TextComponent(core.getPrefix() + text);
 
-        if(clickEvent instanceof ClickEvent) msg.setClickEvent((ClickEvent) clickEvent);
-        if(hoverEvent instanceof HoverEvent) msg.setHoverEvent((HoverEvent) hoverEvent);
+        if(clickAction != null) msg.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
+        if(hoverAction != null) msg.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverAction), Collections.singletonList(new Text(hoverMsg))));
         if(sender instanceof CommandSender) ((CommandSender) sender).spigot().sendMessage(msg);
     }
 
     @Override
-    public void sendAdminMessage(String text, Object clickEvent, Object hoverEvent) {
-        getServer().getOnlinePlayers().forEach(pp -> {if(pp.hasPermission("neoprotect.admin"))sendMessage(pp, text, clickEvent, hoverEvent);});
+    public void sendAdminMessage(String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
+        getServer().getOnlinePlayers().forEach(pp -> {if(pp.hasPermission("neoprotect.admin")) sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);});
     }
 
     @Override

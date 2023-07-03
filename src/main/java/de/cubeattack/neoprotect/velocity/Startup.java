@@ -24,9 +24,9 @@ public class Startup {
         cm.register(cm.metaBuilder("neoprotect").aliases("np").build(), new NeoProtectCommand(instance));
 
         em.register(instance, new ChatListener(instance));
-        em.register(instance, new LoginListener(instance));
-        em.register(instance, new DisconnectListener());
         em.register(instance, new JoinListener(instance));
+        em.register(instance, new LoginListener(instance));
+        em.register(instance, new DisconnectListener(instance));
         em.register(instance, new SessionChatListener(instance));
     }
 }

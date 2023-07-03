@@ -5,10 +5,11 @@ import java.util.logging.Logger;
 public interface NeoProtectPlugin {
 
     void sendMessage(Object sender, String text);
-    void sendMessage(Object sender, String text, Object clickEvent, Object hoverEvent);
+    void sendMessage(Object sender, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg);
 
-    void sendAdminMessage(String text, Object clickEvent, Object hoverEvent);
+    void sendAdminMessage(String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg);
 
+    Core getCore();
     Logger getLogger();
     String getVersion();
 }
