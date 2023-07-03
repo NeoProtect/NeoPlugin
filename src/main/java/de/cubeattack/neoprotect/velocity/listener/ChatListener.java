@@ -3,7 +3,7 @@ package de.cubeattack.neoprotect.velocity.listener;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
-import de.cubeattack.neoprotect.core.command.NeoProtectExecutor;
+import de.cubeattack.neoprotect.core.executor.NeoProtectExecutor;
 import de.cubeattack.neoprotect.velocity.NeoProtectVelocity;
 
 public class ChatListener {

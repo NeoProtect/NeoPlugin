@@ -1,6 +1,6 @@
 package de.cubeattack.neoprotect.spigot.listener;
 
-import de.cubeattack.neoprotect.core.command.NeoProtectExecutor;
+import de.cubeattack.neoprotect.core.executor.NeoProtectExecutor;
 import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

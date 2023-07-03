@@ -1,4 +1,4 @@
-package de.cubeattack.neoprotect.core.command;
+package de.cubeattack.neoprotect.core.executor;
 
 import de.cubeattack.api.language.Localization;
 import de.cubeattack.neoprotect.core.Config;

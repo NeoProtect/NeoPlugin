@@ -1,7 +1,7 @@
 package de.cubeattack.neoprotect.spigot.command;
 
 import de.cubeattack.api.language.Localization;
-import de.cubeattack.neoprotect.core.command.NeoProtectExecutor;
+import de.cubeattack.neoprotect.core.executor.NeoProtectExecutor;
 import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

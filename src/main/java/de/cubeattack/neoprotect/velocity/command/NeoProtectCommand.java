@@ -3,7 +3,7 @@ package de.cubeattack.neoprotect.velocity.command;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import de.cubeattack.api.language.Localization;
-import de.cubeattack.neoprotect.core.command.NeoProtectExecutor;
+import de.cubeattack.neoprotect.core.executor.NeoProtectExecutor;
 import de.cubeattack.neoprotect.velocity.NeoProtectVelocity;
 
 import java.util.List;

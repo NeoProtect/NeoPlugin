@@ -2,7 +2,7 @@ package de.cubeattack.neoprotect.bungee.command;
 
 import de.cubeattack.api.language.Localization;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
-import de.cubeattack.neoprotect.core.command.NeoProtectExecutor;
+import de.cubeattack.neoprotect.core.executor.NeoProtectExecutor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
