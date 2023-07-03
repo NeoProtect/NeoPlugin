@@ -6,7 +6,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
@@ -41,7 +41,7 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
 
         if(clickAction != null) msg.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
         if(hoverAction != null) msg.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverAction), Collections.singletonList(new Text(hoverMsg))));
-        if(sender instanceof CommandSender) ((CommandSender) sender).spigot().sendMessage(msg);
+        if(sender instanceof Player) ((Player) sender).spigot().sendMessage(msg);
     }
 
     @Override
