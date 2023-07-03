@@ -44,7 +44,7 @@ public class ProxyProtocol {
                             return;
                         }
 
-                        if (!instance.getCore().getRestAPI().getNeoServerIPs().toList().
+                        if (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
                                 contains(channel.remoteAddress().toString().substring(1).split(":")[0])) {
                             channel.close();
                             return;
