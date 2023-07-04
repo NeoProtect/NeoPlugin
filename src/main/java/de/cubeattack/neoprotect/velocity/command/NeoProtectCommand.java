@@ -6,6 +6,7 @@ import de.cubeattack.api.language.Localization;
 import de.cubeattack.neoprotect.core.executor.NeoProtectExecutor;
 import de.cubeattack.neoprotect.velocity.NeoProtectVelocity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -41,7 +42,34 @@ public class NeoProtectCommand implements SimpleCommand {
 
     @Override
     public CompletableFuture<List<String>> suggestAsync(Invocation invocation) {
-        return SimpleCommand.super.suggestAsync(invocation);
+        return CompletableFuture.supplyAsync(() ->{
+            List<String> list = new ArrayList<>();
+            List<String> completorList = new ArrayList<>();
+            String[] args = invocation.arguments();
+
+            if (args.length > 1) {
+                return completorList;
+            }
+
+            list.add("setup");
+            list.add("setgameshield");
+            list.add("setbackend");
+            list.add("ipanic");
+
+            for (String tab : list) {
+
+                if(args.length == 0){
+                    completorList.add(tab);
+                    continue;
+                }
+
+                if(tab.toLowerCase().startsWith(args[args.length-1].toLowerCase())){
+                    completorList.add(tab);
+                }
+            }
+
+            return completorList;
+        });
     }
 
     @Override

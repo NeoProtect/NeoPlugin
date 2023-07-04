@@ -1,6 +1,7 @@
 package de.cubeattack.neoprotect.bungee;
 
 import de.cubeattack.neoprotect.bungee.command.NeoProtectCommand;
+import de.cubeattack.neoprotect.bungee.command.NeoProtectTabCompleter;
 import de.cubeattack.neoprotect.bungee.listener.ChatListener;
 import de.cubeattack.neoprotect.bungee.listener.DisconnectListener;
 import de.cubeattack.neoprotect.bungee.listener.LoginListener;
@@ -19,6 +20,7 @@ public class Startup {
         PluginManager pm = ProxyServer.getInstance().getPluginManager();
         pm.registerCommand(instance, new NeoProtectCommand(instance,"neoprotect", "neoprotect.admin", "np"));
 
+        pm.registerListener(instance, new NeoProtectTabCompleter());
         pm.registerListener(instance, new ChatListener(instance));
         pm.registerListener(instance, new LoginListener(instance));
         pm.registerListener(instance, new DisconnectListener(instance));
