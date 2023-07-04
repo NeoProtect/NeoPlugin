@@ -30,10 +30,10 @@ public class RestAPIRequests {
         this.core = core;
         this.rest = new RestAPIManager(core);
 
-        versionChecker();
         testCredentials();
         attackCheckSchedule();
-        neoServerIPsSchedule();
+        versionCheckSchedule();
+        neoServerIPsUpdateSchedule();
 
         if(Config.isUpdateIP()){
             backendServerIPUpdater();
@@ -134,7 +134,7 @@ public class RestAPIRequests {
         return map;
     }
 
-    private void neoServerIPsSchedule(){
+    private void neoServerIPsUpdateSchedule(){
 
         core.info("NeoServerIPsUpdate scheduler started");
 
@@ -146,14 +146,14 @@ public class RestAPIRequests {
         }, 0, 1000 * 10);
     }
 
-    private void versionChecker(){
+    private void versionCheckSchedule(){
 
-        core.info("VersionChecker scheduler started");
+        core.info("VersionCheck scheduler started");
 
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", core.getPlugin().getVersion()));
+                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getVersion()));
             }
         }, 0, 1000 * 20);
     }
