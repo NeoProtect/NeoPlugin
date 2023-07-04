@@ -14,6 +14,6 @@ public class DisconnectListener {
 
     @Subscribe
     public void onDisconnect(DisconnectEvent event){
-        instance.getCore().getPLAYER_IN_SETUP().remove(event.getPlayer());
+        instance.getCore().getPlayerInSetup().remove(event.getPlayer());
     }
 }

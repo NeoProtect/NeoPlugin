@@ -96,7 +96,7 @@ public class NeoProtectExecutor {
     }
 
     private void setup(Object sender){
-        instance.getCore().getPLAYER_IN_SETUP().add(sender);
+        instance.getCore().getPlayerInSetup().add(sender);
         instance.sendMessage(sender, localization.get("command.setup") + localization.get("utils.click"),
                 "OPEN_URL", "https://panel.neoprotect.net/profile",
                 "SHOW_TEXT", localization.get("apikey.find"));
@@ -150,7 +150,7 @@ public class NeoProtectExecutor {
         instance.sendMessage(sender, localization.get("set.backend", args[1]));
         instance.getCore().getRestAPI().testCredentials();
 
-        if(instance.getCore().getPLAYER_IN_SETUP().remove(sender)){
+        if(instance.getCore().getPlayerInSetup().remove(sender)){
             instance.sendMessage(sender, localization.get("setup.finished"));
         }
     }

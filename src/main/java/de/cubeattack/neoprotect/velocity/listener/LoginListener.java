@@ -29,7 +29,7 @@ public class LoginListener {
             instance.sendMessage(player, localization.get("plugin.outdated.link", result.getReleaseUrl()), "OPEN_URL", result.getReleaseUrl(), null, null);
         }
 
-        if(!instance.getCore().isSetup() && instance.getCore().getPLAYER_IN_SETUP().isEmpty()){
+        if(!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()){
             instance.sendMessage(player, localization.get("setup.required.first"));
             instance.sendMessage(player, localization.get("setup.required.second"));
         }

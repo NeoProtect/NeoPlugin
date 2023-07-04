@@ -73,7 +73,7 @@ public class Core {
         return restAPIRequests.isSetup();
     }
 
-    public List<Object> getPLAYER_IN_SETUP() {
+    public List<Object> getPlayerInSetup() {
         return PLAYER_IN_SETUP;
     }
 
