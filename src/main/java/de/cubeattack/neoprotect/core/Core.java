@@ -15,7 +15,7 @@ import java.util.Locale;
 public class Core {
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final String prefix = "§8[§5NEOPROTECT§8] §b";
+    private final String prefix = "§8[§bNeo§3Protect§8] §7";
     private final RestAPIRequests restAPIRequests;
     private final NeoProtectPlugin plugin;
     private final Localization localization;
