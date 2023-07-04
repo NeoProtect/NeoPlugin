@@ -7,6 +7,8 @@ import de.cubeattack.api.language.Localization;
 import de.cubeattack.api.utils.VersionUtils;
 import de.cubeattack.neoprotect.velocity.NeoProtectVelocity;
 
+import java.text.MessageFormat;
+
 public class LoginListener {
 
     private final NeoProtectVelocity instance;
@@ -26,7 +28,9 @@ public class LoginListener {
         VersionUtils.Result result = instance.getCore().getVersionResult();
         if(result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)){
             instance.sendMessage(player, localization.get("plugin.outdated.message", result.getCurrentVersion(), result.getLatestVersion()));
-            instance.sendMessage(player, localization.get("plugin.outdated.link", result.getReleaseUrl()), "OPEN_URL", result.getReleaseUrl(), null, null);
+            instance.sendMessage(player, MessageFormat.format("§7-> §b{0}",
+                            result.getReleaseUrl().replace("/NeoPlugin", "").replace("/releases/tag", "")),
+                    "OPEN_URL", result.getReleaseUrl(), null, null);
         }
 
         if(!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()){

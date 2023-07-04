@@ -8,6 +8,8 @@ import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
+import java.text.MessageFormat;
+
 public class LoginListener implements Listener {
 
     private final NeoProtectBungee instance;
@@ -25,7 +27,7 @@ public class LoginListener implements Listener {
         VersionUtils.Result result = instance.getCore().getVersionResult();
         if(result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)){
             instance.sendMessage(player, localization.get("plugin.outdated.message", result.getCurrentVersion(), result.getLatestVersion()));
-            instance.sendMessage(player, localization.get("plugin.outdated.link",
+            instance.sendMessage(player, MessageFormat.format("§7-> §b{0}",
                     result.getReleaseUrl().replace("/NeoPlugin", "").replace("/releases/tag", "")),
                     "OPEN_URL", result.getReleaseUrl(), null, null);
         }

@@ -8,6 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.text.MessageFormat;
+
 public class LoginListener implements Listener {
 
     private final NeoProtectSpigot instance;
@@ -27,7 +29,9 @@ public class LoginListener implements Listener {
         VersionUtils.Result result = instance.getCore().getVersionResult();
         if(result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)){
             instance.sendMessage(player, localization.get("plugin.outdated.message", result.getCurrentVersion(), result.getLatestVersion()));
-            instance.sendMessage(player, localization.get("plugin.outdated.link", result.getReleaseUrl()), "OPEN_URL", result.getReleaseUrl(), null, null);
+            instance.sendMessage(player, MessageFormat.format("§7-> §b{0}",
+                            result.getReleaseUrl().replace("/NeoPlugin", "").replace("/releases/tag", "")),
+                    "OPEN_URL", result.getReleaseUrl(), null, null);
         }
 
         if(!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()){
