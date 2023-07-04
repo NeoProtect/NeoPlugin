@@ -181,7 +181,7 @@ public class RestAPIRequests {
                     attackRunning[0] = true;
                 }
             }
-        }, 0, 1000 * 10);
+        }, 1000 * 60 * 3, 1000 * 60 * 3);
     }
 
     private void backendServerIPUpdater(){
