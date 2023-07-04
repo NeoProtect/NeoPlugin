@@ -13,8 +13,6 @@ public class NeoProtectTabCompleter implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onTabComplete(TabCompleteEvent event) {
 
-        System.out.println("test");
-
         String cursor = event.getCursor().toLowerCase();
         ArrayList<String> commands = new ArrayList<>();
         ArrayList<String> tabListOne = new ArrayList<>();
