@@ -3,6 +3,7 @@ package de.cubeattack.neoprotect.core.request;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
+import de.cubeattack.api.utils.VersionUtils;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.JsonBuilder;
@@ -29,9 +30,10 @@ public class RestAPIRequests {
         this.core = core;
         this.rest = new RestAPIManager(core);
 
+        versionChecker();
         testCredentials();
         attackCheckSchedule();
-        getNeoServerIPsSchedule();
+        neoServerIPsSchedule();
 
         if(Config.isUpdateIP()){
             backendServerIPUpdater();
@@ -132,7 +134,7 @@ public class RestAPIRequests {
         return map;
     }
 
-    private void getNeoServerIPsSchedule(){
+    private void neoServerIPsSchedule(){
 
         core.info("NeoServerIPsUpdate scheduler started");
 
@@ -142,6 +144,18 @@ public class RestAPIRequests {
                 neoServerIPs = getNeoIPs();
             }
         }, 0, 1000 * 10);
+    }
+
+    private void versionChecker(){
+
+        core.info("VersionChecker scheduler started");
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", core.getPlugin().getVersion()));
+            }
+        }, 0, 1000 * 20);
     }
 
     private void attackCheckSchedule(){

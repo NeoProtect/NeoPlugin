@@ -21,13 +21,13 @@ public class Core {
     private final Localization localization;
 
     private final List<Object> PLAYER_IN_SETUP = new ArrayList<>();
-    private final VersionUtils.Result versionResult;
+    private VersionUtils.Result versionResult;
 
     public Core(NeoProtectPlugin plugin) {
         LogManager.getLogger().setLogger(plugin.getLogger());
 
         this.plugin = plugin;
-        this.versionResult = VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + plugin.getVersion());
+        this.versionResult = VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + plugin.getVersion()).message();
 
         FileUtils config = new FileUtils(Core.class.getResourceAsStream("/config.yml"), "plugins/NeoProtect", "config.yml", false);
         FileUtils languageEN = new FileUtils(Core.class.getResourceAsStream("/language_en.properties"), "plugins/NeoProtect/languages", "language_en.properties", true);
@@ -81,4 +81,7 @@ public class Core {
         return versionResult;
     }
 
+    public void setVersionResult(VersionUtils.Result versionResult) {
+        this.versionResult = versionResult;
+    }
 }
