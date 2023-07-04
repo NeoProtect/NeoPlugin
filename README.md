@@ -4,15 +4,15 @@ Official NeoProtect plugin maintained by [EinfacheSache (aka CubeAttack)](https:
 
 ## Feature
 
-| Feature                                                                     |      Available      |
-|:----------------------------------------------------------------------------|:-------------------:|
-| Proxy Protocol                                                              | :white_check_mark:  |
-| Update Backend IP                                                           | :white_check_mark:  |
-| Anti-portscanner (Bungeecord + Velocity)                                    | :white_check_mark:  |
-| IPanic mode command (toggle AntiBot level)                                  | :white_check_mark:  |
-| Some commands to interact with NeoProtect intern system                     | :white_check_mark:  |
-| In-game message if under attack (player with permission 'neoprotect.admin') | :white_check_mark:  |
-| In-game analytics                                                           | :hammer_and_wrench: |
+| Feature                                                 |      Available      |
+|:--------------------------------------------------------|:-------------------:|
+| Proxy Protocol                                          | :white_check_mark:  |
+| Update Backend IP                                       | :white_check_mark:  |
+| Anti-portscanner (Bungeecord + Velocity)                | :white_check_mark:  |
+| IPanic mode command (toggle AntiBot level)              | :white_check_mark:  |
+| Some commands to interact with NeoProtect intern system | :white_check_mark:  |
+| In-game message if server is under attack               | :white_check_mark:  |
+| In-game analytics                                       | :hammer_and_wrench: |
 
 
 Pre-Requirements:
@@ -31,15 +31,15 @@ Install Instructions:
 2) Now join the server you need the permission "neoprotect.admin" when joining, 
    and you should now see a message in the chat telling you how to proceed.
 
+## Permission
 
-## Commands
-
-| Command           | Description                                                 | Permission       |
-|:------------------|-------------------------------------------------------------|------------------|
-| /np setup         | start the setup (setup set API-KEY, backend and gameshield) | neoprotect.admin |
-| /np ipanic        | toggle AntiBot level                                        | neoprotect.admin |
-| /np setgameshield | set gameshield for establish the connection to NeoProtect   | neoprotect.admin |
-| /np setbackend    | set backend for establish the connection to NeoProtect      | neoprotect.admin |
+| Command / Feature    | Description                                                 | Permission                             |
+|:---------------------|-------------------------------------------------------------|----------------------------------------|
+| /np setup            | start the setup (setup set API-KEY, backend and gameshield) | neoprotect.admin                       |
+| /np ipanic           | toggle AntiBot level                                        | neoprotect.admin                       |
+| /np setgameshield    | set gameshield for establish the connection to NeoProtect   | neoprotect.admin                       |
+| /np setbackend       | set backend for establish the connection to NeoProtect      | neoprotect.admin                       |
+| under attack message | In-game message if server is under attack                   | neoprotect.admin<br/>neoprotect.notify |
 
 ## Config.yml 
 ```

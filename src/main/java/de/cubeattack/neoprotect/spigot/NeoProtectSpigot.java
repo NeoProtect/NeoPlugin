@@ -2,6 +2,7 @@ package de.cubeattack.neoprotect.spigot;
 
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
+import de.cubeattack.neoprotect.core.Permission;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -45,8 +46,11 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     }
 
     @Override
-    public void sendAdminMessage(String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
-        getServer().getOnlinePlayers().forEach(pp -> {if(pp.hasPermission("neoprotect.admin")) sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);});
+    public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
+        getServer().getOnlinePlayers().forEach(pp -> {
+            if(pp.hasPermission("neoprotect.admin") || pp.hasPermission(permission.value))
+                sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);
+        });
     }
 
     @Override

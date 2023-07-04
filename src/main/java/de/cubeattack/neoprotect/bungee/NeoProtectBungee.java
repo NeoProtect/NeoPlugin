@@ -2,6 +2,7 @@ package de.cubeattack.neoprotect.bungee;
 
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
+import de.cubeattack.neoprotect.core.Permission;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -45,8 +46,11 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     }
 
     @Override
-    public void sendAdminMessage(String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
-        getProxy().getPlayers().forEach(pp -> {if(pp.hasPermission("neoprotect.admin")) sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);});
+    public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
+        getProxy().getPlayers().forEach(pp -> {
+            if(pp.hasPermission("neoprotect.admin") || pp.hasPermission(permission.value))
+                sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);
+        });
     }
 
     @Override

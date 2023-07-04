@@ -7,6 +7,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
+import de.cubeattack.neoprotect.core.Permission;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -62,8 +63,11 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     }
 
     @Override
-    public void sendAdminMessage(String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
-        getProxy().getAllPlayers().forEach(pp -> {if(pp.hasPermission("neoprotect.admin")) sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);});
+    public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
+        getProxy().getAllPlayers().forEach(pp -> {
+            if(pp.hasPermission("neoprotect.admin") || pp.hasPermission(permission.value))
+                sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);
+        });
     }
 
     @Override
