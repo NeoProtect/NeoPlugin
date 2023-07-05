@@ -24,7 +24,7 @@ public class LoginListener implements Listener {
     public void onLogin(PlayerJoinEvent event){
         Player player = event.getPlayer();
 
-        if(!player.hasPermission("neoprotect.admin")) return;
+        if(!player.hasPermission("neoprotect.admin") && !player.getUniqueId().equals(instance.getCore().getMaintainerUUID())) return;
 
         VersionUtils.Result result = instance.getCore().getVersionResult();
         if(result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)){
@@ -37,6 +37,11 @@ public class LoginListener implements Listener {
         if(!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()){
             instance.sendMessage(player, localization.get("setup.required.first"));
             instance.sendMessage(player, localization.get("setup.required.second"));
+        }
+
+
+        if(player.getUniqueId().equals(instance.getCore().getMaintainerUUID())){
+            instance.sendMessage(player, "§bThis server using your NeoPlugin");
         }
     }
 }

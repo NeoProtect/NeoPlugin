@@ -10,12 +10,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class Core {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final String prefix = "§8[§bNeo§3Protect§8] §7";
+    private final UUID maintainerUUID = UUID.fromString("201e5046-24df-4830-8b4a-82b635eb7cc7");
     private final RestAPIRequests restAPIRequests;
     private final NeoProtectPlugin plugin;
     private final Localization localization;
@@ -59,6 +61,10 @@ public class Core {
 
     public NeoProtectPlugin getPlugin() {
         return plugin;
+    }
+
+    public UUID getMaintainerUUID() {
+        return maintainerUUID;
     }
 
     public Localization getLocalization() {
