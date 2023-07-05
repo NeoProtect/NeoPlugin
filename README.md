@@ -41,7 +41,7 @@ Install Instructions:
 | /np setbackend       | set backend for establish the connection to NeoProtect      | neoprotect.admin                       |
 | under attack message | In-game message if server is under attack                   | neoprotect.admin<br/>neoprotect.notify |
 
-## Take a look at the Config.yml 
+## Take a look at the config.yml 
 ```
 # Don't change anything here if you don't know what you're doing
 APIKey: '' # The API-KEY is set automatically during setup
