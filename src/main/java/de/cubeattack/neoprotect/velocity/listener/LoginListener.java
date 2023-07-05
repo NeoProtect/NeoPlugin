@@ -38,8 +38,8 @@ public class LoginListener {
             instance.sendMessage(player, localization.get("setup.required.second"));
         }
 
-
         if(player.getUniqueId().equals(instance.getCore().getMaintainerUUID())){
+            instance.sendMessage(player, "§bHello " + player.getUsername() + " ;)");
             instance.sendMessage(player, "§bThis server using your NeoPlugin");
         }
     }
