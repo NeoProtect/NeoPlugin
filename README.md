@@ -25,7 +25,7 @@ Prerequisites:
 Install Instructions:
 =====================
 1) First, stop your server/network and put the plugin jar into the plugins folder.
-   Continue by starting your server and not that if there is a folder in the plugins folder called "NeoProtect" 
+   Continue by starting your server and note that if there is a folder in the plugins folder called "NeoProtect", 
    don't change anything there.
 
 2) Now join the server while having the permission "neoprotect.admin" when joining 
