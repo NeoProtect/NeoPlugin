@@ -15,23 +15,23 @@ Official NeoProtect plugin maintained by [EinfacheSache (aka CubeAttack)](https:
 | In-game analytics                                       | :hammer_and_wrench: |
 
 
-Pre-Requirements:
+Prerequisites:
 =================
-1) You have created an account with a gameShield at [NeoProtect](https://neoprotect.net).
+1) You have created an account and posess a GameShield at [NeoProtect](https://neoprotect.net).
 2) You have a server/network that you can connect to.
-3) [Compatibility version](https://github.com/NeoProtect/NeoPlugin/blob/master/SECURITY.md)
+3) The required software installed [Compatibility version](https://github.com/NeoProtect/NeoPlugin/blob/master/SECURITY.md)
  
   
 Install Instructions:
 =====================
-1) First stop your server/network and then put the plugin in the Plugins folder up.
-   Then start your server now if there is a folder in the Plugins folder called "NeoProtect" 
+1) First, stop your server/network and put the plugin jar into the plugins folder.
+   Continue by starting your server and not that if there is a folder in the plugins folder called "NeoProtect" 
    don't change anything there.
 
-2) Now join the server you need the permission "neoprotect.admin" when joining, 
-   and you should now see a message in the chat telling you how to proceed.
+2) Now join the server while having the permission "neoprotect.admin" when joining 
+   and you should now see a message in the chat telling you how to proceed. 
 
-## Permission
+## Permissions
 
 | Command / Feature    | Description                                                 | Permission                             |
 |:---------------------|-------------------------------------------------------------|----------------------------------------|
@@ -41,7 +41,7 @@ Install Instructions:
 | /np setbackend       | set backend for establish the connection to NeoProtect      | neoprotect.admin                       |
 | under attack message | In-game message if server is under attack                   | neoprotect.admin<br/>neoprotect.notify |
 
-## Config.yml 
+## Take a look at the Config.yml 
 ```
 # Don't change anything here if you don't know what you're doing
 APIKey: '' # The API-KEY is set automatically during setup
