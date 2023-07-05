@@ -17,7 +17,7 @@ for the remaining versions there is no support and no guarantee that they will w
 ## Spigot
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.20    | :white_check_mark: |
+| 1.20.1  | :white_check_mark: |
 | > 1.8.8 | :white_check_mark: |
 | < 1.8.8 | :x:                |
 
@@ -25,7 +25,7 @@ for the remaining versions there is no support and no guarantee that they will w
 ## BungeeCord
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.20    | :white_check_mark: |
+| 1.20.1  | :white_check_mark: |
 | > 1.8.8 | :white_check_mark: |
 | < 1.8.8 | :x:                |
 
@@ -33,14 +33,14 @@ for the remaining versions there is no support and no guarantee that they will w
 ## Velocity
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.20    | :white_check_mark: |
+| 1.20.1  | :white_check_mark: |
 | > 1.8.8 | :white_check_mark: |
 | < 1.8.8 | :x:                |
 
 ## Mohist
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.20    | :white_check_mark: |
+| 1.20.1  | :white_check_mark: |
 | > 1.8.8 | :white_check_mark: |
 | < 1.8.8 | :x:                |
 
