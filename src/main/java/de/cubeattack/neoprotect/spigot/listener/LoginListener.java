@@ -41,7 +41,7 @@ public class LoginListener implements Listener {
 
         if(player.getUniqueId().equals(instance.getCore().getMaintainerUUID())){
             instance.sendMessage(player, "§bHello " + player.getName() + " ;)");
-            instance.sendMessage(player, "§bThis server using your NeoPlugin");
+            instance.sendMessage(player, "§bThis server uses your NeoPlugin");
         }
     }
 }
