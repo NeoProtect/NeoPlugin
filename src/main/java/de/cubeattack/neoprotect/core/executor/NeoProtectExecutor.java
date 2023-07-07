@@ -56,7 +56,7 @@ public class NeoProtectExecutor {
             return;
         }
 
-        switch (args[0]) {
+        switch (args[0].toLowerCase()) {
 
             case "setup": {
                 setup(sender);
