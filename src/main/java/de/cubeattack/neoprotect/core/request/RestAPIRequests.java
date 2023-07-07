@@ -8,12 +8,13 @@ import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.JsonBuilder;
 import de.cubeattack.neoprotect.core.Permission;
-import de.cubeattack.neoprotect.core.objects.Backend;
+import de.cubeattack.neoprotect.core.model.Backend;
+import de.cubeattack.neoprotect.core.model.Gameshield;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -109,29 +110,29 @@ public class RestAPIRequests {
         }
     }
 
-    public HashMap<String, String> getGameshields(){
-        HashMap<String, String> map = new HashMap<>();
+    public List<Gameshield> getGameshields(){
+        List<Gameshield> list = new ArrayList<>();
 
         JSONArray gameshields = rest.request(RequestType.GET_GAMESHIELDS, null).getResponseBodyArray();
 
         for (Object object : gameshields) {
             JSONObject jsonObject = (JSONObject) object;
-            map.put(jsonObject.get("id").toString(), jsonObject.get("name").toString());
+            list.add(new Gameshield(jsonObject.getString("id"), jsonObject.getString("name")));
         }
 
-        return map;
+        return list;
     }
 
-    public ArrayList<Backend> getBackends(){
-        ArrayList<Backend> map = new ArrayList<>();
+    public List<Backend> getBackends(){
+        List<Backend> list = new ArrayList<>();
         JSONArray backends = rest.request(RequestType.GET_GAMESHIELD_BACKENDS, null, Config.getGameShieldID()).getResponseBodyArray();
 
         for (Object object : backends) {
             JSONObject jsonObject = (JSONObject) object;
-            map.add(new Backend(jsonObject.getString("id"), jsonObject.getString("ipv4"), String.valueOf(jsonObject.getInt("port"))));
+            list.add(new Backend(jsonObject.getString("id"), jsonObject.getString("ipv4"), String.valueOf(jsonObject.getInt("port"))));
         }
 
-        return map;
+        return list;
     }
 
     private void neoServerIPsUpdateSchedule(){

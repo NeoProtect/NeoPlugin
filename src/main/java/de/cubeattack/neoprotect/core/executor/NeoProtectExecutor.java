@@ -3,10 +3,10 @@ package de.cubeattack.neoprotect.core.executor;
 import de.cubeattack.api.language.Localization;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
-import de.cubeattack.neoprotect.core.objects.Backend;
+import de.cubeattack.neoprotect.core.model.Backend;
+import de.cubeattack.neoprotect.core.model.Gameshield;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class NeoProtectExecutor {
@@ -114,12 +114,12 @@ public class NeoProtectExecutor {
     private void gameshieldSelector(Object sender){
         instance.sendMessage(sender, localization.get("select.gameshield"));
 
-        HashMap<String, String> gameshields = instance.getCore().getRestAPI().getGameshields();
+        List<Gameshield> gameshieldList = instance.getCore().getRestAPI().getGameshields();
 
-        for (Object set: gameshields.keySet()) {
-            instance.sendMessage(sender, "§5" + gameshields.get(set.toString()) + localization.get("utils.click"),
-                    "RUN_COMMAND", "/np setgameshield " + set,
-                    "SHOW_TEXT", localization.get("hover.gameshield", gameshields.get(set.toString()), set));
+        for (Gameshield gameshield: gameshieldList) {
+            instance.sendMessage(sender, "§5" + gameshield.getName() + localization.get("utils.click"),
+                    "RUN_COMMAND", "/np setgameshield " + gameshield.getId(),
+                    "SHOW_TEXT", localization.get("hover.gameshield", gameshield.getName(), gameshield.getId()));
         }
     }
 
@@ -135,9 +135,9 @@ public class NeoProtectExecutor {
     private void backendSelector(Object sender) {
         instance.sendMessage(sender, localization.get("select.backend"));
 
-        ArrayList<Backend> backends = instance.getCore().getRestAPI().getBackends();
+        List<Backend> backendList = instance.getCore().getRestAPI().getBackends();
 
-        for (Backend backend : backends) {
+        for (Backend backend : backendList) {
             instance.sendMessage(sender, "§5" + backend.getIp() + ":" + backend.getPort() + localization.get("utils.click"),
                     "RUN_COMMAND", "/np setbackend " + backend.getId(),
                     "SHOW_TEXT", localization.get("hover.backend", backend.getIp(), backend.getPort(), backend.getId()));

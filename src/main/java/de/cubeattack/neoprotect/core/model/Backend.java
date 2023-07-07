@@ -1,4 +1,4 @@
-package de.cubeattack.neoprotect.core.objects;
+package de.cubeattack.neoprotect.core.model;
 
 public class Backend {
 
