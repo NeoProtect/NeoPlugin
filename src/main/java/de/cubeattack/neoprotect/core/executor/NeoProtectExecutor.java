@@ -124,8 +124,13 @@ public class NeoProtectExecutor {
     }
 
     private void setGameshield(Object sender, String[] args){
-        Config.setGameShieldID(args[1]);
 
+        if(!instance.getCore().getRestAPI().isGameshieldFound(args[0])) {
+            instance.sendMessage(sender, localization.get("invalid.gameshield", args[1]));
+            return;
+        }
+
+        Config.setGameShieldID(args[1]);
         instance.sendMessage(sender, localization.get("set.gameshield", args[1]));
 
         backendSelector(sender);
@@ -145,10 +150,14 @@ public class NeoProtectExecutor {
     }
 
     private void setBackend(Object sender, String[] args) {
-        Config.setBackendID(args[1]);
 
+        if (!instance.getCore().getRestAPI().isBackendFound(args[0])) {
+            instance.sendMessage(sender, localization.get("invalid.backend", args[1]));
+            return;
+        }
+
+        Config.setBackendID(args[1]);
         instance.sendMessage(sender, localization.get("set.backend", args[1]));
-        instance.getCore().getRestAPI().testCredentials();
 
         if(instance.getCore().getPlayerInSetup().remove(sender)){
             instance.sendMessage(sender, localization.get("setup.finished"));
