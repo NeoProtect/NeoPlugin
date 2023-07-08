@@ -53,12 +53,12 @@ public class RestAPIRequests {
         return !new ResponseManager(rest.callRequest(rest.defaultBuilder(apiKey).url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_ATTACKS)).build())).checkCode(200);
     }
 
-    private boolean isGameshieldFound(){
-        return new ResponseManager(rest.callRequest(rest.defaultBuilder().url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_GAMESHIELD_INFO, Config.getGameShieldID())).build())).checkCode(200);
+    public boolean isGameshieldFound(String gameshieldID){
+        return new ResponseManager(rest.callRequest(rest.defaultBuilder().url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_GAMESHIELD_INFO, gameshieldID)).build())).checkCode(200);
     }
 
-    private boolean isBackendFound(){
-        return getBackends().stream().anyMatch(e -> e.compareById(Config.getBackendID()));
+    public boolean isBackendFound(String backendID){
+        return getBackends().stream().anyMatch(e -> e.compareById(backendID));
     }
 
     private boolean isAttack(){
@@ -73,24 +73,26 @@ public class RestAPIRequests {
         rest.request(RequestType.POST_GAMESHIELD_UPDATE, RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("proxyProtocol", String.valueOf(setting)).build().toString()), Config.getGameShieldID());
     }
 
-    public void testCredentials(){
+    public boolean testCredentials(){
 
         if(isAPIInvalid(Config.getAPIKey())){
             core.severe("API is not valid! Please run /neoprotect setup to set the API Key");
             setup = false;
-            return;
-        }else if(!isGameshieldFound()){
+            return false;
+        }else if(!isGameshieldFound(Config.getGameShieldID())){
             core.severe("Gameshield is not valid! Please run /neoprotect setgameshield to set the gameshield");
             setup = false;
-            return;
-        }else if(!isBackendFound()) {
+            return false;
+        }else if(!isBackendFound(Config.getBackendID())) {
             core.severe("Backend is not valid! Please run /neoprotect setbackend to set the backend");
             setup = false;
-            return;
+            return false;
         }
 
         this.setup = true;
         setProxyProtocol(Config.isProxyProtocol());
+
+        return true;
     }
 
     public boolean togglePanicMode(){
