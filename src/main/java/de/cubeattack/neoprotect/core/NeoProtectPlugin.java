@@ -1,5 +1,7 @@
 package de.cubeattack.neoprotect.core;
 
+import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
+
 import java.util.logging.Logger;
 
 public interface NeoProtectPlugin {
@@ -9,7 +11,15 @@ public interface NeoProtectPlugin {
 
     void sendAdminMessage(Permission permission,String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg);
 
+    KeepAliveResponseKey sendKeepAliveMessage(Object sender, long id);
     Core getCore();
     Logger getLogger();
     String getVersion();
+    PluginType getPluginType();
+
+    enum PluginType {
+        SPIGOT,
+        VELOCITY,
+        BUNGEECORD,
+    }
 }

@@ -4,6 +4,7 @@ import de.cubeattack.api.language.Localization;
 import de.cubeattack.api.logger.LogManager;
 import de.cubeattack.api.utils.FileUtils;
 import de.cubeattack.api.utils.VersionUtils;
+import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
 import de.cubeattack.neoprotect.core.request.RestAPIRequests;
 
 import java.io.File;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public class Core {
@@ -23,6 +25,7 @@ public class Core {
     private final Localization localization;
 
     private final List<Object> PLAYER_IN_SETUP = new ArrayList<>();
+    private final ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap = new ConcurrentHashMap<>();
     private VersionUtils.Result versionResult;
 
     public Core(NeoProtectPlugin plugin) {
@@ -81,6 +84,10 @@ public class Core {
 
     public List<Object> getPlayerInSetup() {
         return PLAYER_IN_SETUP;
+    }
+
+    public ConcurrentHashMap<KeepAliveResponseKey, Long> getPingMap() {
+        return pingMap;
     }
 
     public VersionUtils.Result getVersionResult() {

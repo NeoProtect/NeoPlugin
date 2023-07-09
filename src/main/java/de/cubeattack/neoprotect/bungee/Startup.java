@@ -20,9 +20,9 @@ public class Startup {
         PluginManager pm = ProxyServer.getInstance().getPluginManager();
         pm.registerCommand(instance, new NeoProtectCommand(instance,"neoprotect", "neoprotect.admin", "np"));
 
-        pm.registerListener(instance, new NeoProtectTabCompleter());
         pm.registerListener(instance, new ChatListener(instance));
         pm.registerListener(instance, new LoginListener(instance));
         pm.registerListener(instance, new DisconnectListener(instance));
+        pm.registerListener(instance, new NeoProtectTabCompleter(instance));
     }
 }

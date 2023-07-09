@@ -1,6 +1,6 @@
 package de.cubeattack.neoprotect.spigot.command;
 
-
+import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -11,16 +11,28 @@ import java.util.List;
 
 public class NeoProtectTabCompleter implements TabCompleter {
 
+    private final NeoProtectPlugin instance;
+
+    public NeoProtectTabCompleter(NeoProtectPlugin instance){
+        this.instance = instance;
+    }
+
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         List<String> list = new ArrayList<>();
         List<String> completorList = new ArrayList<>();
 
-        if (args.length == 1) {
-            list.add("setup");
+        if (args.length != 1) {
+            return completorList;
+        }
+
+        list.add("setup");
+
+        if(instance.getCore().isSetup()){
+            list.add("ipanic");
+            list.add("analytics");
             list.add("setgameshield");
             list.add("setbackend");
-            list.add("ipanic");
         }
 
         for (String tab : list) {

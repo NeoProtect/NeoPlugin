@@ -4,10 +4,12 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.Permission;
+import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -72,6 +74,16 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     }
 
     @Override
+    public KeepAliveResponseKey sendKeepAliveMessage(Object sender, long id) {
+        if(sender instanceof Player){
+            //((Player)sender).unsafe().sendPacket(new KeepAlive().setRandomId(id));
+            return new KeepAliveResponseKey(((Player)sender).getRemoteAddress(), id);
+        }
+        return null;
+    }
+
+
+    @Override
     public Logger getLogger() {
         return logger;
     }
@@ -79,5 +91,10 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     @Override
     public String getVersion() {
         return proxy.getPluginManager().ensurePluginContainer(this).getDescription().getVersion().orElse("");
+    }
+
+    @Override
+    public PluginType getPluginType() {
+        return PluginType.VELOCITY;
     }
 }

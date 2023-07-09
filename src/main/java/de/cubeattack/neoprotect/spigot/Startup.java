@@ -21,7 +21,7 @@ public class Startup {
     private void register(NeoProtectSpigot instance){
         PluginManager pm = Bukkit.getPluginManager();
         Objects.requireNonNull(instance.getCommand("neoprotect")).setExecutor(new NeoProtectCommand(instance));
-        Objects.requireNonNull(instance.getCommand("neoprotect")).setTabCompleter(new NeoProtectTabCompleter());
+        Objects.requireNonNull(instance.getCommand("neoprotect")).setTabCompleter(new NeoProtectTabCompleter(instance));
 
         pm.registerEvents(new ChatListener(instance), instance);
         pm.registerEvents(new LoginListener(instance), instance);

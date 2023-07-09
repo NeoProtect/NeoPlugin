@@ -1,5 +1,6 @@
 package de.cubeattack.neoprotect.bungee.command;
 
+import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -9,6 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class NeoProtectTabCompleter implements Listener {
+
+    private final NeoProtectPlugin instance;
+
+    public NeoProtectTabCompleter(NeoProtectPlugin instance) {
+        this.instance = instance;
+    }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onTabComplete(TabCompleteEvent event) {
@@ -20,9 +27,14 @@ public class NeoProtectTabCompleter implements Listener {
         commands.add("/np");
         commands.add("/neoprotect");
         tabListOne.add("setup");
-        tabListOne.add("setgameshield");
-        tabListOne.add("setbackend");
-        tabListOne.add("ipanic");
+
+        if(instance.getCore().isSetup()){
+            tabListOne.add("ipanic");
+            tabListOne.add("debugPing");
+            tabListOne.add("analytics");
+            tabListOne.add("setgameshield");
+            tabListOne.add("setbackend");
+        }
 
         event.getSuggestions().addAll(completer(true, cursor, commands, tabListOne));
     }

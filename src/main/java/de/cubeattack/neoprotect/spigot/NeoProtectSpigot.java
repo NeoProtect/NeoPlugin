@@ -3,6 +3,7 @@ package de.cubeattack.neoprotect.spigot;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.Permission;
+import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -55,7 +56,17 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     }
 
     @Override
+    public KeepAliveResponseKey sendKeepAliveMessage(Object sender, long id) {
+        return null;
+    }
+
+    @Override
     public String getVersion() {
         return getDescription().getVersion();
+    }
+
+    @Override
+    public PluginType getPluginType() {
+        return PluginType.SPIGOT;
     }
 }

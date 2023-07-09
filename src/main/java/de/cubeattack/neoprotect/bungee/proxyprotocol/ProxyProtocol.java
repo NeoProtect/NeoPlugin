@@ -3,6 +3,7 @@ package de.cubeattack.neoprotect.bungee.proxyprotocol;
 import de.cubeattack.api.utils.JavaUtils;
 import de.cubeattack.neoprotect.bungee.NeoProtectBungee;
 import de.cubeattack.neoprotect.core.Config;
+import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -12,11 +13,14 @@ import io.netty.handler.codec.haproxy.HAProxyMessageDecoder;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.PipelineUtils;
+import net.md_5.bungee.protocol.PacketWrapper;
+import net.md_5.bungee.protocol.packet.KeepAlive;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class ProxyProtocol {
@@ -33,8 +37,9 @@ public class ProxyProtocol {
             ChannelInitializer<Channel> channelInitializer = new ChannelInitializer<Channel>() {
                 @Override
                 protected void initChannel(Channel channel) {
-
                     try {
+
+                        AtomicReference<InetSocketAddress> inetAddress = new AtomicReference<>();
 
                         initChannelMethod.invoke(bungeeChannelInitializer, channel);
 
@@ -55,19 +60,36 @@ public class ProxyProtocol {
                                 channel.pipeline().remove("HAProxyMessageDecoder#0");
                         });
 
-
                         channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
                         channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {
                             @Override
                             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                                 if (msg instanceof HAProxyMessage) {
                                     HAProxyMessage message = (HAProxyMessage) msg;
-                                    channelWrapperAccessor.get(channel.pipeline().get(HandlerBoss.class)).setRemoteAddress(new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
+                                    inetAddress.set(new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
+                                    channelWrapperAccessor.get(channel.pipeline().get(HandlerBoss.class)).setRemoteAddress(inetAddress.get());
                                 } else {
                                     super.channelRead(ctx, msg);
                                 }
                             }
                         });
+
+                        channel.pipeline().addAfter(PipelineUtils.PACKET_DECODER, "neo-keep-alive-handler", new ChannelInboundHandlerAdapter() {
+                            @Override
+                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                if (msg instanceof PacketWrapper && ((PacketWrapper) msg).packet instanceof KeepAlive) {
+                                    KeepAlive keepAlive = (KeepAlive) ((PacketWrapper) msg).packet;
+                                    for (KeepAliveResponseKey keepAliveResponseKey : instance.getCore().getPingMap().keySet()) {
+                                        if(keepAliveResponseKey.getAddress().equals(inetAddress.get()) && keepAliveResponseKey.getId() == keepAlive.getRandomId()){
+                                            instance.getLogger().info("Ping: " + (System.currentTimeMillis() - instance.getCore().getPingMap().get(keepAliveResponseKey)) + "ms");
+                                        }
+                                    }
+                                }
+
+                                super.channelRead(ctx, msg);
+                            }
+                        });
+
                     } catch (Exception ex) {
                         instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
                     }

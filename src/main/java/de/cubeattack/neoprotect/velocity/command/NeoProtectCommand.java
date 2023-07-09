@@ -52,9 +52,14 @@ public class NeoProtectCommand implements SimpleCommand {
             }
 
             list.add("setup");
-            list.add("setgameshield");
-            list.add("setbackend");
-            list.add("ipanic");
+
+            if(instance.getCore().isSetup()) {
+                list.add("setgameshield");
+                list.add("setbackend");
+                list.add("analytics");
+                list.add("debugPing");
+                list.add("ipanic");
+            }
 
             for (String tab : list) {
 
