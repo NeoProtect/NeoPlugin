@@ -7,9 +7,11 @@ import de.cubeattack.neoprotect.core.model.Backend;
 import de.cubeattack.neoprotect.core.model.Gameshield;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class NeoProtectExecutor {
 
@@ -108,8 +110,37 @@ public class NeoProtectExecutor {
     }
 
     private void analytics(){
-        JSONObject analytics =  instance.getCore().getRestAPI().getAnalytics();
-        analytics.keySet().forEach(k -> instance.sendMessage(sender, k + ": " + analytics.get(k).toString().replace("onlinePlayers", "online players")));
+        instance.sendMessage(sender, "§7§l-------- §bAnalytics §7§l--------");
+        JSONObject analytics = instance.getCore().getRestAPI().getAnalytics();
+        instance.getCore().getRestAPI().getAnalytics().keySet().forEach(ak -> {
+            if(ak.equals("bandwidth")){
+                return;
+            }
+
+            if(ak.equals("traffic")){
+                instance.sendMessage(sender, ak.replace("traffic", "bandwidth") + ": " +
+                        new DecimalFormat("#.####").format((float) analytics.getInt(ak) * 8 / (1000 * 1000)) + " mbit/s");
+                JSONObject traffic = instance.getCore().getRestAPI().getTraffic();
+
+                AtomicReference<String> trafficUsed = new AtomicReference<>();
+                AtomicReference<String> trafficAvailable = new AtomicReference<>();
+                traffic.keySet().forEach(bk -> {
+                    if(bk.equals("used")) {
+                        trafficUsed.set(traffic.getFloat(bk) / (1000 * 1000 * 1000) + " gb");
+                    }
+                    if(bk.equals("available")) {
+                        trafficAvailable.set(String.valueOf(traffic.getLong(bk)).equals("999999999") ? "unlimited" : traffic.getLong(bk) + " gb");
+                    }
+                });
+                instance.sendMessage(sender,"bandwidth used"  + ": " + trafficUsed.get() + "/" + trafficAvailable.get());
+
+                return;
+            }
+
+            instance.sendMessage(sender, ak
+                    .replace("onlinePlayers", "online players")
+                    .replace("cps", "connections/s") + ": " + analytics.get(ak));
+        });
     }
 
     private void setup(Object sender){
