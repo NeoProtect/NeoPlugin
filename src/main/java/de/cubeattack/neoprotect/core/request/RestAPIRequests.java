@@ -164,7 +164,7 @@ public class RestAPIRequests {
             public void run() {
                 core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getVersion()));
             }
-        }, 1000 * 60 * 30, 1000 * 60 * 30);
+        }, 1000 * 60 * 3, 1000 * 60 * 3);
     }
 
     private void attackCheckSchedule(){
