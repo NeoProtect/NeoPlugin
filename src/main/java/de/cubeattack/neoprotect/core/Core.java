@@ -4,15 +4,19 @@ import de.cubeattack.api.language.Localization;
 import de.cubeattack.api.logger.LogManager;
 import de.cubeattack.api.utils.FileUtils;
 import de.cubeattack.api.utils.VersionUtils;
+import de.cubeattack.neoprotect.core.model.DebugPingResponse;
 import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
 import de.cubeattack.neoprotect.core.request.RestAPIRequests;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @SuppressWarnings("unused")
 public class Core {
@@ -26,12 +30,17 @@ public class Core {
 
     private final List<Object> PLAYER_IN_SETUP = new ArrayList<>();
     private final ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Timestamp> timestampsMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, DebugPingResponse> debugPingResponses = new ConcurrentHashMap<>();
+
+    private final ExecutorService executorService;
     private VersionUtils.Result versionResult;
 
     public Core(NeoProtectPlugin plugin) {
         LogManager.getLogger().setLogger(plugin.getLogger());
 
         this.plugin = plugin;
+        this.executorService = Executors.newSingleThreadExecutor();
         this.versionResult = VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + plugin.getVersion()).message();
 
         FileUtils config = new FileUtils(Core.class.getResourceAsStream("/config.yml"), "plugins/NeoProtect", "config.yml", false);
@@ -66,6 +75,10 @@ public class Core {
         return plugin;
     }
 
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
     public UUID getMaintainerUUID() {
         return maintainerUUID;
     }
@@ -88,6 +101,14 @@ public class Core {
 
     public ConcurrentHashMap<KeepAliveResponseKey, Long> getPingMap() {
         return pingMap;
+    }
+
+    public ConcurrentHashMap<Long, Timestamp> getTimestampsMap() {
+        return timestampsMap;
+    }
+
+    public ConcurrentHashMap<String, DebugPingResponse> getDebugPingResponses() {
+        return debugPingResponses;
     }
 
     public VersionUtils.Result getVersionResult() {

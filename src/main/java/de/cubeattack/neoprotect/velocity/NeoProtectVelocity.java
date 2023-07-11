@@ -34,7 +34,7 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     }
 
     @Subscribe
-    public void onProxyInitialize(ProxyInitializeEvent event){
+    public void onProxyInitialize(ProxyInitializeEvent event) {
         metricsFactory.make(this, 18727);
         core = new Core(this);
         new Startup(this);
@@ -49,39 +49,44 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     }
 
     @Override
-    public void sendMessage(Object sender, String text) {
-        sendMessage(sender, text, null, null, null, null);
+    public void sendMessage(Object receiver, String text) {
+        sendMessage(receiver, text, null, null, null, null);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void sendMessage(Object sender, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
+    public void sendMessage(Object receiver, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         TextComponent msg = Component.text(core.getPrefix() + text);
 
         if(clickAction != null) msg = msg.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
         if(hoverAction != null) msg = msg.hoverEvent(HoverEvent.hoverEvent((HoverEvent.Action<Object>) Objects.requireNonNull(HoverEvent.Action.NAMES.value(hoverAction.toLowerCase())),
                 Component.text(hoverMsg)));
 
-        if(sender instanceof CommandSource) ((CommandSource) sender).sendMessage(msg);
+        if(receiver instanceof CommandSource) ((CommandSource) receiver).sendMessage(msg);
     }
 
     @Override
     public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
-        getProxy().getAllPlayers().forEach(pp -> {
-            if(pp.hasPermission("neoprotect.admin") || pp.hasPermission(permission.value))
-                sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);
+        getProxy().getAllPlayers().forEach(receiver -> {
+            if(receiver.hasPermission("neoprotect.admin") || receiver.hasPermission(permission.value))
+                sendMessage(receiver, text, clickAction, clickMsg, hoverAction, hoverMsg);
         });
     }
 
     @Override
-    public KeepAliveResponseKey sendKeepAliveMessage(Object sender, long id) {
-        if(sender instanceof Player){
-            //((Player)sender).unsafe().sendPacket(new KeepAlive().setRandomId(id));
-            return new KeepAliveResponseKey(((Player)sender).getRemoteAddress(), id);
+    public void sendKeepAliveMessage(Object receiver, long id) {
+        if(receiver instanceof Player){
+            getCore().getPingMap().put(new KeepAliveResponseKey(((Player) receiver).getRemoteAddress(), id), System.currentTimeMillis());
         }
-        return null;
     }
 
+    @Override
+    public long sendKeepAliveMessage(long id) {
+        for (Player player : this.proxy.getAllPlayers()) {
+            sendKeepAliveMessage(player , id);
+        }
+        return id;
+    }
 
     @Override
     public Logger getLogger() {

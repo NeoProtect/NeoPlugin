@@ -3,13 +3,19 @@ package de.cubeattack.neoprotect.bungee.proxyprotocol;
 import de.cubeattack.api.utils.JavaUtils;
 import de.cubeattack.neoprotect.bungee.NeoProtectBungee;
 import de.cubeattack.neoprotect.core.Config;
+import de.cubeattack.neoprotect.core.model.DebugPingResponse;
 import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.epoll.EpollTcpInfo;
 import io.netty.handler.codec.haproxy.HAProxyMessage;
 import io.netty.handler.codec.haproxy.HAProxyMessageDecoder;
+import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.UserConnection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.PipelineUtils;
@@ -20,11 +26,11 @@ import sun.misc.Unsafe;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.InetSocketAddress;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class ProxyProtocol {
-
     private final Reflection.FieldAccessor<ChannelWrapper> channelWrapperAccessor = Reflection.getField(HandlerBoss.class, "channel", ChannelWrapper.class);
     private final ChannelInitializer<Channel> bungeeChannelInitializer = PipelineUtils.SERVER_CHILD;
     private final Reflection.MethodInvoker initChannelMethod = Reflection.getMethod(bungeeChannelInitializer.getClass(), "initChannel", Channel.class);
@@ -77,19 +83,51 @@ public class ProxyProtocol {
                         channel.pipeline().addAfter(PipelineUtils.PACKET_DECODER, "neo-keep-alive-handler", new ChannelInboundHandlerAdapter() {
                             @Override
                             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                if (msg instanceof PacketWrapper && ((PacketWrapper) msg).packet instanceof KeepAlive) {
-                                    KeepAlive keepAlive = (KeepAlive) ((PacketWrapper) msg).packet;
-                                    for (KeepAliveResponseKey keepAliveResponseKey : instance.getCore().getPingMap().keySet()) {
-                                        if(keepAliveResponseKey.getAddress().equals(inetAddress.get()) && keepAliveResponseKey.getId() == keepAlive.getRandomId()){
-                                            instance.getLogger().info("Ping: " + (System.currentTimeMillis() - instance.getCore().getPingMap().get(keepAliveResponseKey)) + "ms");
-                                        }
-                                    }
+                                super.channelRead(ctx, msg);
+
+                                if (!(msg instanceof PacketWrapper)) {
+                                    return;
+                                }
+                                if (!(((PacketWrapper) msg).packet instanceof KeepAlive)) {
+                                    return;
                                 }
 
-                                super.channelRead(ctx, msg);
+                                KeepAlive keepAlive = (KeepAlive) ((PacketWrapper) msg).packet;
+                                ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap =  instance.getCore().getPingMap();
+
+                                for (KeepAliveResponseKey keepAliveResponseKey : pingMap.keySet()) {
+
+                                    if (!keepAliveResponseKey.getAddress().equals(inetAddress.get()) || !(keepAliveResponseKey.getId() == keepAlive.getRandomId())) {
+                                        continue;
+                                    }
+
+                                    for (ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
+
+                                        if (!(player).getPendingConnection().getSocketAddress().equals(inetAddress.get())) {
+                                            continue;
+                                        }
+
+                                        EpollTcpInfo tcpInfo = ((EpollSocketChannel) channel).tcpInfo();
+                                        EpollTcpInfo tcpInfoBackend = ((EpollSocketChannel) ((UserConnection) player).getServer().getCh().getHandle()).tcpInfo();
+
+                                        long ping = System.currentTimeMillis() - pingMap.get(keepAliveResponseKey);
+                                        long neoRTT = 0;
+                                        long backendRTT = 0;
+
+                                        if (tcpInfo != null) {
+                                            neoRTT = tcpInfo.rtt() / 1000;
+                                        }
+                                        if (tcpInfoBackend != null) {
+                                            backendRTT = tcpInfoBackend.rtt() / 1000;
+                                        }
+
+                                        instance.getCore().getDebugPingResponses().put(player.getName(), new DebugPingResponse(ping, neoRTT, backendRTT));
+
+                                    }
+                                    instance.getCore().getPingMap().remove(keepAliveResponseKey);
+                                }
                             }
                         });
-
                     } catch (Exception ex) {
                         instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
                     }

@@ -36,34 +36,41 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     }
 
     @Override
-    public void sendMessage(Object sender, String text) {
-        sendMessage(sender, text, null, null, null, null);
+    public void sendMessage(Object receiver, String text) {
+        sendMessage(receiver, text, null, null, null, null);
     }
 
     @Override
-    public void sendMessage(Object sender, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
+    public void sendMessage(Object receiver, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         TextComponent msg = new TextComponent(core.getPrefix() + text);
 
         if(clickAction != null) msg.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
         if(hoverAction != null) msg.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverAction), Collections.singletonList(new Text(hoverMsg))));
-        if(sender instanceof CommandSender) ((CommandSender) sender).sendMessage(msg);
+        if(receiver instanceof CommandSender) ((CommandSender) receiver).sendMessage(msg);
     }
 
     @Override
     public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
-        getProxy().getPlayers().forEach(pp -> {
-            if(pp.hasPermission("neoprotect.admin") || pp.hasPermission(permission.value))
-                sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);
+        getProxy().getPlayers().forEach(receiver -> {
+            if(receiver.hasPermission("neoprotect.admin") || receiver.hasPermission(permission.value))
+                sendMessage(receiver, text, clickAction, clickMsg, hoverAction, hoverMsg);
         });
     }
 
     @Override
-    public KeepAliveResponseKey sendKeepAliveMessage(Object sender, long id) {
-        if(sender instanceof ProxiedPlayer){
-            ((ProxiedPlayer)sender).unsafe().sendPacket(new KeepAlive(id));
-            return new KeepAliveResponseKey(((ProxiedPlayer)sender).getSocketAddress(), id);
+    public void sendKeepAliveMessage(Object receiver, long id) {
+        if(receiver instanceof ProxiedPlayer){
+            ((ProxiedPlayer)receiver).unsafe().sendPacket(new KeepAlive(id));
+            getCore().getPingMap().put(new KeepAliveResponseKey(((ProxiedPlayer)receiver).getSocketAddress(), id), System.currentTimeMillis());
         }
-        return null;
+    }
+
+    @Override
+    public long sendKeepAliveMessage(long id) {
+        for (ProxiedPlayer player : this.getProxy().getPlayers()) {
+            sendKeepAliveMessage(player, id);
+        }
+        return id;
     }
 
     @Override

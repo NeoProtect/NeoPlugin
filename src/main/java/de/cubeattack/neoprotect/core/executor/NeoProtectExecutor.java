@@ -5,12 +5,16 @@ import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.model.Backend;
 import de.cubeattack.neoprotect.core.model.Gameshield;
+import org.bspfsystems.yamlconfiguration.file.YamlConfiguration;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class NeoProtectExecutor {
@@ -31,7 +35,7 @@ public class NeoProtectExecutor {
         this.msg = executeBuilder.getMsg();
     }
 
-    private void chatEvent(ExecutorBuilder executorBuilder){
+    private void chatEvent(ExecutorBuilder executorBuilder) {
         initials(executorBuilder);
 
         if (instance.getCore().getRestAPI().isAPIInvalid(msg)) {
@@ -50,12 +54,12 @@ public class NeoProtectExecutor {
 
         initials(executorBuilder);
 
-        if(args.length == 0){
+        if (args.length == 0) {
             showHelp(sender);
             return;
         }
 
-        if(!instance.getCore().isSetup() & !args[0].equals("setup") & !args[0].equals("setgameshield") & !args[0].equals("setbackend") ){
+        if (!instance.getCore().isSetup() & !args[0].equals("setup") & !args[0].equals("setgameshield") & !args[0].equals("setbackend")) {
             instance.sendMessage(sender, localization.get("setup.command.required"));
             return;
         }
@@ -83,22 +87,22 @@ public class NeoProtectExecutor {
             }
 
             case "setgameshield": {
-                if(args.length == 1){
+                if (args.length == 1) {
                     gameshieldSelector(sender);
                 } else if (args.length == 2) {
                     setGameshield(sender, args);
-                }else {
+                } else {
                     instance.sendMessage(sender, localization.get("usage.setgameshield"));
                 }
                 break;
             }
 
             case "setbackend": {
-                if(args.length == 1){
+                if (args.length == 1) {
                     backendSelector(sender);
                 } else if (args.length == 2) {
                     setBackend(sender, args);
-                }else {
+                } else {
                     instance.sendMessage(sender, localization.get("usage.setbackend"));
                 }
                 break;
@@ -109,15 +113,15 @@ public class NeoProtectExecutor {
         }
     }
 
-    private void analytics(){
+    private void analytics() {
         instance.sendMessage(sender, "§7§l-------- §bAnalytics §7§l--------");
         JSONObject analytics = instance.getCore().getRestAPI().getAnalytics();
         instance.getCore().getRestAPI().getAnalytics().keySet().forEach(ak -> {
-            if(ak.equals("bandwidth")){
+            if (ak.equals("bandwidth")) {
                 return;
             }
 
-            if(ak.equals("traffic")){
+            if (ak.equals("traffic")) {
                 instance.sendMessage(sender, ak.replace("traffic", "bandwidth") + ": " +
                         new DecimalFormat("#.####").format((float) analytics.getInt(ak) * 8 / (1000 * 1000)) + " mbit/s");
                 JSONObject traffic = instance.getCore().getRestAPI().getTraffic();
@@ -125,14 +129,14 @@ public class NeoProtectExecutor {
                 AtomicReference<String> trafficUsed = new AtomicReference<>();
                 AtomicReference<String> trafficAvailable = new AtomicReference<>();
                 traffic.keySet().forEach(bk -> {
-                    if(bk.equals("used")) {
+                    if (bk.equals("used")) {
                         trafficUsed.set(traffic.getFloat(bk) / (1000 * 1000 * 1000) + " gb");
                     }
-                    if(bk.equals("available")) {
+                    if (bk.equals("available")) {
                         trafficAvailable.set(String.valueOf(traffic.getLong(bk)).equals("999999999") ? "unlimited" : traffic.getLong(bk) + " gb");
                     }
                 });
-                instance.sendMessage(sender,"bandwidth used"  + ": " + trafficUsed.get() + "/" + trafficAvailable.get());
+                instance.sendMessage(sender, "bandwidth used" + ": " + trafficUsed.get() + "/" + trafficAvailable.get());
 
                 return;
             }
@@ -143,15 +147,15 @@ public class NeoProtectExecutor {
         });
     }
 
-    private void setup(Object sender){
+    private void setup(Object sender) {
         instance.getCore().getPlayerInSetup().add(sender);
         instance.sendMessage(sender, localization.get("command.setup") + localization.get("utils.click"),
                 "OPEN_URL", "https://panel.neoprotect.net/profile",
                 "SHOW_TEXT", localization.get("apikey.find"));
     }
 
-    private void iPanic(Object sender, String[] args){
-        if(args.length != 1){
+    private void iPanic(Object sender, String[] args) {
+        if (args.length != 1) {
             instance.sendMessage(sender, localization.get("usage.ipanic"));
         } else {
             instance.sendMessage(sender, localization.get("command.ipanic",
@@ -159,38 +163,64 @@ public class NeoProtectExecutor {
         }
     }
 
-    private void debugPing(){
-        if(1==1){
-            instance.sendMessage(sender , "§cthis feature is coming soon");
-            return;
-        }
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void debugPing() {
 
-        if(instance.getPluginType() == NeoProtectPlugin.PluginType.SPIGOT){
+        if (instance.getPluginType() == NeoProtectPlugin.PluginType.SPIGOT) {
             instance.sendMessage(sender, "This command is only available for proxy-server");
             return;
         }
 
-        int id = new Random().nextInt(9) * 10000 + 1337;
+        if (instance.getPluginType() == NeoProtectPlugin.PluginType.VELOCITY) {
+            instance.sendMessage(sender, "This command is currently not yet supported for Velocity");
+            return;
+        }
 
-        instance.getCore().getPingMap().put(instance.sendKeepAliveMessage(sender, id), System.currentTimeMillis());
-        instance.sendMessage(sender , "Keep-alive packets send");
+        instance.getCore().getTimestampsMap().put(instance.sendKeepAliveMessage(new Random().nextInt(90) * 10000 + 1337), new Timestamp(System.currentTimeMillis()));
+        instance.sendMessage(sender, "§aSending KeepAlivePackets");
+
+        Timer time = new Timer();
+        time.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    File file = new File("plugins/NeoProtect/debug" + "/" + new Timestamp(System.currentTimeMillis()) + ".yml");
+                    YamlConfiguration configuration = new YamlConfiguration();
+
+                    if (!file.exists()) {
+                        file.getParentFile().mkdirs();
+                        file.createNewFile();
+                    }
+
+                    configuration.load(file);
+
+                    instance.getCore().getDebugPingResponses().keySet().forEach((playerName -> configuration.set("players." + playerName, new JSONObject(instance.getCore().getDebugPingResponses().get(playerName)).toMap())));
+
+                    configuration.save(file);
+                    instance.sendMessage(sender, "§aDebug file has been created");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 3000);
+
     }
 
-    private void gameshieldSelector(Object sender){
+    private void gameshieldSelector(Object sender) {
         instance.sendMessage(sender, localization.get("select.gameshield"));
 
         List<Gameshield> gameshieldList = instance.getCore().getRestAPI().getGameshields();
 
-        for (Gameshield gameshield: gameshieldList) {
+        for (Gameshield gameshield : gameshieldList) {
             instance.sendMessage(sender, "§5" + gameshield.getName() + localization.get("utils.click"),
                     "RUN_COMMAND", "/np setgameshield " + gameshield.getId(),
                     "SHOW_TEXT", localization.get("hover.gameshield", gameshield.getName(), gameshield.getId()));
         }
     }
 
-    private void setGameshield(Object sender, String[] args){
+    private void setGameshield(Object sender, String[] args) {
 
-        if(instance.getCore().getRestAPI().isGameshieldInvalid(args[1])) {
+        if (instance.getCore().getRestAPI().isGameshieldInvalid(args[1])) {
             instance.sendMessage(sender, localization.get("invalid.gameshield", args[1]));
             return;
         }
@@ -224,19 +254,19 @@ public class NeoProtectExecutor {
         Config.setBackendID(args[1]);
         instance.sendMessage(sender, localization.get("set.backend", args[1]));
 
-        if(instance.getCore().getPlayerInSetup().remove(sender)){
+        if (instance.getCore().getPlayerInSetup().remove(sender)) {
             instance.sendMessage(sender, localization.get("setup.finished"));
         }
 
         instance.getCore().getRestAPI().testCredentials();
     }
 
-    private void showHelp(Object sender){
+    private void showHelp(Object sender) {
         instance.sendMessage(sender, localization.get("available.commands"));
         instance.sendMessage(sender, " - /np setup");
         instance.sendMessage(sender, " - /np ipanic");
         instance.sendMessage(sender, " - /np analytics");
-        instance.sendMessage(sender, " - /np debugping");
+        instance.sendMessage(sender, " - /np debugPing");
         instance.sendMessage(sender, " - /np setgameshield");
         instance.sendMessage(sender, " - /np setbackend");
     }
@@ -247,31 +277,32 @@ public class NeoProtectExecutor {
         private String[] args;
         private String msg;
 
-        public ExecutorBuilder neoProtectPlugin(NeoProtectPlugin instance){
+        public ExecutorBuilder neoProtectPlugin(NeoProtectPlugin instance) {
             this.instance = instance;
             return this;
         }
 
-        public ExecutorBuilder sender(Object sender){
+        public ExecutorBuilder sender(Object sender) {
             this.sender = sender;
             return this;
         }
 
-        public ExecutorBuilder msg(String msg){
+        public ExecutorBuilder msg(String msg) {
             this.msg = msg;
             return this;
         }
 
-        public ExecutorBuilder args(String[] args){
+        public ExecutorBuilder args(String[] args) {
             this.args = args;
             return this;
         }
 
-        public void executeChatEvent(){
-            CompletableFuture.runAsync(() -> new NeoProtectExecutor().chatEvent(this));
+        public void executeChatEvent() {
+            instance.getCore().getExecutorService().submit(() -> new NeoProtectExecutor().chatEvent(this));
         }
-        public void executeCommand(){
-            CompletableFuture.runAsync(()-> new NeoProtectExecutor().command(this));
+
+        public void executeCommand() {
+            instance.getCore().getExecutorService().submit(() -> new NeoProtectExecutor().command(this));
         }
 
         public NeoProtectPlugin getInstance() {
