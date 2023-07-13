@@ -3,7 +3,7 @@ package de.cubeattack.neoprotect.bungee;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.Permission;
-import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
+import de.cubeattack.neoprotect.core.model.debugtool.KeepAliveResponseKey;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;

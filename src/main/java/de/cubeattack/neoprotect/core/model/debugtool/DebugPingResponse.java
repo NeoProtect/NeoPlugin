@@ -1,4 +1,4 @@
-package de.cubeattack.neoprotect.core.model;
+package de.cubeattack.neoprotect.core.model.debugtool;
 
 @SuppressWarnings("unused")
 public class DebugPingResponse {

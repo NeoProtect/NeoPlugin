@@ -4,8 +4,8 @@ import de.cubeattack.api.language.Localization;
 import de.cubeattack.api.logger.LogManager;
 import de.cubeattack.api.util.FileUtils;
 import de.cubeattack.api.util.VersionUtils;
-import de.cubeattack.neoprotect.core.model.DebugPingResponse;
-import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
+import de.cubeattack.neoprotect.core.model.debugtool.DebugPingResponse;
+import de.cubeattack.neoprotect.core.model.debugtool.KeepAliveResponseKey;
 import de.cubeattack.neoprotect.core.request.RestAPIRequests;
 
 import java.io.File;
@@ -27,14 +27,14 @@ public class Core {
     private final RestAPIRequests restAPIRequests;
     private final NeoProtectPlugin plugin;
     private final Localization localization;
-
     private final List<Object> PLAYER_IN_SETUP = new ArrayList<>();
     private final ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, Timestamp> timestampsMap = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, DebugPingResponse> debugPingResponses = new ConcurrentHashMap<>();
-
+    private final ConcurrentHashMap<String, ArrayList<DebugPingResponse>> debugPingResponses = new ConcurrentHashMap<>();
     private final ExecutorService executorService;
+
     private VersionUtils.Result versionResult;
+    private boolean isDebugRunning = false;
 
     public Core(NeoProtectPlugin plugin) {
         LogManager.getLogger().setLogger(plugin.getLogger());
@@ -69,6 +69,14 @@ public class Core {
 
     public String getPrefix() {
         return prefix;
+    }
+
+    public boolean isDebugRunning() {
+        return isDebugRunning;
+    }
+
+    public void setDebugRunning(boolean debugRunning) {
+        isDebugRunning = debugRunning;
     }
 
     public NeoProtectPlugin getPlugin() {
@@ -107,7 +115,7 @@ public class Core {
         return timestampsMap;
     }
 
-    public ConcurrentHashMap<String, DebugPingResponse> getDebugPingResponses() {
+    public ConcurrentHashMap<String, ArrayList<DebugPingResponse>> getDebugPingResponses() {
         return debugPingResponses;
     }
 

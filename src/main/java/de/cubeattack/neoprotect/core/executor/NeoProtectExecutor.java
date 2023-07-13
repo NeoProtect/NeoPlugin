@@ -7,6 +7,7 @@ import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.model.Backend;
 import de.cubeattack.neoprotect.core.model.Gameshield;
+import de.cubeattack.neoprotect.core.model.debugtool.DebugPingResponse;
 
 import java.io.File;
 import java.sql.Timestamp;
@@ -77,7 +78,7 @@ public class NeoProtectExecutor {
             }
 
             case "debugping": {
-                debugPing();
+                debugTool();
                 break;
             }
 
@@ -110,6 +111,23 @@ public class NeoProtectExecutor {
             default: {
                 showHelp(sender);
             }
+        }
+    }
+
+
+    private void setup(Object sender) {
+        instance.getCore().getPlayerInSetup().add(sender);
+        instance.sendMessage(sender, localization.get("command.setup") + localization.get("utils.click"),
+                "OPEN_URL", "https://panel.neoprotect.net/profile",
+                "SHOW_TEXT", localization.get("apikey.find"));
+    }
+
+    private void iPanic(Object sender, String[] args) {
+        if (args.length != 1) {
+            instance.sendMessage(sender, localization.get("usage.ipanic"));
+        } else {
+            instance.sendMessage(sender, localization.get("command.ipanic",
+                    localization.get(instance.getCore().getRestAPI().togglePanicMode() ? "utils.activated" : "utils.deactivated")));
         }
     }
 
@@ -147,27 +165,11 @@ public class NeoProtectExecutor {
         });
     }
 
-    private void setup(Object sender) {
-        instance.getCore().getPlayerInSetup().add(sender);
-        instance.sendMessage(sender, localization.get("command.setup") + localization.get("utils.click"),
-                "OPEN_URL", "https://panel.neoprotect.net/profile",
-                "SHOW_TEXT", localization.get("apikey.find"));
-    }
-
-    private void iPanic(Object sender, String[] args) {
-        if (args.length != 1) {
-            instance.sendMessage(sender, localization.get("usage.ipanic"));
-        } else {
-            instance.sendMessage(sender, localization.get("command.ipanic",
-                    localization.get(instance.getCore().getRestAPI().togglePanicMode() ? "utils.activated" : "utils.deactivated")));
-        }
-    }
-
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void debugPing() {
+    private void debugTool() {
 
         if (instance.getPluginType() == NeoProtectPlugin.PluginType.SPIGOT) {
-            instance.sendMessage(sender, "This command is only available for proxy-server");
+            instance.sendMessage(sender, localization.get("debug.spigot"));
             return;
         }
 
@@ -176,34 +178,111 @@ public class NeoProtectExecutor {
             return;
         }
 
-        instance.getCore().getTimestampsMap().put(instance.sendKeepAliveMessage(new Random().nextInt(90) * 10000 + 1337), new Timestamp(System.currentTimeMillis()));
-        instance.sendMessage(sender, "§aSending KeepAlivePackets");
+        if (instance.getCore().isDebugRunning()) {
+            instance.sendMessage(sender, localization.get("debug.running"));
+            return;
+        }
 
-        Timer time = new Timer();
-        time.schedule(new TimerTask() {
+        instance.getCore().setDebugRunning(true);
+        instance.sendMessage(sender, localization.get("debug.starting"));
+
+        new Timer().schedule(new TimerTask() {
+            int counter = 0;
             @Override
             public void run() {
-                try {
-                    File file = new File("plugins/NeoProtect/debug" + "/" + new Timestamp(System.currentTimeMillis()) + ".yml");
-                    YamlConfiguration configuration = new YamlConfiguration();
-
-                    if (!file.exists()) {
-                        file.getParentFile().mkdirs();
-                        file.createNewFile();
-                    }
-
-                    configuration.load(file);
-
-                    instance.getCore().getDebugPingResponses().keySet().forEach((playerName -> configuration.set("players." + playerName, new JSONObject(instance.getCore().getDebugPingResponses().get(playerName)).toMap())));
-
-                    configuration.save(file);
-                    instance.sendMessage(sender, "§aDebug file has been created");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                counter++;
+                instance.getCore().getTimestampsMap().put(instance.sendKeepAliveMessage(new Random().nextInt(90) * 10000 + 1337), new Timestamp(System.currentTimeMillis()));
+                instance.sendMessage(sender, localization.get("debug.sendingPackets") + " (" + counter + "/5)");
+                if(counter >= 5)this.cancel();
             }
-        }, 3000);
+        },500, 2000);
 
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                instance.getCore().getExecutorService().submit(() -> {
+                    try {
+                        File file = new File("plugins/NeoProtect/debug" + "/" + new Timestamp(System.currentTimeMillis()) + ".yml");
+                        YamlConfiguration configuration = new YamlConfiguration();
+
+                        if (!file.exists()) {
+                            file.getParentFile().mkdirs();
+                            file.createNewFile();
+                        }
+
+                        configuration.load(file);
+
+                        instance.getCore().getDebugPingResponses().keySet().forEach((playerName -> {
+                            List<DebugPingResponse> list = instance.getCore().getDebugPingResponses().get(playerName);
+
+                            long maxPlayerToProxyLatenz = 0;
+                            long maxNeoToProxyLatenz = 0;
+                            long maxProxyToBackendLatenz = 0;
+                            long maxPlayerToNeoLatenz = 0;
+
+                            long avgPlayerToProxyLatenz = 0;
+                            long avgNeoToProxyLatenz = 0;
+                            long avgProxyToBackendLatenz = 0;
+                            long avgPlayerToNeoLatenz = 0;
+
+                            long minPlayerToProxyLatenz = Long.MAX_VALUE;
+                            long minNeoToProxyLatenz = Long.MAX_VALUE;
+                            long minProxyToBackendLatenz = Long.MAX_VALUE;
+                            long minPlayerToNeoLatenz = Long.MAX_VALUE;
+
+                            for (DebugPingResponse response : list) {
+                                if (maxPlayerToProxyLatenz < response.getPlayerToProxyLatenz())
+                                    maxPlayerToProxyLatenz = response.getPlayerToProxyLatenz();
+                                if (maxNeoToProxyLatenz < response.getNeoToProxyLatenz())
+                                    maxNeoToProxyLatenz = response.getNeoToProxyLatenz();
+                                if (maxProxyToBackendLatenz < response.getProxyToBackendLatenz())
+                                    maxProxyToBackendLatenz = response.getProxyToBackendLatenz();
+                                if (maxPlayerToNeoLatenz < response.getPlayerToNeoLatenz())
+                                    maxPlayerToNeoLatenz = response.getPlayerToNeoLatenz();
+
+                                avgPlayerToProxyLatenz = avgPlayerToProxyLatenz + response.getPlayerToProxyLatenz();
+                                avgNeoToProxyLatenz = avgNeoToProxyLatenz + response.getNeoToProxyLatenz();
+                                avgProxyToBackendLatenz = avgProxyToBackendLatenz + response.getProxyToBackendLatenz();
+                                avgPlayerToNeoLatenz = avgPlayerToNeoLatenz + response.getPlayerToNeoLatenz();
+
+                                if (minPlayerToProxyLatenz > response.getPlayerToProxyLatenz())
+                                    minPlayerToProxyLatenz = response.getPlayerToProxyLatenz();
+                                if (minNeoToProxyLatenz > response.getNeoToProxyLatenz())
+                                    minNeoToProxyLatenz = response.getNeoToProxyLatenz();
+                                if (minProxyToBackendLatenz > response.getProxyToBackendLatenz())
+                                    minProxyToBackendLatenz = response.getProxyToBackendLatenz();
+                                if (minPlayerToNeoLatenz > response.getPlayerToNeoLatenz())
+                                    minPlayerToNeoLatenz = response.getPlayerToNeoLatenz();
+                            }
+
+                            configuration.set("players." + playerName + ".max.PlayerToProxyLatenz", maxPlayerToProxyLatenz);
+                            configuration.set("players." + playerName + ".max.NeoToProxyLatenz", maxNeoToProxyLatenz);
+                            configuration.set("players." + playerName + ".max.ProxyToBackendLatenz", maxProxyToBackendLatenz);
+                            configuration.set("players." + playerName + ".max.PlayerToNeoLatenz", maxPlayerToNeoLatenz);
+
+                            configuration.set("players." + playerName + ".average.PlayerToProxyLatenz", avgPlayerToProxyLatenz / list.size());
+                            configuration.set("players." + playerName + ".average.NeoToProxyLatenz", avgNeoToProxyLatenz / list.size());
+                            configuration.set("players." + playerName + ".average.ProxyToBackendLatenz", avgProxyToBackendLatenz / list.size());
+                            configuration.set("players." + playerName + ".average.PlayerToNeoLatenz", avgPlayerToNeoLatenz / list.size());
+
+                            configuration.set("players." + playerName + ".min.PlayerToProxyLatenz", minPlayerToProxyLatenz);
+                            configuration.set("players." + playerName + ".min.NeoToProxyLatenz", minNeoToProxyLatenz);
+                            configuration.set("players." + playerName + ".min.ProxyToBackendLatenz", minProxyToBackendLatenz);
+                            configuration.set("players." + playerName + ".min.PlayerToNeoLatenz", minPlayerToNeoLatenz);
+
+                        }));
+
+                        configuration.save(file);
+                        instance.sendMessage(sender, localization.get("debug.finished.first"));
+                        instance.sendMessage(sender, localization.get("debug.finished.second") + file.getAbsolutePath() + " " + localization.get("utils.copy"), "COPY_TO_CLIPBOARD", file.getAbsolutePath(), null, null);
+                        instance.getCore().setDebugRunning(false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        }, 2000 * 4 + 2500);
     }
 
     private void gameshieldSelector(Object sender) {

@@ -3,8 +3,8 @@ package de.cubeattack.neoprotect.bungee.proxyprotocol;
 import de.cubeattack.api.util.JavaUtils;
 import de.cubeattack.neoprotect.bungee.NeoProtectBungee;
 import de.cubeattack.neoprotect.core.Config;
-import de.cubeattack.neoprotect.core.model.DebugPingResponse;
-import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
+import de.cubeattack.neoprotect.core.model.debugtool.DebugPingResponse;
+import de.cubeattack.neoprotect.core.model.debugtool.KeepAliveResponseKey;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -26,6 +26,7 @@ import sun.misc.Unsafe;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -121,7 +122,13 @@ public class ProxyProtocol {
                                             backendRTT = tcpInfoBackend.rtt() / 1000;
                                         }
 
-                                        instance.getCore().getDebugPingResponses().put(player.getName(), new DebugPingResponse(ping, neoRTT, backendRTT));
+                                        ConcurrentHashMap<String, ArrayList<DebugPingResponse>> map = instance.getCore().getDebugPingResponses();
+
+                                        if(!map.containsKey(player.getName())) {
+                                            instance.getCore().getDebugPingResponses().put(player.getName(), new ArrayList<>());
+                                        }
+
+                                        map.get(player.getName()).add(new DebugPingResponse(ping, neoRTT, backendRTT));
 
                                     }
                                     instance.getCore().getPingMap().remove(keepAliveResponseKey);

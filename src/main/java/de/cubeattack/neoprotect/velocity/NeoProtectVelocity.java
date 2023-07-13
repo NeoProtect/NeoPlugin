@@ -9,7 +9,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.Permission;
-import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
+import de.cubeattack.neoprotect.core.model.debugtool.KeepAliveResponseKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
