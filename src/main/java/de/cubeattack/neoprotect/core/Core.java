@@ -2,8 +2,8 @@ package de.cubeattack.neoprotect.core;
 
 import de.cubeattack.api.language.Localization;
 import de.cubeattack.api.logger.LogManager;
-import de.cubeattack.api.utils.FileUtils;
-import de.cubeattack.api.utils.VersionUtils;
+import de.cubeattack.api.util.FileUtils;
+import de.cubeattack.api.util.VersionUtils;
 import de.cubeattack.neoprotect.core.model.DebugPingResponse;
 import de.cubeattack.neoprotect.core.model.KeepAliveResponseKey;
 import de.cubeattack.neoprotect.core.request.RestAPIRequests;

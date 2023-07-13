@@ -5,8 +5,9 @@ import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.executor.NeoProtectExecutor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 
-public class NeoProtectCommand extends net.md_5.bungee.api.plugin.Command {
+public class NeoProtectCommand extends Command {
 
     private final NeoProtectPlugin instance;
     private final Localization localization;

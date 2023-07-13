@@ -1,6 +1,6 @@
 package de.cubeattack.neoprotect.core;
 
-import de.cubeattack.api.utils.FileUtils;
+import de.cubeattack.api.util.FileUtils;
 
 @SuppressWarnings("unused")
 public class Config {

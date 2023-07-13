@@ -2,15 +2,15 @@ package de.cubeattack.neoprotect.core.request;
 
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import de.cubeattack.api.libraries.org.json.JSONArray;
+import de.cubeattack.api.libraries.org.json.JSONException;
+import de.cubeattack.api.libraries.org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Objects;
 
-public class ResponseManager extends JSONObject{
+public class ResponseManager extends JSONObject {
 
     private final String responseBody;
     private final Response response;

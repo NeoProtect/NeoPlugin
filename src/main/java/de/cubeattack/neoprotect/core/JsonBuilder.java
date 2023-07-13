@@ -1,5 +1,6 @@
 package de.cubeattack.neoprotect.core;
 
+@SuppressWarnings("unused")
 public class JsonBuilder {
 
     private StringBuilder builder = new StringBuilder();

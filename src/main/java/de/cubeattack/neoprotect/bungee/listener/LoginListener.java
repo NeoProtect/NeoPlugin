@@ -1,7 +1,7 @@
 package de.cubeattack.neoprotect.bungee.listener;
 
 import de.cubeattack.api.language.Localization;
-import de.cubeattack.api.utils.VersionUtils;
+import de.cubeattack.api.util.VersionUtils;
 import de.cubeattack.neoprotect.bungee.NeoProtectBungee;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;

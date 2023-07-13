@@ -4,7 +4,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
 import de.cubeattack.api.language.Localization;
-import de.cubeattack.api.utils.VersionUtils;
+import de.cubeattack.api.util.VersionUtils;
 import de.cubeattack.neoprotect.velocity.NeoProtectVelocity;
 
 import java.text.MessageFormat;

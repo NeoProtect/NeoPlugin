@@ -1,6 +1,6 @@
 package de.cubeattack.neoprotect.bungee.proxyprotocol;
 
-import de.cubeattack.api.utils.JavaUtils;
+import de.cubeattack.api.util.JavaUtils;
 import de.cubeattack.neoprotect.bungee.NeoProtectBungee;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.model.DebugPingResponse;

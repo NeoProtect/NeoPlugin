@@ -3,15 +3,15 @@ package de.cubeattack.neoprotect.core.request;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
-import de.cubeattack.api.utils.VersionUtils;
+import de.cubeattack.api.libraries.org.json.JSONArray;
+import de.cubeattack.api.libraries.org.json.JSONObject;
+import de.cubeattack.api.util.VersionUtils;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.JsonBuilder;
 import de.cubeattack.neoprotect.core.Permission;
 import de.cubeattack.neoprotect.core.model.Backend;
 import de.cubeattack.neoprotect.core.model.Gameshield;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
