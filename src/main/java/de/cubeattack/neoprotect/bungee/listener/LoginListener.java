@@ -9,37 +9,46 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 import java.text.MessageFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LoginListener implements Listener {
 
     private final NeoProtectBungee instance;
     private final Localization localization;
+
     public LoginListener(NeoProtectBungee instance) {
         this.instance = instance;
         this.localization = instance.getCore().getLocalization();
     }
+
     @EventHandler(priority = 6)
     public void onLogin(PostLoginEvent event) {
-        ProxiedPlayer player = event.getPlayer();
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                ProxiedPlayer player = event.getPlayer();
 
-        if(!player.hasPermission("neoprotect.admin") && !player.getUniqueId().equals(instance.getCore().getMaintainerUUID())) return;
+                if (!player.hasPermission("neoprotect.admin") && !player.getUniqueId().equals(instance.getCore().getMaintainerUUID())) return;
 
-        VersionUtils.Result result = instance.getCore().getVersionResult();
-        if(result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)){
-            instance.sendMessage(player, localization.get("plugin.outdated.message", result.getCurrentVersion(), result.getLatestVersion()));
-            instance.sendMessage(player, MessageFormat.format("§7-> §b{0}",
-                    result.getReleaseUrl().replace("/NeoPlugin", "").replace("/releases/tag", "")),
-                    "OPEN_URL", result.getReleaseUrl(), null, null);
-        }
+                VersionUtils.Result result = instance.getCore().getVersionResult();
+                if (result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)) {
+                    instance.sendMessage(player, localization.get("plugin.outdated.message", result.getCurrentVersion(), result.getLatestVersion()));
+                    instance.sendMessage(player, MessageFormat.format("§7-> §b{0}",
+                                    result.getReleaseUrl().replace("/NeoPlugin", "").replace("/releases/tag", "")),
+                            "OPEN_URL", result.getReleaseUrl(), null, null);
+                }
 
-        if(!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()){
-            instance.sendMessage(player, localization.get("setup.required.first"));
-            instance.sendMessage(player, localization.get("setup.required.second"));
-        }
+                if (!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()) {
+                    instance.sendMessage(player, localization.get("setup.required.first"));
+                    instance.sendMessage(player, localization.get("setup.required.second"));
+                }
 
-        if(player.getUniqueId().equals(instance.getCore().getMaintainerUUID())){
-            instance.sendMessage(player, "§bHello " + player.getName() + " ;)");
-            instance.sendMessage(player, "§bThis server uses your NeoPlugin");
-        }
+                if (player.getUniqueId().equals(instance.getCore().getMaintainerUUID())) {
+                    instance.sendMessage(player, "§bHello " + player.getName() + " ;)");
+                    instance.sendMessage(player, "§bThis server uses your NeoPlugin");
+                }
+            }
+        }, 500);
     }
 }
