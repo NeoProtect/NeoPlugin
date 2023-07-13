@@ -30,7 +30,7 @@ public class NeoProtectTabCompleter implements Listener {
 
         if(instance.getCore().isSetup()){
             tabListOne.add("ipanic");
-            tabListOne.add("debugPing");
+            tabListOne.add("debugTool");
             tabListOne.add("analytics");
             tabListOne.add("setgameshield");
             tabListOne.add("setbackend");

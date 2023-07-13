@@ -77,7 +77,7 @@ public class NeoProtectExecutor {
                 break;
             }
 
-            case "debugping": {
+            case "debugtool": {
                 debugTool();
                 break;
             }
@@ -345,7 +345,7 @@ public class NeoProtectExecutor {
         instance.sendMessage(sender, " - /np setup");
         instance.sendMessage(sender, " - /np ipanic");
         instance.sendMessage(sender, " - /np analytics");
-        instance.sendMessage(sender, " - /np debugPing");
+        instance.sendMessage(sender, " - /np debugTool");
         instance.sendMessage(sender, " - /np setgameshield");
         instance.sendMessage(sender, " - /np setbackend");
     }

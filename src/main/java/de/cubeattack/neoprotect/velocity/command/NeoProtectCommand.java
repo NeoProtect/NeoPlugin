@@ -57,7 +57,7 @@ public class NeoProtectCommand implements SimpleCommand {
                 list.add("setgameshield");
                 list.add("setbackend");
                 list.add("analytics");
-                list.add("debugPing");
+                list.add("debugTool");
                 list.add("ipanic");
             }
 
