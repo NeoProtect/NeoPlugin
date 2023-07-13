@@ -18,8 +18,8 @@ public class LoginListener implements Listener {
         this.instance = instance;
         this.localization = instance.getCore().getLocalization();
     }
-    @EventHandler
-    public void onLogin(PostLoginEvent event){
+    @EventHandler(priority = 6)
+    public void onLogin(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
 
         if(!player.hasPermission("neoprotect.admin") && !player.getUniqueId().equals(instance.getCore().getMaintainerUUID())) return;

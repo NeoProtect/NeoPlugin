@@ -1,5 +1,6 @@
 package de.cubeattack.neoprotect.velocity.listener;
 
+import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
@@ -19,7 +20,7 @@ public class LoginListener {
         this.localization = instance.getCore().getLocalization();
     }
 
-    @Subscribe
+    @Subscribe(order = PostOrder.LAST)
     public void onPostLogin(PostLoginEvent event){
         Player player = event.getPlayer();
 
