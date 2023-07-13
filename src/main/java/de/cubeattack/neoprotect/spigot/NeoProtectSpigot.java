@@ -8,6 +8,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -42,6 +43,7 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
 
         if(clickAction != null) msg.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
         if(hoverAction != null) msg.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverAction), new ComponentBuilder(hoverMsg).create()));
+        if(receiver instanceof ConsoleCommandSender) ((ConsoleCommandSender) receiver).sendMessage(msg.toLegacyText());
         if(receiver instanceof Player) ((Player) receiver).spigot().sendMessage(msg);
     }
 
