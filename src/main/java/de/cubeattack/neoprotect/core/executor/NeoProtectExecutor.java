@@ -287,6 +287,7 @@ public class NeoProtectExecutor {
                         }));
 
                         configuration.save(file);
+                        instance.getCore().getDebugPingResponses().clear();
                         instance.sendMessage(sender, localization.get("debug.finished.first"));
                         instance.sendMessage(sender, localization.get("debug.finished.second") + file.getAbsolutePath() + " " + localization.get("utils.copy"), "COPY_TO_CLIPBOARD", file.getAbsolutePath(), null, null);
                         instance.getCore().setDebugRunning(false);
@@ -295,7 +296,7 @@ public class NeoProtectExecutor {
                     }
                 });
             }
-        }, 2000L * (amount - 1) + 2500);
+        }, 2000L * amount + 500);
     }
 
     private void gameshieldSelector() {
