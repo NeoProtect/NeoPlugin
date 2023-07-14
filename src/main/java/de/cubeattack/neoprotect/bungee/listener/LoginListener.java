@@ -45,7 +45,7 @@ public class LoginListener implements Listener {
                     instance.sendMessage(player, localization.get("setup.required.second"));
                 }
 
-                if (Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId()))) {
+                if (Arrays.stream(instance.getCore().getMaintainerUUID()).anyMatch(uuid -> uuid.equals(player.getUniqueId()))) {
                     instance.sendMessage(player, "§bHello " + player.getName() + " ;)");
                     instance.sendMessage(player, "§bThis server uses your NeoPlugin");
                 }
