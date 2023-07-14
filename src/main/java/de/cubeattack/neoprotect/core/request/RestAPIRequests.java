@@ -190,7 +190,7 @@ public class RestAPIRequests {
                     attackRunning[0] = true;
                 }
             }
-        }, 1000 * 60 * 3, 1000 * 60 * 3);
+        }, 1000 * 3, 1000 * 3);
     }
 
     private void backendServerIPUpdater(){
@@ -220,7 +220,7 @@ public class RestAPIRequests {
                     backend.setIp(ip);
                 }
             }
-        }, 1000, 1000*10);
+        }, 1000, 1000 * 10);
     }
 
     public JSONArray getNeoServerIPs() {
