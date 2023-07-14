@@ -23,7 +23,7 @@ public class Core {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final String prefix = "§8[§bNeo§3Protect§8] §7";
-    private final UUID maintainerUUID = UUID.fromString("201e5046-24df-4830-8b4a-82b635eb7cc7");
+    private final UUID[] maintainerUUID = new UUID[]{UUID.fromString("201e5046-24df-4830-8b4a-82b635eb7cc7"), UUID.fromString("8c07bf89-9c8f-304c-9216-4666b670223b")};
     private final RestAPIRequests restAPIRequests;
     private final NeoProtectPlugin plugin;
     private final Localization localization;
@@ -87,7 +87,7 @@ public class Core {
         return executorService;
     }
 
-    public UUID getMaintainerUUID() {
+    public UUID[] getMaintainerUUID() {
         return maintainerUUID;
     }
 

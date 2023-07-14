@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 public class LoginListener implements Listener {
 
@@ -25,7 +26,7 @@ public class LoginListener implements Listener {
     public void onLogin(PlayerJoinEvent event){
         Player player = event.getPlayer();
 
-        if(!player.hasPermission("neoprotect.admin") && !player.getUniqueId().equals(instance.getCore().getMaintainerUUID())) return;
+        if(!player.hasPermission("neoprotect.admin") && Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId()))) return;
 
         VersionUtils.Result result = instance.getCore().getVersionResult();
         if(result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)){
@@ -40,7 +41,7 @@ public class LoginListener implements Listener {
             instance.sendMessage(player, localization.get("setup.required.second"));
         }
 
-        if(player.getUniqueId().equals(instance.getCore().getMaintainerUUID())){
+        if(Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId()))){
             instance.sendMessage(player, "§bHello " + player.getName() + " ;)");
             instance.sendMessage(player, "§bThis server uses your NeoPlugin");
         }
