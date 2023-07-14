@@ -6,6 +6,8 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import com.velocitypowered.proxy.protocol.packet.KeepAlive;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.Permission;
@@ -76,6 +78,9 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     @Override
     public void sendKeepAliveMessage(Object receiver, long id) {
         if(receiver instanceof Player){
+            KeepAlive keepAlive = new KeepAlive();
+            keepAlive.setRandomId(id);
+            ((ConnectedPlayer)receiver).getConnection().getChannel().writeAndFlush(keepAlive);
             getCore().getPingMap().put(new KeepAliveResponseKey(((Player) receiver).getRemoteAddress(), id), System.currentTimeMillis());
         }
     }

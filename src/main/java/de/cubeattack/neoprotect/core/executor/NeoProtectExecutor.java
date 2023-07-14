@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class NeoProtectExecutor {
 
+    private static Timer debugTimer = new Timer();
     private NeoProtectPlugin instance;
     private Localization localization;
 
@@ -48,7 +49,7 @@ public class NeoProtectExecutor {
 
         instance.sendMessage(sender, localization.get("apikey.valid"));
 
-        gameshieldSelector(sender);
+        gameshieldSelector();
     }
 
     private void command(ExecutorBuilder executorBuilder) {
@@ -56,7 +57,7 @@ public class NeoProtectExecutor {
         initials(executorBuilder);
 
         if (args.length == 0) {
-            showHelp(sender);
+            showHelp();
             return;
         }
 
@@ -68,17 +69,17 @@ public class NeoProtectExecutor {
         switch (args[0].toLowerCase()) {
 
             case "setup": {
-                setup(sender);
+                setup();
                 break;
             }
 
             case "ipanic": {
-                iPanic(sender, args);
+                iPanic(args);
                 break;
             }
 
             case "debugtool": {
-                debugTool();
+                debugTool(args);
                 break;
             }
 
@@ -89,9 +90,9 @@ public class NeoProtectExecutor {
 
             case "setgameshield": {
                 if (args.length == 1) {
-                    gameshieldSelector(sender);
+                    gameshieldSelector();
                 } else if (args.length == 2) {
-                    setGameshield(sender, args);
+                    setGameshield(args);
                 } else {
                     instance.sendMessage(sender, localization.get("usage.setgameshield"));
                 }
@@ -100,29 +101,29 @@ public class NeoProtectExecutor {
 
             case "setbackend": {
                 if (args.length == 1) {
-                    backendSelector(sender);
+                    backendSelector();
                 } else if (args.length == 2) {
-                    setBackend(sender, args);
+                    setBackend(args);
                 } else {
                     instance.sendMessage(sender, localization.get("usage.setbackend"));
                 }
                 break;
             }
             default: {
-                showHelp(sender);
+                showHelp();
             }
         }
     }
 
 
-    private void setup(Object sender) {
+    private void setup() {
         instance.getCore().getPlayerInSetup().add(sender);
         instance.sendMessage(sender, localization.get("command.setup") + localization.get("utils.click"),
                 "OPEN_URL", "https://panel.neoprotect.net/profile",
                 "SHOW_TEXT", localization.get("apikey.find"));
     }
 
-    private void iPanic(Object sender, String[] args) {
+    private void iPanic(String[] args) {
         if (args.length != 1) {
             instance.sendMessage(sender, localization.get("usage.ipanic"));
         } else {
@@ -166,16 +167,25 @@ public class NeoProtectExecutor {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void debugTool() {
+    private void debugTool(String[] args) {
 
         if (instance.getPluginType() == NeoProtectPlugin.PluginType.SPIGOT) {
             instance.sendMessage(sender, localization.get("debug.spigot"));
             return;
         }
 
-        if (instance.getPluginType() == NeoProtectPlugin.PluginType.VELOCITY) {
-            instance.sendMessage(sender, "This command is currently not yet supported for Velocity");
-            return;
+        if (args.length == 2) {
+            if(args[1].equals("cancel")){
+                debugTimer.cancel();
+                instance.getCore().setDebugRunning(false);
+                instance.sendMessage(sender, "Debug tool stopped");
+                return;
+            }
+
+            if (!isInteger(args[1])) {
+                instance.sendMessage(sender, localization.get("usage.debug"));
+                return;
+            }
         }
 
         if (instance.getCore().isDebugRunning()) {
@@ -186,19 +196,22 @@ public class NeoProtectExecutor {
         instance.getCore().setDebugRunning(true);
         instance.sendMessage(sender, localization.get("debug.starting"));
 
-        new Timer().schedule(new TimerTask() {
+        int amount = args.length == 2 ? (Integer.parseInt(args[1]) <= 0 ? 1 : Integer.parseInt(args[1]))  : 5;
+
+        debugTimer = new Timer();
+
+        debugTimer.schedule(new TimerTask() {
             int counter = 0;
             @Override
             public void run() {
                 counter++;
                 instance.getCore().getTimestampsMap().put(instance.sendKeepAliveMessage(new Random().nextInt(90) * 10000 + 1337), new Timestamp(System.currentTimeMillis()));
-                instance.sendMessage(sender, localization.get("debug.sendingPackets") + " (" + counter + "/5)");
-                if(counter >= 5)this.cancel();
+                instance.sendMessage(sender, localization.get("debug.sendingPackets") + " (" + counter + "/" + amount + ")");
+                if(counter >= amount) this.cancel();
             }
         },500, 2000);
 
-
-        new Timer().schedule(new TimerTask() {
+        debugTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 instance.getCore().getExecutorService().submit(() -> {
@@ -282,10 +295,10 @@ public class NeoProtectExecutor {
                     }
                 });
             }
-        }, 2000 * 4 + 2500);
+        }, 2000L * (amount - 1) + 2500);
     }
 
-    private void gameshieldSelector(Object sender) {
+    private void gameshieldSelector() {
         instance.sendMessage(sender, localization.get("select.gameshield"));
 
         List<Gameshield> gameshieldList = instance.getCore().getRestAPI().getGameshields();
@@ -297,7 +310,7 @@ public class NeoProtectExecutor {
         }
     }
 
-    private void setGameshield(Object sender, String[] args) {
+    private void setGameshield(String[] args) {
 
         if (instance.getCore().getRestAPI().isGameshieldInvalid(args[1])) {
             instance.sendMessage(sender, localization.get("invalid.gameshield", args[1]));
@@ -307,11 +320,11 @@ public class NeoProtectExecutor {
         Config.setGameShieldID(args[1]);
         instance.sendMessage(sender, localization.get("set.gameshield", args[1]));
 
-        backendSelector(sender);
+        backendSelector();
     }
 
 
-    private void backendSelector(Object sender) {
+    private void backendSelector() {
         instance.sendMessage(sender, localization.get("select.backend"));
 
         List<Backend> backendList = instance.getCore().getRestAPI().getBackends();
@@ -323,7 +336,7 @@ public class NeoProtectExecutor {
         }
     }
 
-    private void setBackend(Object sender, String[] args) {
+    private void setBackend(String[] args) {
 
         if (instance.getCore().getRestAPI().isBackendInvalid(args[1])) {
             instance.sendMessage(sender, localization.get("invalid.backend", args[1]));
@@ -340,12 +353,12 @@ public class NeoProtectExecutor {
         instance.getCore().getRestAPI().testCredentials();
     }
 
-    private void showHelp(Object sender) {
+    private void showHelp() {
         instance.sendMessage(sender, localization.get("available.commands"));
         instance.sendMessage(sender, " - /np setup");
         instance.sendMessage(sender, " - /np ipanic");
         instance.sendMessage(sender, " - /np analytics");
-        instance.sendMessage(sender, " - /np debugTool");
+        instance.sendMessage(sender, " - /np debugTool (cancel / amount)");
         instance.sendMessage(sender, " - /np setgameshield");
         instance.sendMessage(sender, " - /np setbackend");
     }
@@ -398,6 +411,15 @@ public class NeoProtectExecutor {
 
         public String getMsg() {
             return msg;
+        }
+    }
+
+    public static boolean isInteger(String input) {
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 }

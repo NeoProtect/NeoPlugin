@@ -8,6 +8,7 @@ import net.md_5.bungee.event.EventPriority;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class NeoProtectTabCompleter implements Listener {
 
@@ -21,8 +22,10 @@ public class NeoProtectTabCompleter implements Listener {
     public void onTabComplete(TabCompleteEvent event) {
 
         String cursor = event.getCursor().toLowerCase();
+        String[] cursorSplit = cursor.split(" ");
         ArrayList<String> commands = new ArrayList<>();
         ArrayList<String> tabListOne = new ArrayList<>();
+        ArrayList<String> tabListTwo= new ArrayList<>();
 
         commands.add("/np");
         commands.add("/neoprotect");
@@ -30,25 +33,32 @@ public class NeoProtectTabCompleter implements Listener {
 
         if(instance.getCore().isSetup()){
             tabListOne.add("ipanic");
-            tabListOne.add("debugTool");
+            tabListOne.add("debugtool");
             tabListOne.add("analytics");
             tabListOne.add("setgameshield");
             tabListOne.add("setbackend");
+
+            if (cursorSplit.length >= 2 && cursorSplit[1].equalsIgnoreCase("debugTool")) {
+                for (int i = 10; i <= 100; i = i + 10) {
+                    tabListTwo.add(String.valueOf(i));
+                }
+                tabListTwo.add("cancel");
+            }
         }
 
-        event.getSuggestions().addAll(completer(true, cursor, commands, tabListOne));
+        event.getSuggestions().addAll(completer(false, cursor, commands, tabListOne, tabListTwo));
     }
 
 
     @SafeVarargs
-    public static ArrayList<String> completer(boolean sort, String cursor, ArrayList<String> cmds, ArrayList<String>... tabLists) {
+    public static ArrayList<String> completer(boolean sort, String cursor, List<String> cmds, List<String>... tabLists) {
 
         ArrayList<String> completions = new ArrayList<>();
 
         int pos = 0;
         String[] splitCursor = cursor.split(" ");
 
-        for (ArrayList<String> tabList : tabLists) {
+        for (List<String> tabList : tabLists) {
             pos++;
 
             if (sort) {

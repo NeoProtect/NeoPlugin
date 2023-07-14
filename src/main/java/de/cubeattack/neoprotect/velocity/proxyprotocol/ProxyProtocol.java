@@ -1,22 +1,32 @@
 package de.cubeattack.neoprotect.velocity.proxyprotocol;
 
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.VelocityServer;
 import com.velocitypowered.proxy.connection.MinecraftConnection;
+import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.network.ConnectionManager;
 import com.velocitypowered.proxy.network.Connections;
 import com.velocitypowered.proxy.network.ServerChannelInitializerHolder;
+import com.velocitypowered.proxy.protocol.packet.KeepAlive;
 import de.cubeattack.neoprotect.core.Config;
+import de.cubeattack.neoprotect.core.model.debugtool.DebugPingResponse;
+import de.cubeattack.neoprotect.core.model.debugtool.KeepAliveResponseKey;
 import de.cubeattack.neoprotect.velocity.NeoProtectVelocity;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.epoll.EpollTcpInfo;
 import io.netty.handler.codec.haproxy.HAProxyMessage;
 import io.netty.handler.codec.haproxy.HAProxyMessageDecoder;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class ProxyProtocol {
@@ -41,6 +51,8 @@ public class ProxyProtocol {
                 protected void initChannel(Channel channel)  {
 
                     try {
+
+                        AtomicReference<InetSocketAddress> inetAddress = new AtomicReference<>();
 
                         initChannelMethod.getMethod().setAccessible(true);
                         initChannelMethod.invoke(oldInitializer, channel);
@@ -71,9 +83,62 @@ public class ProxyProtocol {
                                 if (msg instanceof HAProxyMessage) {
                                     HAProxyMessage message = (HAProxyMessage) msg;
                                     Reflection.FieldAccessor<SocketAddress> fieldAccessor = Reflection.getField(MinecraftConnection.class, SocketAddress.class, 0);
-                                    fieldAccessor.set(channel.pipeline().get(Connections.HANDLER), new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
+                                    inetAddress.set(new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
+                                    fieldAccessor.set(channel.pipeline().get(Connections.HANDLER), inetAddress.get());
                                 } else {
                                     super.channelRead(ctx, msg);
+                                }
+                            }
+                        });
+
+                        channel.pipeline().addAfter("minecraft-decoder", "neo-keep-alive-handler", new ChannelInboundHandlerAdapter() {
+                            @Override
+                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                super.channelRead(ctx, msg);
+
+                                if (!(msg instanceof KeepAlive)) {
+                                    return;
+                                }
+
+                                KeepAlive keepAlive = (KeepAlive) msg;
+                                ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap =  instance.getCore().getPingMap();
+
+                                for (KeepAliveResponseKey keepAliveResponseKey : pingMap.keySet()) {
+
+                                    if (!keepAliveResponseKey.getAddress().equals(inetAddress.get()) || !(keepAliveResponseKey.getId() == keepAlive.getRandomId())) {
+                                        continue;
+                                    }
+
+                                    for (Player player : velocityServer.getAllPlayers()) {
+
+                                        if (!(player).getRemoteAddress().equals(inetAddress.get())) {
+                                            continue;
+                                        }
+
+                                        EpollTcpInfo tcpInfo = ((EpollSocketChannel) channel).tcpInfo();
+                                        EpollTcpInfo tcpInfoBackend = ((EpollSocketChannel) ((ConnectedPlayer)player).getConnection().getChannel()).tcpInfo();
+
+                                        long ping = System.currentTimeMillis() - pingMap.get(keepAliveResponseKey);
+                                        long neoRTT = 0;
+                                        long backendRTT = 0;
+
+                                        if (tcpInfo != null) {
+                                            neoRTT = tcpInfo.rtt() / 1000;
+                                        }
+                                        if (tcpInfoBackend != null) {
+                                            backendRTT = tcpInfoBackend.rtt() / 1000;
+                                        }
+
+                                        ConcurrentHashMap<String, ArrayList<DebugPingResponse>> map = instance.getCore().getDebugPingResponses();
+
+                                        if(!map.containsKey(player.getUsername())) {
+                                            instance.getCore().getDebugPingResponses().put(player.getUsername(), new ArrayList<>());
+                                        }
+
+                                        map.get(player.getUsername()).add(new DebugPingResponse(ping, neoRTT, backendRTT));
+
+                                    }
+                                    instance.getCore().getPingMap().remove(keepAliveResponseKey);
                                 }
                             }
                         });
