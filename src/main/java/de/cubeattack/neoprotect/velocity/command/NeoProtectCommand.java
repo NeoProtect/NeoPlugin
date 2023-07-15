@@ -47,9 +47,7 @@ public class NeoProtectCommand implements SimpleCommand {
             List<String> completorList = new ArrayList<>();
             String[] args = invocation.arguments();
 
-
             if (args.length == 2) {
-                System.out.println(args[0]);
                 if(args[0].equalsIgnoreCase("debugtool")){
                     for (int i = 10; i <= 100; i = i + 10) {
                         completorList.add(String.valueOf(i));
@@ -68,8 +66,6 @@ public class NeoProtectCommand implements SimpleCommand {
                 }
                 return completorList;
             }
-
-
 
             if (args.length > 1) {
                 return completorList;
