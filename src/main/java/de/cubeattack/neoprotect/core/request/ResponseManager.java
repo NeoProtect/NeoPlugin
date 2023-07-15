@@ -37,7 +37,7 @@ public class ResponseManager extends JSONObject {
         return Objects.equals(this.code, code);
     }
 
-    private int getCode(){
+    public int getCode(){
         try{
             return response.code();
         }catch (Exception ex){
@@ -57,7 +57,7 @@ public class ResponseManager extends JSONObject {
     public JSONArray getResponseBodyArray() {
         try {
             return new JSONArray(responseBody);
-        }catch (JSONException ignored){}
+        } catch (JSONException ignored){}
         return new JSONArray();
     }
 

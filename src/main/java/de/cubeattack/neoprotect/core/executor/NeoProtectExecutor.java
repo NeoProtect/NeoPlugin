@@ -78,6 +78,11 @@ public class NeoProtectExecutor {
                 break;
             }
 
+            case "toggle": {
+                toggle(args);
+                break;
+            }
+
             case "debugtool": {
                 debugTool(args);
                 break;
@@ -132,6 +137,27 @@ public class NeoProtectExecutor {
         }
     }
 
+    private void toggle(String[] args) {
+        if (args.length != 2) {
+            instance.sendMessage(sender, localization.get("usage.toggle"));
+        } else {
+            int response = instance.getCore().getRestAPI().toggle(args[1]);
+
+            if(response == 403){
+                instance.sendMessage(sender, localization.get("err.upgrade-plan"));
+                return;
+            }
+
+            if(response == 429){
+                instance.sendMessage(sender, localization.get("err.rate-limit"));
+                return;
+            }
+
+            instance.sendMessage(sender, localization.get("command.toggle", args[1],
+                    localization.get(response == 1 ? "utils.activated" : "utils.deactivated")));
+        }
+    }
+
     private void analytics() {
         instance.sendMessage(sender, "§7§l-------- §bAnalytics §7§l--------");
         JSONObject analytics = instance.getCore().getRestAPI().getAnalytics();
@@ -178,7 +204,7 @@ public class NeoProtectExecutor {
             if(args[1].equals("cancel")){
                 debugTimer.cancel();
                 instance.getCore().setDebugRunning(false);
-                instance.sendMessage(sender, "Debug tool stopped");
+                instance.sendMessage(sender, localization.get("debug.cancelled"));
                 return;
             }
 
@@ -360,6 +386,7 @@ public class NeoProtectExecutor {
         instance.sendMessage(sender, " - /np setup");
         instance.sendMessage(sender, " - /np ipanic");
         instance.sendMessage(sender, " - /np analytics");
+        instance.sendMessage(sender, " - /np toggle (option)");
         instance.sendMessage(sender, " - /np debugTool (cancel / amount)");
         instance.sendMessage(sender, " - /np setgameshield");
         instance.sendMessage(sender, " - /np setbackend");

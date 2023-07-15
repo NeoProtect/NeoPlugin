@@ -56,8 +56,20 @@ public class NeoProtectCommand implements SimpleCommand {
                     }
                     completorList.add("cancel");
                 }
+                if (args[0].equalsIgnoreCase("toggle")) {
+                    completorList.add("antiVPN");
+                    completorList.add("anycast");
+                    completorList.add("motdCache");
+                    completorList.add("blockForge");
+                    completorList.add("ipWhitelist");
+                    completorList.add("ipBlacklist");
+                    completorList.add("secureProfiles");
+                    completorList.add("advancedAntiBot");
+                }
                 return completorList;
             }
+
+
 
             if (args.length > 1) {
                 return completorList;
@@ -71,6 +83,7 @@ public class NeoProtectCommand implements SimpleCommand {
                 list.add("analytics");
                 list.add("debugTool");
                 list.add("ipanic");
+                list.add("toggle");
             }
 
             for (String tab : list) {

@@ -33,20 +33,32 @@ public class NeoProtectTabCompleter implements Listener {
 
         if(instance.getCore().isSetup()){
             tabListOne.add("ipanic");
+            tabListOne.add("toggle");
             tabListOne.add("debugtool");
             tabListOne.add("analytics");
             tabListOne.add("setgameshield");
             tabListOne.add("setbackend");
 
             if (cursorSplit.length >= 2 && cursorSplit[1].equalsIgnoreCase("debugTool")) {
-                for (int i = 10; i <= 100; i = i + 10) {
+                for (int i = 10; i <= 90; i = i + 10) {
                     tabListTwo.add(String.valueOf(i));
                 }
                 tabListTwo.add("cancel");
             }
+
+            if (cursorSplit.length >= 2 && cursorSplit[1].equalsIgnoreCase("toggle")) {
+                tabListTwo.add("antiVPN");
+                tabListTwo.add("anycast");
+                tabListTwo.add("motdCache");
+                tabListTwo.add("blockForge");
+                tabListTwo.add("ipWhitelist");
+                tabListTwo.add("ipBlacklist");
+                tabListTwo.add("secureProfiles");
+                tabListTwo.add("advancedAntiBot");
+            }
         }
 
-        event.getSuggestions().addAll(completer(false, cursor, commands, tabListOne, tabListTwo));
+        event.getSuggestions().addAll(completer(true, cursor, commands, tabListOne, tabListTwo));
     }
 
 

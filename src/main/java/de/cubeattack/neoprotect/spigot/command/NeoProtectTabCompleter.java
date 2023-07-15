@@ -22,6 +22,18 @@ public class NeoProtectTabCompleter implements TabCompleter {
         List<String> list = new ArrayList<>();
         List<String> completorList = new ArrayList<>();
 
+        if (args.length == 2 && args[0].equalsIgnoreCase("toggle")) {
+            completorList.add("antiVPN");
+            completorList.add("anycast");
+            completorList.add("motdCache");
+            completorList.add("blockForge");
+            completorList.add("ipWhitelist");
+            completorList.add("ipBlacklist");
+            completorList.add("secureProfiles");
+            completorList.add("advancedAntiBot");
+            return completorList;
+        }
+
         if (args.length != 1) {
             return completorList;
         }
@@ -30,6 +42,7 @@ public class NeoProtectTabCompleter implements TabCompleter {
 
         if(instance.getCore().isSetup()){
             list.add("ipanic");
+            list.add("toggle");
             list.add("analytics");
             list.add("setgameshield");
             list.add("setbackend");

@@ -118,6 +118,25 @@ public class RestAPIRequests {
         }
     }
 
+    public int toggle(String mode){
+        JSONObject settings = rest.request(RequestType.GET_GAMESHIELD_INFO, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldSettings");
+        boolean mitigationSensitivity = settings.getBoolean(mode);
+
+        if(mitigationSensitivity){
+            int code = rest.request(RequestType.POST_GAMESHIELD_UPDATE,
+                    RequestBody.create(MediaType.parse("application/json"), settings.put(mode, false).toString()),
+                    Config.getGameShieldID()).getCode();
+
+            return code == 200 ? 0 : code;
+        }else {
+            int code = rest.request(RequestType.POST_GAMESHIELD_UPDATE,
+                    RequestBody.create(MediaType.parse("application/json"), settings.put(mode, true).toString()),
+                    Config.getGameShieldID()).getCode();
+
+            return code == 200 ? 1 : code;
+        }
+    }
+
     public List<Gameshield> getGameshields(){
         List<Gameshield> list = new ArrayList<>();
 
