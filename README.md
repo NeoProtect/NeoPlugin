@@ -38,6 +38,7 @@ Install Instructions:
 |:---------------------|-------------------------------------------------------------|----------------------------------------|
 | /np setup            | start the setup (setup set API-KEY, backend and gameshield) | neoprotect.admin                       |
 | /np ipanic           | toggle AntiBot level                                        | neoprotect.admin                       |
+| /np toggle (option)  | toggle different options                                    | neoprotect.admin                       |
 | /np debugTool        | start debug tool                                            | neoprotect.admin                       |
 | /np setgameshield    | set gameshield for establish the connection to NeoProtect   | neoprotect.admin                       |
 | /np setbackend       | set backend for establish the connection to NeoProtect      | neoprotect.admin                       |
