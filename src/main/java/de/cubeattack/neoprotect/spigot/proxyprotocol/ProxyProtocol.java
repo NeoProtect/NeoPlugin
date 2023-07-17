@@ -71,6 +71,13 @@ public class ProxyProtocol {
 		endInitProtocol = new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel channel) {
+
+				if (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
+						contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
+					channel.close();
+					return;
+				}
+
 				if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
 					return;
 				}
