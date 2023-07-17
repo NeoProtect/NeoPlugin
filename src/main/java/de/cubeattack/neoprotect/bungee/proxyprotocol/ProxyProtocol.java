@@ -46,21 +46,30 @@ public class ProxyProtocol {
                 protected void initChannel(Channel channel) {
                     try {
 
+                        instance.getCore().debug("Open channel");
+
                         AtomicReference<InetSocketAddress> inetAddress = new AtomicReference<>();
 
                         initChannelMethod.invoke(bungeeChannelInitializer, channel);
 
-                        if(channel.localAddress().toString().startsWith("local:"))return;
+                        if(channel.localAddress().toString().startsWith("local:")){
+                            instance.getCore().debug("Detected bedrock player (return)");
+                            return;
+                        }
 
                         if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+                            instance.getCore().debug("Plugin is not setup / ProxyProtocol is off (return)");
                             return;
                         }
 
                         if (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
-                                contains(channel.remoteAddress().toString().substring(1).split(":")[0])) {
+                                contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
                             channel.close();
+                            instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
                             return;
                         }
+
+                        instance.getCore().debug("Adding Handler...");
 
                         channel.pipeline().names().forEach((n) -> {
                             if (n.equals("HAProxyMessageDecoder#0"))
@@ -96,17 +105,23 @@ public class ProxyProtocol {
                                 KeepAlive keepAlive = (KeepAlive) ((PacketWrapper) msg).packet;
                                 ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap =  instance.getCore().getPingMap();
 
+                                instance.getCore().debug("Received KeepAlivePackets (" + keepAlive.getRandomId() + ")");
+
                                 for (KeepAliveResponseKey keepAliveResponseKey : pingMap.keySet()) {
 
                                     if (!keepAliveResponseKey.getAddress().equals(inetAddress.get()) || !(keepAliveResponseKey.getId() == keepAlive.getRandomId())) {
                                         continue;
                                     }
 
+                                    instance.getCore().debug("KeepAlivePackets matched to DebugKeepAlivePacket");
+
                                     for (ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
 
                                         if (!(player).getPendingConnection().getSocketAddress().equals(inetAddress.get())) {
                                             continue;
                                         }
+
+                                        instance.getCore().debug("Player matched to DebugKeepAlivePacket (loading data...)");
 
                                         EpollTcpInfo tcpInfo = ((EpollSocketChannel) channel).tcpInfo();
                                         EpollTcpInfo tcpInfoBackend = ((EpollSocketChannel) ((UserConnection) player).getServer().getCh().getHandle()).tcpInfo();
@@ -130,6 +145,8 @@ public class ProxyProtocol {
 
                                         map.get(player.getName()).add(new DebugPingResponse(ping, neoRTT, backendRTT));
 
+                                        instance.getCore().debug("Loading completed");
+                                        instance.getCore().debug(" ");
                                     }
                                     instance.getCore().getPingMap().remove(keepAliveResponseKey);
                                 }
@@ -138,6 +155,7 @@ public class ProxyProtocol {
                     } catch (Exception ex) {
                         instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
                     }
+                    instance.getCore().debug("Connecting finished");
                 }
             };
 

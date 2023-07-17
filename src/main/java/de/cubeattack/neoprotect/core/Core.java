@@ -17,6 +17,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 public class Core {
@@ -55,7 +57,7 @@ public class Core {
     }
 
     public void debug(String output){
-        LogManager.getLogger().debug(output);
+        if(Config.isDebugMode())((Logger)LogManager.getLogger().logger).log(Level.SEVERE, output);
     }
     public void info(String output){
         LogManager.getLogger().info(output);

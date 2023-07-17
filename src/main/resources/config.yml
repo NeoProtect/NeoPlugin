@@ -6,3 +6,4 @@ gameshield:
   serverId: '' # The serverID is set automatically during setup
   backendId: '' # The backendID is set automatically during setup
   autoUpdateIP: false # This setting automatically sets the IP of the NeoProtect backend every 10 seconds
+DebugMode: false # IMPORTANT Please ensure that you activate this option solely upon receiving a prompt from a NeoProtect maintainer.

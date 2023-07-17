@@ -75,20 +75,26 @@ public class ProxyProtocol {
 				if (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
 						contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
 					channel.close();
+					instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
 					return;
 				}
 
 				if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+					instance.getCore().debug("Plugin is not setup / ProxyProtocol is off (return)");
 					return;
 				}
 
 				try {
+					instance.getCore().debug("Adding Handler...");
 					synchronized (networkManagers) {
 						// Adding the decoder to the pipeline
 						channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
 						// Adding the proxy message handler to the pipeline too
 						channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", HAPROXY_MESSAGE_HANDLER);
 					}
+
+					instance.getCore().debug("Connecting finished");
+
 				} catch (Exception ex) {
 					instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
 				}
@@ -171,7 +177,12 @@ public class ProxyProtocol {
 		public void channelRead(ChannelHandlerContext ctx, Object msg) {
 			Channel channel = (Channel) msg;
 
-			if(channel.localAddress().toString().startsWith("local:"))return;
+			instance.getCore().debug("Open channel");
+
+			if(channel.localAddress().toString().startsWith("local:")){
+				instance.getCore().debug("Detected bedrock player (return)");
+				return;
+			}
 
 			// Prepare to initialize ths channel
 			channel.pipeline().addFirst(beginInitProtocol);

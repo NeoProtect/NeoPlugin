@@ -57,15 +57,20 @@ public class ProxyProtocol {
                         initChannelMethod.getMethod().setAccessible(true);
                         initChannelMethod.invoke(oldInitializer, channel);
 
-                        if(channel.localAddress().toString().startsWith("local:"))return;
+                        if(channel.localAddress().toString().startsWith("local:")){
+                            instance.getCore().debug("Detected bedrock player (return)");
+                            return;
+                        }
 
                         if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+                            instance.getCore().debug("Plugin is not setup / ProxyProtocol is off (return)");
                             return;
                         }
 
                         if (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
                                 contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
                             channel.close();
+                            instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
                             return;
                         }
 
@@ -103,17 +108,23 @@ public class ProxyProtocol {
                                 KeepAlive keepAlive = (KeepAlive) msg;
                                 ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap =  instance.getCore().getPingMap();
 
+                                instance.getCore().debug("Received KeepAlivePackets (" + keepAlive.getRandomId() + ")");
+
                                 for (KeepAliveResponseKey keepAliveResponseKey : pingMap.keySet()) {
 
                                     if (!keepAliveResponseKey.getAddress().equals(inetAddress.get()) || !(keepAliveResponseKey.getId() == keepAlive.getRandomId())) {
                                         continue;
                                     }
 
+                                    instance.getCore().debug("KeepAlivePackets matched to DebugKeepAlivePacket");
+
                                     for (Player player : velocityServer.getAllPlayers()) {
 
                                         if (!(player).getRemoteAddress().equals(inetAddress.get())) {
                                             continue;
                                         }
+
+                                        instance.getCore().debug("Player matched to DebugKeepAlivePacket (loading data...)");
 
                                         EpollTcpInfo tcpInfo = ((EpollSocketChannel) channel).tcpInfo();
                                         EpollTcpInfo tcpInfoBackend = ((EpollSocketChannel) ((ConnectedPlayer)player).getConnection().getChannel()).tcpInfo();
@@ -137,11 +148,17 @@ public class ProxyProtocol {
 
                                         map.get(player.getUsername()).add(new DebugPingResponse(ping, neoRTT, backendRTT));
 
+                                        instance.getCore().debug("Loading completed");
+                                        instance.getCore().debug(" ");
+
                                     }
-                                    instance.getCore().getPingMap().remove(keepAliveResponseKey);
+                                    pingMap.remove(keepAliveResponseKey);
                                 }
                             }
                         });
+
+                        instance.getCore().debug("Connecting finished");
+
                     } catch (Exception ex) {
                         instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
                     }

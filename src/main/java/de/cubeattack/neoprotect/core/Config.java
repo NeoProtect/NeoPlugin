@@ -11,6 +11,7 @@ public class Config {
     private static String GameShieldID;
     private static String BackendID;
     private static boolean updateIP;
+    private static boolean debugMode;
 
     private static FileUtils fileUtils;
 
@@ -24,6 +25,7 @@ public class Config {
         GameShieldID = config.getString("gameshield.serverId", "");
         BackendID = config.getString("gameshield.backendId", "");
         updateIP = config.getBoolean("gameshield.autoUpdateIP", false);
+        debugMode = config.getBoolean("DebugMode", false);
 
         if(APIKey.length() != 64){
             core.severe("Failed to load API-Key. Key is null or not valid");
@@ -67,6 +69,9 @@ public class Config {
         return updateIP;
     }
 
+    public static boolean isDebugMode() {
+        return debugMode;
+    }
 
     public static void setAPIKey(String key) {
         fileUtils.set("APIKey", key);
