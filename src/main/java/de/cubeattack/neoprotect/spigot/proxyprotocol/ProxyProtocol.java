@@ -72,15 +72,15 @@ public class ProxyProtocol {
 			@Override
 			protected void initChannel(Channel channel) {
 
+				if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+					instance.getCore().debug("Plugin is not setup / ProxyProtocol is off (return)");
+					return;
+				}
+
 				if (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
 						contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
 					channel.close();
 					instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
-					return;
-				}
-
-				if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
-					instance.getCore().debug("Plugin is not setup / ProxyProtocol is off (return)");
 					return;
 				}
 
