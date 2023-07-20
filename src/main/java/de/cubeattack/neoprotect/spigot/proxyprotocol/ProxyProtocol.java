@@ -79,8 +79,7 @@ public class ProxyProtocol {
 
 				if (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
 						contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
-					channel.close();
-					instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
+					instance.getCore().debug("Player connected over IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (warning)");
 					return;
 				}
 
@@ -177,7 +176,7 @@ public class ProxyProtocol {
 		public void channelRead(ChannelHandlerContext ctx, Object msg) {
 			Channel channel = (Channel) msg;
 
-			instance.getCore().debug("Open channel");
+			instance.getCore().debug("Open channel (" + channel.remoteAddress().toString() + ")");
 
 			if(channel.localAddress().toString().startsWith("local:")){
 				instance.getCore().debug("Detected bedrock player (return)");
