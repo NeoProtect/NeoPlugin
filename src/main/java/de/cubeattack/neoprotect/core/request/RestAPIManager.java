@@ -42,7 +42,7 @@ public class RestAPIManager {
         try {
             return client.newCall(request).execute();
         }catch (UnknownHostException | SocketTimeoutException | SocketException connectionException){
-            core.severe(connectionException.getMessage());
+            core.severe( request + " failed cause (" + connectionException + ")");
         } catch (Exception exception){
             exception.printStackTrace();
         }
