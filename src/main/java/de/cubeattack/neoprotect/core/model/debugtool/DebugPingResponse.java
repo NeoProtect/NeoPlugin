@@ -1,15 +1,22 @@
 package de.cubeattack.neoprotect.core.model.debugtool;
 
+import java.net.SocketAddress;
+
 @SuppressWarnings("unused")
 public class DebugPingResponse {
+
+    private final long proxyToBackendLatenz;
     private final long playerToProxyLatenz;
     private final long neoToProxyLatenz;
-    private final long proxyToBackendLatenz;
+    private final SocketAddress playerAddress;
+    private final SocketAddress neoAddress;
 
-    public DebugPingResponse(long playerPing, long neoToProxyLatenz, long proxyToBackendLatenz){
-        this.playerToProxyLatenz = playerPing;
-        this.neoToProxyLatenz = neoToProxyLatenz;
+    public DebugPingResponse(long playerToProxyLatenz, long neoToProxyLatenz, long proxyToBackendLatenz, SocketAddress playerAddress, SocketAddress neoAddress){
         this.proxyToBackendLatenz = proxyToBackendLatenz;
+        this.playerToProxyLatenz = playerToProxyLatenz;
+        this.neoToProxyLatenz = neoToProxyLatenz;
+        this.playerAddress = playerAddress;
+        this.neoAddress = neoAddress;
     }
 
     public long getPlayerToProxyLatenz() {
@@ -23,5 +30,13 @@ public class DebugPingResponse {
     }
     public long getPlayerToNeoLatenz() {
         return playerToProxyLatenz - neoToProxyLatenz;
+    }
+
+    public String getPlayerAddress() {
+        return playerAddress.toString();
+    }
+
+    public String getNeoAddress() {
+        return neoAddress.toString();
     }
 }

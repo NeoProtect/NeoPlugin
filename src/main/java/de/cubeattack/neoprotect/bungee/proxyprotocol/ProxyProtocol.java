@@ -46,7 +46,7 @@ public class ProxyProtocol {
                 protected void initChannel(Channel channel) {
                     try {
 
-                        instance.getCore().debug("Open channel");
+                        instance.getCore().debug("Open channel (" + channel.remoteAddress().toString() + ")");
 
                         AtomicReference<InetSocketAddress> inetAddress = new AtomicReference<>();
 
@@ -143,7 +143,7 @@ public class ProxyProtocol {
                                             instance.getCore().getDebugPingResponses().put(player.getName(), new ArrayList<>());
                                         }
 
-                                        map.get(player.getName()).add(new DebugPingResponse(ping, neoRTT, backendRTT));
+                                        map.get(player.getName()).add(new DebugPingResponse(ping, neoRTT, backendRTT, inetAddress.get(), channel.remoteAddress()));
 
                                         instance.getCore().debug("Loading completed");
                                         instance.getCore().debug(" ");

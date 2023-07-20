@@ -14,6 +14,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.protocol.packet.KeepAlive;
 import org.bstats.bungeecord.Metrics;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
@@ -76,6 +77,28 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     @Override
     public String getVersion() {
         return getDescription().getVersion();
+    }
+
+    @Override
+    public String getPluginFile() {
+        return getFile().getAbsolutePath();
+    }
+
+    @Override
+    public String getProxyName() {
+        return getProxy().getName();
+    }
+
+    @Override
+    public String getProxyVersion() {
+        return getProxy().getVersion();
+    }
+
+    @Override
+    public ArrayList<String> getProxyPlugins() {
+        ArrayList<String> plugins = new ArrayList<>();
+        getProxy().getPluginManager().getPlugins().forEach(p -> plugins.add(p.getDescription().getName()));
+        return plugins;
     }
 
     @Override

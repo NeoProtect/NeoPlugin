@@ -1,5 +1,6 @@
 package de.cubeattack.neoprotect.core.executor;
 
+import de.cubeattack.api.API;
 import de.cubeattack.api.language.Localization;
 import de.cubeattack.api.libraries.org.bspfsystems.yamlconfiguration.file.YamlConfiguration;
 import de.cubeattack.api.libraries.org.json.JSONObject;
@@ -240,7 +241,7 @@ public class NeoProtectExecutor {
         debugTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                instance.getCore().getExecutorService().submit(() -> {
+                API.getExecutorService().submit(() -> {
                     try {
                         long startTime = System.currentTimeMillis();
                         File file = new File("plugins/NeoProtect/debug" + "/" + new Timestamp(System.currentTimeMillis()) + ".yml");
@@ -252,6 +253,12 @@ public class NeoProtectExecutor {
                         }
 
                         configuration.load(file);
+
+                        configuration.set("general.osName", System.getProperty("os.name"));
+                        configuration.set("general.javaVersion", System.getProperty("java.version"));
+                        configuration.set("general.bungeecordName", instance.getProxyName());
+                        configuration.set("general.bungeecordVersion", instance.getProxyVersion());
+                        configuration.set("general.bungeecordPlugins", instance.getProxyPlugins());
 
                         instance.getCore().getDebugPingResponses().keySet().forEach((playerName -> {
                             List<DebugPingResponse> list = instance.getCore().getDebugPingResponses().get(playerName);
@@ -270,6 +277,10 @@ public class NeoProtectExecutor {
                             long minNeoToProxyLatenz = Long.MAX_VALUE;
                             long minProxyToBackendLatenz = Long.MAX_VALUE;
                             long minPlayerToNeoLatenz = Long.MAX_VALUE;
+
+
+                            configuration.set("players." + playerName + ".playerAddress", list.get(0).getPlayerAddress());
+                            configuration.set("players." + playerName + ".neoAddress", list.get(0).getNeoAddress());
 
                             for (DebugPingResponse response : list) {
                                 if (maxPlayerToProxyLatenz < response.getPlayerToProxyLatenz())
@@ -296,20 +307,20 @@ public class NeoProtectExecutor {
                                     minPlayerToNeoLatenz = response.getPlayerToNeoLatenz();
                             }
 
-                            configuration.set("players." + playerName + ".max.PlayerToProxyLatenz", maxPlayerToProxyLatenz);
-                            configuration.set("players." + playerName + ".max.NeoToProxyLatenz", maxNeoToProxyLatenz);
-                            configuration.set("players." + playerName + ".max.ProxyToBackendLatenz", maxProxyToBackendLatenz);
-                            configuration.set("players." + playerName + ".max.PlayerToNeoLatenz", maxPlayerToNeoLatenz);
+                            configuration.set("players." + playerName + ".ping.max.PlayerToProxyLatenz", maxPlayerToProxyLatenz);
+                            configuration.set("players." + playerName + ".ping.max.NeoToProxyLatenz", maxNeoToProxyLatenz);
+                            configuration.set("players." + playerName + ".ping.max.ProxyToBackendLatenz", maxProxyToBackendLatenz);
+                            configuration.set("players." + playerName + ".ping.max.PlayerToNeoLatenz", maxPlayerToNeoLatenz);
 
-                            configuration.set("players." + playerName + ".average.PlayerToProxyLatenz", avgPlayerToProxyLatenz / list.size());
-                            configuration.set("players." + playerName + ".average.NeoToProxyLatenz", avgNeoToProxyLatenz / list.size());
-                            configuration.set("players." + playerName + ".average.ProxyToBackendLatenz", avgProxyToBackendLatenz / list.size());
-                            configuration.set("players." + playerName + ".average.PlayerToNeoLatenz", avgPlayerToNeoLatenz / list.size());
+                            configuration.set("players." + playerName + ".ping.average.PlayerToProxyLatenz", avgPlayerToProxyLatenz / list.size());
+                            configuration.set("players." + playerName + ".ping.average.NeoToProxyLatenz", avgNeoToProxyLatenz / list.size());
+                            configuration.set("players." + playerName + ".ping.average.ProxyToBackendLatenz", avgProxyToBackendLatenz / list.size());
+                            configuration.set("players." + playerName + ".ping.average.PlayerToNeoLatenz", avgPlayerToNeoLatenz / list.size());
 
-                            configuration.set("players." + playerName + ".min.PlayerToProxyLatenz", minPlayerToProxyLatenz);
-                            configuration.set("players." + playerName + ".min.NeoToProxyLatenz", minNeoToProxyLatenz);
-                            configuration.set("players." + playerName + ".min.ProxyToBackendLatenz", minProxyToBackendLatenz);
-                            configuration.set("players." + playerName + ".min.PlayerToNeoLatenz", minPlayerToNeoLatenz);
+                            configuration.set("players." + playerName + ".ping.min.PlayerToProxyLatenz", minPlayerToProxyLatenz);
+                            configuration.set("players." + playerName + ".ping.min.NeoToProxyLatenz", minNeoToProxyLatenz);
+                            configuration.set("players." + playerName + ".ping.min.ProxyToBackendLatenz", minProxyToBackendLatenz);
+                            configuration.set("players." + playerName + ".ping.min.PlayerToNeoLatenz", minPlayerToNeoLatenz);
 
                         }));
 
@@ -419,11 +430,11 @@ public class NeoProtectExecutor {
         }
 
         public void executeChatEvent() {
-            instance.getCore().getExecutorService().submit(() -> new NeoProtectExecutor().chatEvent(this));
+            API.getExecutorService().submit(() -> new NeoProtectExecutor().chatEvent(this));
         }
 
         public void executeCommand() {
-            instance.getCore().getExecutorService().submit(() -> new NeoProtectExecutor().command(this));
+            API.getExecutorService().submit(() -> new NeoProtectExecutor().command(this));
         }
 
         public NeoProtectPlugin getInstance() {

@@ -1,5 +1,6 @@
 package de.cubeattack.neoprotect.core;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public interface NeoProtectPlugin {
@@ -14,6 +15,10 @@ public interface NeoProtectPlugin {
     Core getCore();
     Logger getLogger();
     String getVersion();
+    String getPluginFile();
+    String getProxyName();
+    String getProxyVersion();
+    ArrayList<String> getProxyPlugins();
     PluginType getPluginType();
 
     enum PluginType {

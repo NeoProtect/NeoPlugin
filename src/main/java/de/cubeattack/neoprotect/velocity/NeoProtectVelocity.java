@@ -18,6 +18,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bstats.velocity.Metrics;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -101,6 +102,28 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     @Override
     public String getVersion() {
         return proxy.getPluginManager().ensurePluginContainer(this).getDescription().getVersion().orElse("");
+    }
+
+    @Override
+    public String getPluginFile() {
+        return proxy.getPluginManager().ensurePluginContainer(this).getDescription().getSource().orElseThrow(null).toFile().getAbsolutePath();
+    }
+
+    @Override
+    public String getProxyName() {
+        return proxy.getVersion().getName();
+    }
+
+    @Override
+    public String getProxyVersion() {
+        return proxy.getVersion().getVersion();
+    }
+
+    @Override
+    public ArrayList<String> getProxyPlugins() {
+        ArrayList<String> plugins = new ArrayList<>();
+        getProxy().getPluginManager().getPlugins().forEach(p -> plugins.add(p.getDescription().getName().orElseThrow(null)));
+        return plugins;
     }
 
     @Override

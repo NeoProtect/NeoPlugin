@@ -12,6 +12,8 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+
 public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
 
     private static Core core;
@@ -69,5 +71,25 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     @Override
     public PluginType getPluginType() {
         return PluginType.SPIGOT;
+    }
+
+    @Override
+    public String getPluginFile() {
+        return getFile().getAbsolutePath();
+    }
+
+    @Override
+    public String getProxyName() {
+        return null;
+    }
+
+    @Override
+    public String getProxyVersion() {
+        return null;
+    }
+
+    @Override
+    public ArrayList<String> getProxyPlugins() {
+        return null;
     }
 }

@@ -33,9 +33,6 @@ public class ProxyProtocol {
 
     private final Reflection.MethodInvoker initChannelMethod = Reflection.getMethod(ChannelInitializer.class, "initChannel", Channel.class);
 
-    private final Reflection.FieldAccessor<ConnectionManager> connectionManagerFieldAccessor = Reflection.getField(VelocityServer.class, ConnectionManager.class, 0);
-    private final Reflection.FieldAccessor<ServerChannelInitializerHolder> serverChannelInitializerHolderFieldAccessor = Reflection.getField(ConnectionManager.class, ServerChannelInitializerHolder.class, 0);
-
     public ProxyProtocol(NeoProtectVelocity instance) {
 
         instance.getLogger().info("Proceeding with the server channel injection...");
@@ -43,6 +40,7 @@ public class ProxyProtocol {
         try {
 
             VelocityServer velocityServer = (VelocityServer)instance.getProxy();
+            Reflection.FieldAccessor<ConnectionManager> connectionManagerFieldAccessor = Reflection.getField(VelocityServer.class, ConnectionManager.class, 0);
             ConnectionManager connectionManager = connectionManagerFieldAccessor.get(velocityServer);
             ChannelInitializer<?> oldInitializer = connectionManager.getServerChannelInitializer().get();
 
@@ -51,6 +49,8 @@ public class ProxyProtocol {
                 protected void initChannel(Channel channel)  {
 
                     try {
+
+                        instance.getCore().debug("Open channel (" + channel.remoteAddress().toString() + ")");
 
                         AtomicReference<InetSocketAddress> inetAddress = new AtomicReference<>();
 
@@ -146,7 +146,7 @@ public class ProxyProtocol {
                                             instance.getCore().getDebugPingResponses().put(player.getUsername(), new ArrayList<>());
                                         }
 
-                                        map.get(player.getUsername()).add(new DebugPingResponse(ping, neoRTT, backendRTT));
+                                        map.get(player.getUsername()).add(new DebugPingResponse(ping, neoRTT, backendRTT, inetAddress.get(), channel.remoteAddress()));
 
                                         instance.getCore().debug("Loading completed");
                                         instance.getCore().debug(" ");
@@ -166,6 +166,7 @@ public class ProxyProtocol {
             };
 
             ServerChannelInitializerHolder newChannelHolder = (ServerChannelInitializerHolder) Reflection.getConstructor(ServerChannelInitializerHolder.class, ChannelInitializer.class).invoke(channelInitializer);
+            Reflection.FieldAccessor<ServerChannelInitializerHolder> serverChannelInitializerHolderFieldAccessor = Reflection.getField(ConnectionManager.class, ServerChannelInitializerHolder.class, 0);
             Field channelInitializerHolderField = serverChannelInitializerHolderFieldAccessor.getField();
 
             channelInitializerHolderField.setAccessible(true);
