@@ -12,11 +12,14 @@ public class Config {
     private static String BackendID;
     private static boolean updateIP;
     private static boolean debugMode;
+    private static boolean autoUpdater = true;
 
+    private static Core core;
     private static FileUtils fileUtils;
 
     public static void loadConfig(Core core, FileUtils config) {
 
+        Config.core = core;
         fileUtils = config;
 
         APIKey = config.getString("APIKey", "");
@@ -73,6 +76,10 @@ public class Config {
         return debugMode;
     }
 
+    public static boolean isAutoUpdater() {
+        return autoUpdater;
+    }
+
     public static void setAPIKey(String key) {
         fileUtils.set("APIKey", key);
         fileUtils.save();
@@ -89,6 +96,18 @@ public class Config {
         fileUtils.set("gameshield.backendId", id);
         fileUtils.save();
         BackendID = id;
+    }
+
+    public static void addAutoUpdater(boolean activate) {
+
+        if(!activate){
+            fileUtils.remove("AutoUpdater");
+        }else if (!fileUtils.getConfig().isSet("AutoUpdater")) {
+            fileUtils.getConfig().set("AutoUpdater", true);
+        }
+
+        fileUtils.save();
+        autoUpdater = fileUtils.getBoolean("AutoUpdater", true);
     }
 }
 

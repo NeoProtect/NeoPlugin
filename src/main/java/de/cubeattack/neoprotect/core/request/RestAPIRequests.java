@@ -65,6 +65,10 @@ public class RestAPIRequests {
         return rest.request(RequestType.GET_GAMESHIELD_ISUNDERATTACK, null, Config.getGameShieldID()).getResponseBody().equals("true");
     }
 
+    public String getPlan(){
+        return rest.request(RequestType.GET_GAMESHIELD_PLAN, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldPlan").getJSONObject("options").getString("name");
+    }
+
     private boolean updateBackend(RequestBody formBody){
         return rest.request(RequestType.POST_GAMESHIELD_BACKEND_UPDATE, formBody, Config.getGameShieldID(), Config.getBackendID()).checkCode(200);
     }
@@ -99,6 +103,8 @@ public class RestAPIRequests {
 
         this.setup = true;
         setProxyProtocol(Config.isProxyProtocol());
+
+        Config.addAutoUpdater(!getPlan().equalsIgnoreCase("Basic"));
     }
 
     public boolean togglePanicMode(){
@@ -181,9 +187,9 @@ public class RestAPIRequests {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getVersion()));
+                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getVersion(), Config.isAutoUpdater(), core.getPlugin().getPluginFile()));
             }
-        }, 1000 * 60 * 3, 1000 * 60 * 3);
+        }, 1000 * 15, 1000 * 60 * 3);
     }
 
     private void attackCheckSchedule(){

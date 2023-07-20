@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,7 +31,6 @@ public class Core {
     private final ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, Timestamp> timestampsMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, ArrayList<DebugPingResponse>> debugPingResponses = new ConcurrentHashMap<>();
-    private final ExecutorService executorService;
 
     private VersionUtils.Result versionResult;
     private boolean isDebugRunning = false;
@@ -42,8 +39,7 @@ public class Core {
         LogManager.getLogger().setLogger(plugin.getLogger());
 
         this.plugin = plugin;
-        this.executorService = Executors.newSingleThreadExecutor();
-        this.versionResult = VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + plugin.getVersion()).message();
+        this.versionResult = VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + plugin.getVersion(), false, null).message();
 
         FileUtils config = new FileUtils(Core.class.getResourceAsStream("/config.yml"), "plugins/NeoProtect", "config.yml", false);
         FileUtils languageEN = new FileUtils(Core.class.getResourceAsStream("/language_en.properties"), "plugins/NeoProtect/languages", "language_en.properties", true);
@@ -83,10 +79,6 @@ public class Core {
 
     public NeoProtectPlugin getPlugin() {
         return plugin;
-    }
-
-    public ExecutorService getExecutorService() {
-        return executorService;
     }
 
     public UUID[] getMaintainerUUID() {
