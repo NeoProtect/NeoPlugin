@@ -36,44 +36,44 @@ public class RestAPIRequests {
         versionCheckSchedule();
         neoServerIPsUpdateSchedule();
 
-        if(Config.isUpdateIP()){
+        if (Config.isUpdateIP()) {
             backendServerIPUpdater();
         }
     }
 
-    private String getIpv4(){
+    private String getIpv4() {
         return new ResponseManager(rest.callRequest(new Request.Builder().url(ipGetter).build())).getResponseBodyObject().getString("ip");
     }
 
-    private JSONArray getNeoIPs(){
+    private JSONArray getNeoIPs() {
         return new ResponseManager(rest.callRequest(rest.defaultBuilder().url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_NEO_SERVER_IPS)).build())).getResponseBodyArray();
     }
 
-    public boolean isAPIInvalid(String apiKey){
+    public boolean isAPIInvalid(String apiKey) {
         return !new ResponseManager(rest.callRequest(rest.defaultBuilder(apiKey).url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_ATTACKS)).build())).checkCode(200);
     }
 
-    public boolean isGameshieldInvalid(String gameshieldID){
+    public boolean isGameshieldInvalid(String gameshieldID) {
         return !new ResponseManager(rest.callRequest(rest.defaultBuilder().url(rest.getBaseURL() + rest.getSubDirectory(RequestType.GET_GAMESHIELD_INFO, gameshieldID)).build())).checkCode(200);
     }
 
-    public boolean isBackendInvalid(String backendID){
+    public boolean isBackendInvalid(String backendID) {
         return getBackends().stream().noneMatch(e -> e.compareById(backendID));
     }
 
-    private boolean isAttack(){
+    private boolean isAttack() {
         return rest.request(RequestType.GET_GAMESHIELD_ISUNDERATTACK, null, Config.getGameShieldID()).getResponseBody().equals("true");
     }
 
-    public String getPlan(){
+    public String getPlan() {
         return rest.request(RequestType.GET_GAMESHIELD_PLAN, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldPlan").getJSONObject("options").getString("name");
     }
 
-    private boolean updateBackend(RequestBody formBody){
+    private boolean updateBackend(RequestBody formBody) {
         return rest.request(RequestType.POST_GAMESHIELD_BACKEND_UPDATE, formBody, Config.getGameShieldID(), Config.getBackendID()).checkCode(200);
     }
 
-    public void setProxyProtocol(boolean setting){
+    public void setProxyProtocol(boolean setting) {
         rest.request(RequestType.POST_GAMESHIELD_UPDATE, RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("proxyProtocol", String.valueOf(setting)).build().toString()), Config.getGameShieldID());
     }
 
@@ -85,17 +85,17 @@ public class RestAPIRequests {
         return rest.request(RequestType.GET_GAMESHIELD_BANDWIDTH, null, Config.getGameShieldID()).getResponseBodyObject();
     }
 
-    public void testCredentials(){
+    public void testCredentials() {
 
-        if(isAPIInvalid(Config.getAPIKey())){
+        if (isAPIInvalid(Config.getAPIKey())) {
             core.severe("API is not valid! Please run /neoprotect setup to set the API Key");
             setup = false;
             return;
-        }else if(isGameshieldInvalid(Config.getGameShieldID())){
+        } else if (isGameshieldInvalid(Config.getGameShieldID())) {
             core.severe("Gameshield is not valid! Please run /neoprotect setgameshield to set the gameshield");
             setup = false;
             return;
-        }else if(isBackendInvalid(Config.getBackendID())) {
+        } else if (isBackendInvalid(Config.getBackendID())) {
             core.severe("Backend is not valid! Please run /neoprotect setbackend to set the backend");
             setup = false;
             return;
@@ -107,16 +107,16 @@ public class RestAPIRequests {
         Config.addAutoUpdater(!getPlan().equalsIgnoreCase("Basic"));
     }
 
-    public boolean togglePanicMode(){
+    public boolean togglePanicMode() {
         JSONObject settings = rest.request(RequestType.GET_GAMESHIELD_INFO, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldSettings");
         String mitigationSensitivity = settings.getString("mitigationSensitivity");
 
-        if(mitigationSensitivity.equals("UNDER_ATTACK")){
+        if (mitigationSensitivity.equals("UNDER_ATTACK")) {
             rest.request(RequestType.POST_GAMESHIELD_UPDATE,
                     RequestBody.create(MediaType.parse("application/json"), settings.put("mitigationSensitivity", "MEDIUM").toString()),
                     Config.getGameShieldID());
             return false;
-        }else {
+        } else {
             rest.request(RequestType.POST_GAMESHIELD_UPDATE,
                     RequestBody.create(MediaType.parse("application/json"), settings.put("mitigationSensitivity", "UNDER_ATTACK").toString()),
                     Config.getGameShieldID());
@@ -124,17 +124,17 @@ public class RestAPIRequests {
         }
     }
 
-    public int toggle(String mode){
+    public int toggle(String mode) {
         JSONObject settings = rest.request(RequestType.GET_GAMESHIELD_INFO, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldSettings");
         boolean mitigationSensitivity = settings.getBoolean(mode);
 
-        if(mitigationSensitivity){
+        if (mitigationSensitivity) {
             int code = rest.request(RequestType.POST_GAMESHIELD_UPDATE,
                     RequestBody.create(MediaType.parse("application/json"), settings.put(mode, false).toString()),
                     Config.getGameShieldID()).getCode();
 
             return code == 200 ? 0 : code;
-        }else {
+        } else {
             int code = rest.request(RequestType.POST_GAMESHIELD_UPDATE,
                     RequestBody.create(MediaType.parse("application/json"), settings.put(mode, true).toString()),
                     Config.getGameShieldID()).getCode();
@@ -143,7 +143,7 @@ public class RestAPIRequests {
         }
     }
 
-    public List<Gameshield> getGameshields(){
+    public List<Gameshield> getGameshields() {
         List<Gameshield> list = new ArrayList<>();
 
         JSONArray gameshields = rest.request(RequestType.GET_GAMESHIELDS, null).getResponseBodyArray();
@@ -156,7 +156,7 @@ public class RestAPIRequests {
         return list;
     }
 
-    public List<Backend> getBackends(){
+    public List<Backend> getBackends() {
         List<Backend> list = new ArrayList<>();
         JSONArray backends = rest.request(RequestType.GET_GAMESHIELD_BACKENDS, null, Config.getGameShieldID()).getResponseBodyArray();
 
@@ -168,7 +168,7 @@ public class RestAPIRequests {
         return list;
     }
 
-    private void neoServerIPsUpdateSchedule(){
+    private void neoServerIPsUpdateSchedule() {
 
         core.info("NeoServerIPsUpdate scheduler started");
 
@@ -180,7 +180,7 @@ public class RestAPIRequests {
         }, 0, 1000 * 10);
     }
 
-    private void versionCheckSchedule(){
+    private void versionCheckSchedule() {
 
         core.info("VersionCheck scheduler started");
 
@@ -192,7 +192,7 @@ public class RestAPIRequests {
         }, 1000 * 15, 1000 * 60 * 3);
     }
 
-    private void attackCheckSchedule(){
+    private void attackCheckSchedule() {
 
         core.info("AttackCheck scheduler started");
 
@@ -202,23 +202,23 @@ public class RestAPIRequests {
             @Override
             public void run() {
 
-                if(!setup)return;
+                if (!setup) return;
 
-                if(!isAttack()) {
+                if (!isAttack()) {
                     attackRunning[0] = false;
                     return;
                 }
 
-                if(!attackRunning[0]) {
+                if (!attackRunning[0]) {
                     core.warn("Gameshield ID '" + Config.getGameShieldID() + "' is under attack");
-                    core.getPlugin().sendAdminMessage(Permission.NOTIFY,"Gameshield ID '" + Config.getGameShieldID() + "' is under attack" , null, null, null, null);
+                    core.getPlugin().sendAdminMessage(Permission.NOTIFY, "Gameshield ID '" + Config.getGameShieldID() + "' is under attack", null, null, null, null);
                     attackRunning[0] = true;
                 }
             }
         }, 1000 * 3, 1000 * 3);
     }
 
-    private void backendServerIPUpdater(){
+    private void backendServerIPUpdater() {
 
         core.info("BackendServerIPUpdate scheduler started");
 
@@ -229,18 +229,18 @@ public class RestAPIRequests {
 
                 Backend backend = getBackends().stream().filter(unFilteredBackend -> unFilteredBackend.compareById(Config.getBackendID())).findAny().orElse(null);
 
-                if(!setup | backend == null) return;
+                if (!setup | backend == null) return;
 
                 String ip = getIpv4();
 
-                if(ip == null) return;
-                if(ip.equals(backend.getIp())) return;
+                if (ip == null) return;
+                if (ip.equals(backend.getIp())) return;
 
                 RequestBody formBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("ipv4", ip).build().toString());
 
-                if(!updateBackend(formBody)){
+                if (!updateBackend(formBody)) {
                     core.warn("Update backendserver ID '" + Config.getBackendID() + "' to IP '" + ip + "' failed");
-                }else {
+                } else {
                     core.info("Update backendserver ID '" + Config.getBackendID() + "' to IP '" + ip + "' success");
                     backend.setIp(ip);
                 }

@@ -13,7 +13,7 @@ public class DisconnectListener {
     }
 
     @Subscribe
-    public void onDisconnect(DisconnectEvent event){
+    public void onDisconnect(DisconnectEvent event) {
         instance.getCore().getPlayerInSetup().remove(event.getPlayer());
     }
 }

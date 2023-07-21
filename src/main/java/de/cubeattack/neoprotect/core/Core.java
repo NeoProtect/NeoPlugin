@@ -52,16 +52,19 @@ public class Core {
         restAPIRequests = new RestAPIRequests(this);
     }
 
-    public void debug(String output){
-        if(Config.isDebugMode())((Logger)LogManager.getLogger().logger).log(Level.SEVERE, output);
+    public void debug(String output) {
+        if (Config.isDebugMode()) ((Logger) LogManager.getLogger().logger).log(Level.SEVERE, output);
     }
-    public void info(String output){
+
+    public void info(String output) {
         LogManager.getLogger().info(output);
     }
-    public void warn(String output){
+
+    public void warn(String output) {
         LogManager.getLogger().warn(output);
     }
-    public void severe(String output){
+
+    public void severe(String output) {
         LogManager.getLogger().error(output);
     }
 

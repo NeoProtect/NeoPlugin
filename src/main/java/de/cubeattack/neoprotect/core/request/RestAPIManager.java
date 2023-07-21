@@ -27,126 +27,126 @@ public class RestAPIManager {
         client.setConnectTimeout(5, TimeUnit.SECONDS);
     }
 
-    protected ResponseManager request(RequestType type, RequestBody requestBody, Object... value){
-        if(type.toString().startsWith("GET")){
+    protected ResponseManager request(RequestType type, RequestBody requestBody, Object... value) {
+        if (type.toString().startsWith("GET")) {
             return new ResponseManager(callRequest(defaultBuilder().url(baseURL + getSubDirectory(type, value)).build()));
-        }else if(type.toString().startsWith("POST")) {
+        } else if (type.toString().startsWith("POST")) {
             return new ResponseManager(callRequest(defaultBuilder().url(baseURL + getSubDirectory(type, value)).post(requestBody).build()));
-        }else {
+        } else {
             return new ResponseManager(callRequest(defaultBuilder().url(baseURL + getSubDirectory(type, value)).delete().build()));
         }
     }
 
 
-    protected Response callRequest(Request request){
+    protected Response callRequest(Request request) {
         try {
             return client.newCall(request).execute();
-        }catch (UnknownHostException | SocketTimeoutException | SocketException connectionException){
-            core.severe( request + " failed cause (" + connectionException + ")");
-        } catch (Exception exception){
+        } catch (UnknownHostException | SocketTimeoutException | SocketException connectionException) {
+            core.severe(request + " failed cause (" + connectionException + ")");
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
         return null;
     }
 
-    protected Request.Builder defaultBuilder(){
+    protected Request.Builder defaultBuilder() {
         return defaultBuilder(Config.getAPIKey());
     }
 
-    protected Request.Builder defaultBuilder(String apiKey){
-       return new Request.Builder()
-               .addHeader("accept", "*/*")
-               .addHeader("Authorization", "Bearer " + apiKey)
-               .addHeader("Content-Type", "application/json");
+    protected Request.Builder defaultBuilder(String apiKey) {
+        return new Request.Builder()
+                .addHeader("accept", "*/*")
+                .addHeader("Authorization", "Bearer " + apiKey)
+                .addHeader("Content-Type", "application/json");
     }
 
-    protected String getSubDirectory(RequestType type, Object... values){
+    protected String getSubDirectory(RequestType type, Object... values) {
 
-        switch (type){
+        switch (type) {
 
-            case GET_ATTACKS : {
+            case GET_ATTACKS: {
                 return new Formatter().format("/attacks", values).toString();
             }
-            case GET_ATTACKS_GAMESHIELD : {
+            case GET_ATTACKS_GAMESHIELD: {
                 return new Formatter().format("/attacks/gameshield/%s", values).toString();
             }
 
-            case GET_GAMESHIELD_BACKENDS : {
+            case GET_GAMESHIELD_BACKENDS: {
                 return new Formatter().format("/gameshields/%s/backends", values).toString();
             }
-            case POST_GAMESHIELD_BACKEND_CREATE : {
+            case POST_GAMESHIELD_BACKEND_CREATE: {
                 return new Formatter().format("/gameshields/%s/backends", values).toString();
             }
-            case POST_GAMESHIELD_BACKEND_UPDATE : {
+            case POST_GAMESHIELD_BACKEND_UPDATE: {
                 return new Formatter().format("/gameshields/%s/backends/%s", values).toString();
             }
-            case DELETE_GAMESHIELD_BACKEND_UPDATE : {
+            case DELETE_GAMESHIELD_BACKEND_UPDATE: {
                 return new Formatter().format("/gameshields/%s/backends/%s", values).toString();
             }
-            case POST_GAMESHIELD_BACKEND_AVAILABLE : {
+            case POST_GAMESHIELD_BACKEND_AVAILABLE: {
                 return new Formatter().format("/gameshield/backends/available", values).toString();
             }
 
-            case GET_GAMESHIELD_DOMAINS : {
+            case GET_GAMESHIELD_DOMAINS: {
                 return new Formatter().format("/gameshields/domains/%s", values).toString();
             }
-            case POST_GAMESHIELD_DOMAIN_CREATE : {
+            case POST_GAMESHIELD_DOMAIN_CREATE: {
                 return new Formatter().format("/gameshields/domains/%s", values).toString();
             }
-            case POST_GAMESHIELD_DOMAIN_AVAILABLE : {
+            case POST_GAMESHIELD_DOMAIN_AVAILABLE: {
                 return new Formatter().format("/gameshields/domains/available", values).toString();
             }
-            case DELETE_GAMESHIELD_DOMAIN : {
+            case DELETE_GAMESHIELD_DOMAIN: {
                 return new Formatter().format("/gameshields/domains/%s", values).toString();
             }
 
-            case GET_GAMESHIELD_FRONTENDS : {
+            case GET_GAMESHIELD_FRONTENDS: {
                 return new Formatter().format("/gameshields/%s/frontends", values).toString();
             }
-            case POST_GAMESHIELD_FRONTEND_CREATE : {
+            case POST_GAMESHIELD_FRONTEND_CREATE: {
                 return new Formatter().format("/gameshields/%s/frontends", values).toString();
             }
 
-            case GET_GAMESHIELDS : {
+            case GET_GAMESHIELDS: {
                 return new Formatter().format("/gameshields", values).toString();
             }
-            case POST_GAMESHIELD_CREATE : {
+            case POST_GAMESHIELD_CREATE: {
                 return new Formatter().format("/gameshields", values).toString();
             }
-            case POST_GAMESHIELD_UPDATE : {
+            case POST_GAMESHIELD_UPDATE: {
                 return new Formatter().format("/gameshields/%s/settings", values).toString();
             }
-            case POST_GAMESHIELD_UPDATE_REGION : {
+            case POST_GAMESHIELD_UPDATE_REGION: {
                 return new Formatter().format("/gameshields/%s/region/%s", values).toString();
             }
-            case GET_GAMESHIELD_PLAN : {
+            case GET_GAMESHIELD_PLAN: {
                 return new Formatter().format("/gameshields/%s/plan", values).toString();
             }
-            case POST_GAMESHIELD_PLAN_UPGRADE : {
+            case POST_GAMESHIELD_PLAN_UPGRADE: {
                 return new Formatter().format("/gameshields/%s/plan", values).toString();
             }
-            case POST_GAMESHIELD_UPDATE_NAME : {
+            case POST_GAMESHIELD_UPDATE_NAME: {
                 return new Formatter().format("/gameshields/%s/name", values).toString();
             }
-            case POST_GAMESHIELD_UPDATE_ICON : {
+            case POST_GAMESHIELD_UPDATE_ICON: {
                 return new Formatter().format("/gameshields/%s/icon", values).toString();
             }
-            case DELETE_GAMESHIELD_UPDATE_ICON : {
+            case DELETE_GAMESHIELD_UPDATE_ICON: {
                 return new Formatter().format("/gameshields/%s/icon", values).toString();
             }
-            case POST_GAMESHIELD_UPDATE_BANNER : {
+            case POST_GAMESHIELD_UPDATE_BANNER: {
                 return new Formatter().format("/gameshields/%s/banner", values).toString();
             }
-            case DELETE_GAMESHIELD_BANNER : {
+            case DELETE_GAMESHIELD_BANNER: {
                 return new Formatter().format("/gameshields/%s/banner", values).toString();
             }
-            case POST_GAMESHIELD_AVAILABLE : {
+            case POST_GAMESHIELD_AVAILABLE: {
                 return new Formatter().format("/gameshields/available", values).toString();
             }
-            case GET_GAMESHIELD_INFO : {
+            case GET_GAMESHIELD_INFO: {
                 return new Formatter().format("/gameshields/%s", values).toString();
             }
-            case DELETE_GAMESHIELD : {
+            case DELETE_GAMESHIELD: {
                 return new Formatter().format("/gameshields/%s", values).toString();
             }
             case GET_GAMESHIELD_LASTSTATS: {
@@ -162,63 +162,63 @@ public class RestAPIManager {
                 return new Formatter().format("/gameshields/%s/analytics/%s", values).toString();
             }
 
-            case GET_FIREWALLS : {
+            case GET_FIREWALLS: {
                 return new Formatter().format("/firewall/gameshield/%s/%s", values).toString();
             }
-            case POST_FIREWALL_CREATE : {
+            case POST_FIREWALL_CREATE: {
                 return new Formatter().format("/firewall/gameshield/%s/%s", values).toString();
             }
-            case DELETE_FIREWALL : {
+            case DELETE_FIREWALL: {
                 return new Formatter().format("/firewall/gameshield/%s/%s", values).toString();
             }
 
-            case GET_PLANS_AVAILABLE : {
+            case GET_PLANS_AVAILABLE: {
                 return new Formatter().format("/plans/gameshield", values).toString();
             }
 
-            case GET_PROFILE_TRANSACTIONS : {
+            case GET_PROFILE_TRANSACTIONS: {
                 return new Formatter().format("/profile/transactions", values).toString();
             }
-            case GET_PROFILE_INFOS : {
+            case GET_PROFILE_INFOS: {
                 return new Formatter().format("/profile/infos", values).toString();
             }
-            case GET_PROFILE_GENERALINFORMATION : {
+            case GET_PROFILE_GENERALINFORMATION: {
                 return new Formatter().format("/profile/generalInformation", values).toString();
             }
 
-            case GET_NEO_SERVER_IPS : {
+            case GET_NEO_SERVER_IPS: {
                 return new Formatter().format("/public/servers", values).toString();
             }
-            case GET_NEO_SERVER_REGIONS : {
+            case GET_NEO_SERVER_REGIONS: {
                 return new Formatter().format("/public/regions", values).toString();
             }
 
-            case GET_VULNERABILITIES_GAMESHIELD : {
+            case GET_VULNERABILITIES_GAMESHIELD: {
                 return new Formatter().format("/vulnerabilities/%s", values).toString();
             }
-            case POST_VULNERABILITIES : {
+            case POST_VULNERABILITIES: {
                 return new Formatter().format("/vulnerabilities/%s", values).toString();
             }
-            case GET_VULNERABILITIES_ALL : {
+            case GET_VULNERABILITIES_ALL: {
                 return new Formatter().format("/vulnerabilities", values).toString();
             }
-            case DELETE_VULNERABILITIES : {
+            case DELETE_VULNERABILITIES: {
                 return new Formatter().format("/vulnerabilities/%s", values).toString();
             }
 
-            case GET_WEBHOOKS : {
+            case GET_WEBHOOKS: {
                 return new Formatter().format("/webhooks/%s", values).toString();
             }
-            case POST_WEBHOOK_CREATE : {
+            case POST_WEBHOOK_CREATE: {
                 return new Formatter().format("/webhooks/%s", values).toString();
             }
-            case POST_WEBHOOK_TEST : {
+            case POST_WEBHOOK_TEST: {
                 return new Formatter().format("/webhooks/%s/%s/test", values).toString();
             }
-            case DELETE_WEBHOOK : {
+            case DELETE_WEBHOOK: {
                 return new Formatter().format("/webhooks/%s/%s", values).toString();
             }
-            default : {
+            default: {
                 return null;
             }
         }

@@ -45,24 +45,25 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     public void sendMessage(Object receiver, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         TextComponent msg = new TextComponent(core.getPrefix() + text);
 
-        if(clickAction != null) msg.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
-        if(hoverAction != null) msg.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverAction), Collections.singletonList(new Text(hoverMsg))));
-        if(receiver instanceof CommandSender) ((CommandSender) receiver).sendMessage(msg);
+        if (clickAction != null) msg.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
+        if (hoverAction != null)
+            msg.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverAction), Collections.singletonList(new Text(hoverMsg))));
+        if (receiver instanceof CommandSender) ((CommandSender) receiver).sendMessage(msg);
     }
 
     @Override
     public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         getProxy().getPlayers().forEach(receiver -> {
-            if(receiver.hasPermission("neoprotect.admin") || receiver.hasPermission(permission.value))
+            if (receiver.hasPermission("neoprotect.admin") || receiver.hasPermission(permission.value))
                 sendMessage(receiver, text, clickAction, clickMsg, hoverAction, hoverMsg);
         });
     }
 
     @Override
     public void sendKeepAliveMessage(Object receiver, long id) {
-        if(receiver instanceof ProxiedPlayer){
-            ((ProxiedPlayer)receiver).unsafe().sendPacket(new KeepAlive(id));
-            getCore().getPingMap().put(new KeepAliveResponseKey(((ProxiedPlayer)receiver).getSocketAddress(), id), System.currentTimeMillis());
+        if (receiver instanceof ProxiedPlayer) {
+            ((ProxiedPlayer) receiver).unsafe().sendPacket(new KeepAlive(id));
+            getCore().getPingMap().put(new KeepAliveResponseKey(((ProxiedPlayer) receiver).getSocketAddress(), id), System.currentTimeMillis());
         }
     }
 

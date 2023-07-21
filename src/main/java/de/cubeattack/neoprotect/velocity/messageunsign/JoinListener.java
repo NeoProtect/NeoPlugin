@@ -33,7 +33,7 @@ public class JoinListener {
     }
 
     private void injectPlayer(Player player) {
-        ConnectedPlayer p = (ConnectedPlayer)player;
+        ConnectedPlayer p = (ConnectedPlayer) player;
         p.getConnection()
                 .getChannel()
                 .pipeline()
@@ -41,7 +41,7 @@ public class JoinListener {
     }
 
     private void removePlayer(Player player) {
-        ConnectedPlayer p = (ConnectedPlayer)player;
+        ConnectedPlayer p = (ConnectedPlayer) player;
         Channel channel = p.getConnection().getChannel();
         channel.eventLoop().submit(() -> channel.pipeline().remove("packetevents"));
     }

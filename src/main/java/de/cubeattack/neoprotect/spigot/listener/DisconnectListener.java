@@ -14,7 +14,7 @@ public class DisconnectListener implements Listener {
     }
 
     @EventHandler
-    public void onDisconnect(PlayerQuitEvent event){
+    public void onDisconnect(PlayerQuitEvent event) {
         instance.getCore().getPlayerInSetup().remove(event.getPlayer());
     }
 }

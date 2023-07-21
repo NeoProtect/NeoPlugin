@@ -49,20 +49,20 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
                 <configuration>
-                <relocations>
-                    <relocation>
-                        <pattern>org.bstats</pattern>
-                        <shadedPattern>de.cubeattack.neoprotect.libraries.org.bstats</shadedPattern>
-                    </relocation>
-                    <relocation>
-                        <pattern>com.squareup</pattern>
-                        <shadedPattern>de.cubeattack.neoprotect.libraries.com.squareup</shadedPattern>
-                    </relocation>
-                    <relocation>
-                        <pattern>okio</pattern>
-                        <shadedPattern>de.cubeattack.neoprotect.libraries.okio</shadedPattern>
-                    </relocation>
-                </relocations>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>de.cubeattack.neoprotect.libraries.org.bstats</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.squareup</pattern>
+                            <shadedPattern>de.cubeattack.neoprotect.libraries.com.squareup</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>okio</pattern>
+                            <shadedPattern>de.cubeattack.neoprotect.libraries.okio</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
                 <executions>
                     <execution>

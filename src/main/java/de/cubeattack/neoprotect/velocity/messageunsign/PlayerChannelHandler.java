@@ -30,11 +30,11 @@ public final class PlayerChannelHandler extends ChannelDuplexHandler {
             return;
         }
 
-        minecraftPacket = (MinecraftPacket)packet;
+        minecraftPacket = (MinecraftPacket) packet;
 
         boolean allowed = this.eventManager.fire(new PacketReceiveEvent(minecraftPacket, this.player)).handle((event, ex) -> {
             if (ex != null) {
-                this.logger.log(Level.SEVERE,"An error has occurred while reading packet " + packet, ex);
+                this.logger.log(Level.SEVERE, "An error has occurred while reading packet " + packet, ex);
                 return Boolean.FALSE;
             }
             return event.getResult().isAllowed();

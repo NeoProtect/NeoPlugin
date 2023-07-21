@@ -23,7 +23,7 @@ public class NeoProtectCommand implements SimpleCommand {
     @Override
     public void execute(Invocation invocation) {
 
-        if(!(invocation.source() instanceof Player)) {
+        if (!(invocation.source() instanceof Player)) {
             instance.sendMessage(invocation.source(), localization.get("console.command"));
             return;
         }
@@ -42,13 +42,13 @@ public class NeoProtectCommand implements SimpleCommand {
 
     @Override
     public CompletableFuture<List<String>> suggestAsync(Invocation invocation) {
-        return CompletableFuture.supplyAsync(() ->{
+        return CompletableFuture.supplyAsync(() -> {
             List<String> list = new ArrayList<>();
             List<String> completorList = new ArrayList<>();
             String[] args = invocation.arguments();
 
             if (args.length == 2) {
-                if(args[0].equalsIgnoreCase("debugtool")){
+                if (args[0].equalsIgnoreCase("debugtool")) {
                     for (int i = 10; i <= 100; i = i + 10) {
                         completorList.add(String.valueOf(i));
                     }
@@ -73,7 +73,7 @@ public class NeoProtectCommand implements SimpleCommand {
 
             list.add("setup");
 
-            if(instance.getCore().isSetup()) {
+            if (instance.getCore().isSetup()) {
                 list.add("setgameshield");
                 list.add("setbackend");
                 list.add("analytics");
@@ -84,12 +84,12 @@ public class NeoProtectCommand implements SimpleCommand {
 
             for (String tab : list) {
 
-                if(args.length == 0){
+                if (args.length == 0) {
                     completorList.add(tab);
                     continue;
                 }
 
-                if(tab.toLowerCase().startsWith(args[args.length-1].toLowerCase())){
+                if (tab.toLowerCase().startsWith(args[args.length - 1].toLowerCase())) {
                     completorList.add(tab);
                 }
             }

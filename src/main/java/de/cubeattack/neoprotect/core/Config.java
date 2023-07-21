@@ -30,15 +30,15 @@ public class Config {
         updateIP = config.getBoolean("gameshield.autoUpdateIP", false);
         debugMode = config.getBoolean("DebugMode", false);
 
-        if(APIKey.length() != 64){
+        if (APIKey.length() != 64) {
             core.severe("Failed to load API-Key. Key is null or not valid");
             return;
         }
-        if(GameShieldID.equals("")){
+        if (GameShieldID.equals("")) {
             core.severe("Failed to load GameshieldID. ID is null");
             return;
         }
-        if(BackendID.equals("")){
+        if (BackendID.equals("")) {
             core.severe("Failed to load BackendID. ID is null");
             return;
         }
@@ -100,9 +100,9 @@ public class Config {
 
     public static void addAutoUpdater(boolean activate) {
 
-        if(!activate){
+        if (!activate) {
             fileUtils.remove("AutoUpdater");
-        }else if (!fileUtils.getConfig().isSet("AutoUpdater")) {
+        } else if (!fileUtils.getConfig().isSet("AutoUpdater")) {
             fileUtils.getConfig().set("AutoUpdater", true);
         }
 

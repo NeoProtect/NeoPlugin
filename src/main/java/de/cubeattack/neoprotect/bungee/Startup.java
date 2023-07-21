@@ -11,14 +11,14 @@ import net.md_5.bungee.api.plugin.PluginManager;
 
 public class Startup {
 
-    public Startup(NeoProtectBungee instance){
+    public Startup(NeoProtectBungee instance) {
         register(instance);
         new ProxyProtocol(instance);
     }
 
-    private void register(NeoProtectBungee instance){
+    private void register(NeoProtectBungee instance) {
         PluginManager pm = ProxyServer.getInstance().getPluginManager();
-        pm.registerCommand(instance, new NeoProtectCommand(instance,"neoprotect", "neoprotect.admin", "np"));
+        pm.registerCommand(instance, new NeoProtectCommand(instance, "neoprotect", "neoprotect.admin", "np"));
 
         pm.registerListener(instance, new ChatListener(instance));
         pm.registerListener(instance, new LoginListener(instance));

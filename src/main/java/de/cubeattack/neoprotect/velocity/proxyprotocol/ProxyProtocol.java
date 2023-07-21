@@ -40,14 +40,14 @@ public class ProxyProtocol {
 
         try {
 
-            VelocityServer velocityServer = (VelocityServer)instance.getProxy();
+            VelocityServer velocityServer = (VelocityServer) instance.getProxy();
             Reflection.FieldAccessor<ConnectionManager> connectionManagerFieldAccessor = Reflection.getField(VelocityServer.class, ConnectionManager.class, 0);
             ConnectionManager connectionManager = connectionManagerFieldAccessor.get(velocityServer);
             ChannelInitializer<?> oldInitializer = connectionManager.getServerChannelInitializer().get();
 
             ChannelInitializer<Channel> channelInitializer = new ChannelInitializer<Channel>() {
                 @Override
-                protected void initChannel(Channel channel)  {
+                protected void initChannel(Channel channel) {
 
                     try {
 
@@ -58,7 +58,7 @@ public class ProxyProtocol {
                         initChannelMethod.getMethod().setAccessible(true);
                         initChannelMethod.invoke(oldInitializer, channel);
 
-                        if(channel.localAddress().toString().startsWith("local:")){
+                        if (channel.localAddress().toString().startsWith("local:")) {
                             instance.getCore().debug("Detected bedrock player (return)");
                             return;
                         }
@@ -125,7 +125,7 @@ public class ProxyProtocol {
         });
     }
 
-    public void addKeepAlivePacketHandler(Channel channel, AtomicReference<InetSocketAddress> inetAddress, VelocityServer velocityServer,  NeoProtectPlugin instance) {
+    public void addKeepAlivePacketHandler(Channel channel, AtomicReference<InetSocketAddress> inetAddress, VelocityServer velocityServer, NeoProtectPlugin instance) {
 
         channel.pipeline().addAfter("minecraft-decoder", "neo-keep-alive-handler", new ChannelInboundHandlerAdapter() {
             @Override

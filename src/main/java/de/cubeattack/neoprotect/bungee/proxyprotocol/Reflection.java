@@ -8,7 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author Kristian
  */
 public final class Reflection {
@@ -32,7 +31,7 @@ public final class Reflection {
         /**
          * Invoke a method on a specific target object.
          *
-         * @param target - the target object, or NULL for a static method.
+         * @param target    - the target object, or NULL for a static method.
          * @param arguments - the arguments to pass to the method.
          * @return The return value, or NULL if is void.
          */
@@ -57,7 +56,7 @@ public final class Reflection {
          * Set the content of a field.
          *
          * @param target - the target object, or NULL for a static field.
-         * @param value - the new value of the field.
+         * @param value  - the new value of the field.
          */
         void set(Object target, Object value);
 
@@ -83,8 +82,8 @@ public final class Reflection {
     /**
      * Retrieve a field accessor for a specific field type and name.
      *
-     * @param target - the target type.
-     * @param name - the name of the field, or NULL to ignore.
+     * @param target    - the target type.
+     * @param name      - the name of the field, or NULL to ignore.
      * @param fieldType - a compatible field type.
      * @return The field accessor.
      */
@@ -96,7 +95,7 @@ public final class Reflection {
      * Retrieve a field accessor for a specific field type and name.
      *
      * @param className - lookup name of the class, see {@link #getClass(String)}.
-     * @param name - the name of the field, or NULL to ignore.
+     * @param name      - the name of the field, or NULL to ignore.
      * @param fieldType - a compatible field type.
      * @return The field accessor.
      */
@@ -107,9 +106,9 @@ public final class Reflection {
     /**
      * Retrieve a field accessor for a specific field type and name.
      *
-     * @param target - the target type.
+     * @param target    - the target type.
      * @param fieldType - a compatible field type.
-     * @param index - the number of compatible fields to skip.
+     * @param index     - the number of compatible fields to skip.
      * @return The field accessor.
      */
     public static <T> Reflection.FieldAccessor<T> getField(Class<?> target, Class<T> fieldType, int index) {
@@ -121,7 +120,7 @@ public final class Reflection {
      *
      * @param className - lookup name of the class, see {@link #getClass(String)}.
      * @param fieldType - a compatible field type.
-     * @param index - the number of compatible fields to skip.
+     * @param index     - the number of compatible fields to skip.
      * @return The field accessor.
      */
     public static <T> Reflection.FieldAccessor<T> getField(String className, Class<T> fieldType, int index) {
@@ -172,7 +171,7 @@ public final class Reflection {
         throw new IllegalArgumentException("Cannot find field with type " + fieldType);
     }
 
-    public static <T> Reflection.FieldAccessor<T> getField(Class<?> target , Class<T> fieldType, String fieldContainedName) {
+    public static <T> Reflection.FieldAccessor<T> getField(Class<?> target, Class<T> fieldType, String fieldContainedName) {
         for (final Field field : target.getDeclaredFields()) {
             if (fieldType.isAssignableFrom(field.getType()) && field.getName().contains(fieldContainedName)) {
                 field.setAccessible(true);
@@ -218,9 +217,9 @@ public final class Reflection {
     /**
      * Search for the first publicly and privately defined method of the given name and parameter count.
      *
-     * @param className - lookup name of the class, see {@link #getClass(String)}.
+     * @param className  - lookup name of the class, see {@link #getClass(String)}.
      * @param methodName - the method name, or NULL to skip.
-     * @param params - the expected parameters.
+     * @param params     - the expected parameters.
      * @return An object that invokes this specific method.
      * @throws IllegalStateException If we cannot find this method.
      */
@@ -231,9 +230,9 @@ public final class Reflection {
     /**
      * Search for the first publicly and privately defined method of the given name and parameter count.
      *
-     * @param clazz - a class to start with.
+     * @param clazz      - a class to start with.
      * @param methodName - the method name, or NULL to skip.
-     * @param params - the expected parameters.
+     * @param params     - the expected parameters.
      * @return An object that invokes this specific method.
      * @throws IllegalStateException If we cannot find this method.
      */
@@ -244,10 +243,10 @@ public final class Reflection {
     /**
      * Search for the first publicly and privately defined method of the given name and parameter count.
      *
-     * @param clazz - a class to start with.
+     * @param clazz      - a class to start with.
      * @param methodName - the method name, or NULL to skip.
      * @param returnType - the expected return type, or NULL to ignore.
-     * @param params - the expected parameters.
+     * @param params     - the expected parameters.
      * @return An object that invokes this specific method.
      * @throws IllegalStateException If we cannot find this method.
      */
@@ -279,7 +278,7 @@ public final class Reflection {
      * Search for the first publically and privately defined constructor of the given name and parameter count.
      *
      * @param className - lookup name of the class, see {@link #getClass(String)}.
-     * @param params - the expected parameters.
+     * @param params    - the expected parameters.
      * @return An object that invokes this constructor.
      * @throws IllegalStateException If we cannot find this method.
      */
@@ -290,7 +289,7 @@ public final class Reflection {
     /**
      * Search for the first publically and privately defined constructor of the given name and parameter count.
      *
-     * @param clazz - a class to start with.
+     * @param clazz  - a class to start with.
      * @param params - the expected parameters.
      * @return An object that invokes this constructor.
      * @throws IllegalStateException If we cannot find this method.
@@ -319,18 +318,18 @@ public final class Reflection {
      * This is useful when looking up fields by a NMS or OBC type.
      * <p>
      *
-     * @see {@link #getClass()} for more information.
      * @param lookupName - the class name with variables.
      * @return The class.
+     * @see {@link #getClass()} for more information.
      */
     public static Class<Object> getUntypedClass(String lookupName) {
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({"rawtypes", "unchecked"})
         Class<Object> clazz = (Class) getClass(lookupName);
         return clazz;
     }
 
-    
-     /**
+
+    /**
      * @param lookupName - the class name with variables.
      * @return The looked up class.
      * @throws IllegalArgumentException If a variable or class could not be found.
@@ -338,7 +337,7 @@ public final class Reflection {
     public static Class<?> getClass(String lookupName) {
         return getCanonicalClass(expandVariables(lookupName));
     }
-    
+
     /**
      * Retrieve a class by its canonical name.
      *

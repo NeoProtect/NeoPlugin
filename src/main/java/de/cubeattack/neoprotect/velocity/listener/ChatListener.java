@@ -15,11 +15,12 @@ public class ChatListener {
     }
 
     @Subscribe
-    public void onChat(PlayerChatEvent event){
+    public void onChat(PlayerChatEvent event) {
 
         Player player = event.getPlayer();
 
-        if (!player.hasPermission("neoprotect.admin") || !instance.getCore().getPlayerInSetup().contains(player)) return;
+        if (!player.hasPermission("neoprotect.admin") || !instance.getCore().getPlayerInSetup().contains(player))
+            return;
 
         event.setResult(PlayerChatEvent.ChatResult.denied());
 

@@ -11,6 +11,7 @@ public class NeoProtectCommand extends Command {
 
     private final NeoProtectPlugin instance;
     private final Localization localization;
+
     public NeoProtectCommand(NeoProtectPlugin instance, String name, String permission, String... aliases) {
         super(name, permission, aliases);
         this.instance = instance;
@@ -20,7 +21,7 @@ public class NeoProtectCommand extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
 
-        if(!(sender instanceof ProxiedPlayer)) {
+        if (!(sender instanceof ProxiedPlayer)) {
             instance.sendMessage(sender, localization.get("console.command"));
             return;
         }

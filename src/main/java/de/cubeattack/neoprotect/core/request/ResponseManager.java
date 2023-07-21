@@ -22,10 +22,10 @@ public class ResponseManager extends JSONObject {
         this.code = getCode();
     }
 
-    private String getBody(Response response){
+    private String getBody(Response response) {
         try (ResponseBody body = response.body()) {
             return body.string();
-        }catch (NullPointerException | SocketTimeoutException | JSONException ignored) {
+        } catch (NullPointerException | SocketTimeoutException | JSONException ignored) {
             return "{}";
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -33,14 +33,14 @@ public class ResponseManager extends JSONObject {
         }
     }
 
-    public boolean checkCode(int code){
+    public boolean checkCode(int code) {
         return Objects.equals(this.code, code);
     }
 
-    public int getCode(){
-        try{
+    public int getCode() {
+        try {
             return response.code();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return -1;
         }
     }
@@ -48,16 +48,18 @@ public class ResponseManager extends JSONObject {
     public String getResponseBody() {
         return responseBody;
     }
+
     public JSONObject getResponseBodyObject() {
         try {
             return new JSONObject(responseBody);
-        }catch (JSONException ignored){}
+        } catch (JSONException ignored) {}
         return new JSONObject();
     }
+
     public JSONArray getResponseBodyArray() {
         try {
             return new JSONArray(responseBody);
-        } catch (JSONException ignored){}
+        } catch (JSONException ignored) {}
         return new JSONArray();
     }
 

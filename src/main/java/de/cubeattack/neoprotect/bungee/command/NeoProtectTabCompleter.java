@@ -25,13 +25,13 @@ public class NeoProtectTabCompleter implements Listener {
         String[] cursorSplit = cursor.split(" ");
         ArrayList<String> commands = new ArrayList<>();
         ArrayList<String> tabListOne = new ArrayList<>();
-        ArrayList<String> tabListTwo= new ArrayList<>();
+        ArrayList<String> tabListTwo = new ArrayList<>();
 
         commands.add("/np");
         commands.add("/neoprotect");
         tabListOne.add("setup");
 
-        if(instance.getCore().isSetup()){
+        if (instance.getCore().isSetup()) {
             tabListOne.add("ipanic");
             tabListOne.add("toggle");
             tabListOne.add("debugtool");
@@ -79,7 +79,7 @@ public class NeoProtectTabCompleter implements Listener {
             }
 
             for (String cmd : cmds) {
-                
+
                 if (!cursor.startsWith(cmd + " ")) {
                     continue;
                 }

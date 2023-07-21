@@ -2,7 +2,7 @@ package de.cubeattack.neoprotect.core;
 
 public enum Permission {
 
-    ADMIN("neoprotect.admin") ,
+    ADMIN("neoprotect.admin"),
     NOTIFY("neoprotect.notify");
 
     public final String value;

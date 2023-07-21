@@ -144,12 +144,12 @@ public class NeoProtectExecutor {
         } else {
             int response = instance.getCore().getRestAPI().toggle(args[1]);
 
-            if(response == 403){
+            if (response == 403) {
                 instance.sendMessage(sender, localization.get("err.upgrade-plan"));
                 return;
             }
 
-            if(response == 429){
+            if (response == 429) {
                 instance.sendMessage(sender, localization.get("err.rate-limit"));
                 return;
             }
@@ -202,7 +202,7 @@ public class NeoProtectExecutor {
         }
 
         if (args.length == 2) {
-            if(args[1].equals("cancel")){
+            if (args[1].equals("cancel")) {
                 debugTimer.cancel();
                 instance.getCore().setDebugRunning(false);
                 instance.sendMessage(sender, localization.get("debug.cancelled"));
@@ -223,20 +223,21 @@ public class NeoProtectExecutor {
         instance.getCore().setDebugRunning(true);
         instance.sendMessage(sender, localization.get("debug.starting"));
 
-        int amount = args.length == 2 ? (Integer.parseInt(args[1]) <= 0 ? 1 : Integer.parseInt(args[1]))  : 5;
+        int amount = args.length == 2 ? (Integer.parseInt(args[1]) <= 0 ? 1 : Integer.parseInt(args[1])) : 5;
 
         debugTimer = new Timer();
 
         debugTimer.schedule(new TimerTask() {
             int counter = 0;
+
             @Override
             public void run() {
                 counter++;
                 instance.getCore().getTimestampsMap().put(instance.sendKeepAliveMessage(new Random().nextInt(90) * 10000 + 1337), new Timestamp(System.currentTimeMillis()));
                 instance.sendMessage(sender, localization.get("debug.sendingPackets") + " (" + counter + "/" + amount + ")");
-                if(counter >= amount) this.cancel();
+                if (counter >= amount) this.cancel();
             }
-        },500, 2000);
+        }, 500, 2000);
 
         debugTimer.schedule(new TimerTask() {
             @Override

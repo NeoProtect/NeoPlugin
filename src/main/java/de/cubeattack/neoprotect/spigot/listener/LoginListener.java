@@ -23,25 +23,26 @@ public class LoginListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onLogin(PlayerJoinEvent event){
+    public void onLogin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if(!player.hasPermission("neoprotect.admin") && Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId()))) return;
+        if (!player.hasPermission("neoprotect.admin") && Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId())))
+            return;
 
         VersionUtils.Result result = instance.getCore().getVersionResult();
-        if(result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)){
+        if (result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)) {
             instance.sendMessage(player, localization.get("plugin.outdated.message", result.getCurrentVersion(), result.getLatestVersion()));
             instance.sendMessage(player, MessageFormat.format("§7-> §b{0}",
                             result.getReleaseUrl().replace("/NeoPlugin", "").replace("/releases/tag", "")),
                     "OPEN_URL", result.getReleaseUrl(), null, null);
         }
 
-        if(!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()){
+        if (!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()) {
             instance.sendMessage(player, localization.get("setup.required.first"));
             instance.sendMessage(player, localization.get("setup.required.second"));
         }
 
-        if(Arrays.stream(instance.getCore().getMaintainerUUID()).anyMatch(uuid -> uuid.equals(player.getUniqueId()))){
+        if (Arrays.stream(instance.getCore().getMaintainerUUID()).anyMatch(uuid -> uuid.equals(player.getUniqueId()))) {
             instance.sendMessage(player, "§bHello " + player.getName() + " ;)");
             instance.sendMessage(player, "§bThis server uses your NeoPlugin");
         }

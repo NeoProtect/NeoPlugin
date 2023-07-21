@@ -13,7 +13,7 @@ public class NeoProtectTabCompleter implements TabCompleter {
 
     private final NeoProtectPlugin instance;
 
-    public NeoProtectTabCompleter(NeoProtectPlugin instance){
+    public NeoProtectTabCompleter(NeoProtectPlugin instance) {
         this.instance = instance;
     }
 
@@ -40,7 +40,7 @@ public class NeoProtectTabCompleter implements TabCompleter {
 
         list.add("setup");
 
-        if(instance.getCore().isSetup()){
+        if (instance.getCore().isSetup()) {
             list.add("ipanic");
             list.add("toggle");
             list.add("analytics");
@@ -49,7 +49,7 @@ public class NeoProtectTabCompleter implements TabCompleter {
         }
 
         for (String tab : list) {
-            if(tab.toLowerCase().startsWith(args[args.length-1].toLowerCase())){
+            if (tab.toLowerCase().startsWith(args[args.length - 1].toLowerCase())) {
                 completorList.add(tab);
             }
         }

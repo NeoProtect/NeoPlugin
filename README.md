@@ -1,36 +1,36 @@
 # NeoProtect plugin
-Official NeoProtect plugin maintained by [EinfacheSache (aka CubeAttack)](https://github.com/EinfacheSache)
 
+Official NeoProtect plugin maintained by [EinfacheSache (aka CubeAttack)](https://github.com/EinfacheSache)
 
 ## Feature
 
-| Feature                                                             |      Available      |
-|:--------------------------------------------------------------------|:-------------------:|
-| Proxy Protocol                                                      | :white_check_mark:  |
-| Debug-tool for high ping problem (BungeeCord, Velocity coming soon) | :white_check_mark:  |
-| Auto update backend IP                                              | :white_check_mark:  |
-| Anti-portscanner (Bungeecord + Velocity)                            | :white_check_mark:  |
-| IPanic mode command (toggle AntiBot level)                          | :white_check_mark:  |
-| Some commands to interact with NeoProtect intern system             | :white_check_mark:  |
-| In-game message if server is under attack                           | :white_check_mark:  |
-| In-game analytics                                                   | :white_check_mark:  |
-
+| Feature                                                             |     Available      |
+|:--------------------------------------------------------------------|:------------------:|
+| Proxy Protocol                                                      | :white_check_mark: |
+| Debug-tool for high ping problem (BungeeCord, Velocity coming soon) | :white_check_mark: |
+| Auto update backend IP                                              | :white_check_mark: |
+| Anti-portscanner (Bungeecord + Velocity)                            | :white_check_mark: |
+| IPanic mode command (toggle AntiBot level)                          | :white_check_mark: |
+| Some commands to interact with NeoProtect intern system             | :white_check_mark: |
+| In-game message if server is under attack                           | :white_check_mark: |
+| In-game analytics                                                   | :white_check_mark: |
 
 Prerequisites:
 =================
-1) You have created an account and posess a GameShield at [NeoProtect](https://neoprotect.net).
+
+1) You have created an account and possess a GameShield at [NeoProtect](https://neoprotect.net).
 2) You have a server/network that you can connect to.
 3) The required software installed [Compatibility version](https://github.com/NeoProtect/NeoPlugin/blob/master/SECURITY.md)
  
-  
 Install Instructions:
 =====================
+
 1) First, stop your server/network and put the plugin jar into the plugins folder.
-   Continue by starting your server and note that if there is a folder in the plugins folder called "NeoProtect", 
+   Continue by starting your server and note that if there is a folder in the plugins folder called "NeoProtect",
    don't change anything there.
 
-2) Now join the server while having the permission "neoprotect.admin" when joining 
-   and you should now see a message in the chat telling you how to proceed. 
+2) Now join the server while having the permission "neoprotect.admin" when joining
+   and you should now see a message in the chat telling you how to proceed.
 
 ## Permissions
 
@@ -44,7 +44,8 @@ Install Instructions:
 | /np setbackend       | set backend for establish the connection to NeoProtect      | neoprotect.admin                       |
 | under attack message | In-game message if server is under attack                   | neoprotect.admin<br/>neoprotect.notify |
 
-## Take a look at the config.yml 
+## Take a look at the config.yml
+
 ```
 # Don't change anything here if you don't know what you're doing
 APIKey: '' # The API-KEY is set automatically during setup

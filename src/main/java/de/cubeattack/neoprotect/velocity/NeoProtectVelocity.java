@@ -61,27 +61,29 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     public void sendMessage(Object receiver, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         TextComponent msg = Component.text(core.getPrefix() + text);
 
-        if(clickAction != null) msg = msg.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
-        if(hoverAction != null) msg = msg.hoverEvent(HoverEvent.hoverEvent((HoverEvent.Action<Object>) Objects.requireNonNull(HoverEvent.Action.NAMES.value(hoverAction.toLowerCase())),
-                Component.text(hoverMsg)));
+        if (clickAction != null)
+            msg = msg.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
+        if (hoverAction != null)
+            msg = msg.hoverEvent(HoverEvent.hoverEvent((HoverEvent.Action<Object>) Objects.requireNonNull(HoverEvent.Action.NAMES.value(hoverAction.toLowerCase())),
+                    Component.text(hoverMsg)));
 
-        if(receiver instanceof CommandSource) ((CommandSource) receiver).sendMessage(msg);
+        if (receiver instanceof CommandSource) ((CommandSource) receiver).sendMessage(msg);
     }
 
     @Override
     public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         getProxy().getAllPlayers().forEach(receiver -> {
-            if(receiver.hasPermission("neoprotect.admin") || receiver.hasPermission(permission.value))
+            if (receiver.hasPermission("neoprotect.admin") || receiver.hasPermission(permission.value))
                 sendMessage(receiver, text, clickAction, clickMsg, hoverAction, hoverMsg);
         });
     }
 
     @Override
     public void sendKeepAliveMessage(Object receiver, long id) {
-        if(receiver instanceof Player){
+        if (receiver instanceof Player) {
             KeepAlive keepAlive = new KeepAlive();
             keepAlive.setRandomId(id);
-            ((ConnectedPlayer)receiver).getConnection().getChannel().writeAndFlush(keepAlive);
+            ((ConnectedPlayer) receiver).getConnection().getChannel().writeAndFlush(keepAlive);
             getCore().getPingMap().put(new KeepAliveResponseKey(((Player) receiver).getRemoteAddress(), id), System.currentTimeMillis());
         }
     }
@@ -89,7 +91,7 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     @Override
     public long sendKeepAliveMessage(long id) {
         for (Player player : this.proxy.getAllPlayers()) {
-            sendKeepAliveMessage(player , id);
+            sendKeepAliveMessage(player, id);
         }
         return id;
     }

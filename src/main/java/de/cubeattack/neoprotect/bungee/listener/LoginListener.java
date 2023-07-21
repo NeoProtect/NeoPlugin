@@ -30,7 +30,8 @@ public class LoginListener implements Listener {
             public void run() {
                 ProxiedPlayer player = event.getPlayer();
 
-                if (!player.hasPermission("neoprotect.admin") && Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId()))) return;
+                if (!player.hasPermission("neoprotect.admin") && Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId())))
+                    return;
 
                 VersionUtils.Result result = instance.getCore().getVersionResult();
                 if (result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)) {

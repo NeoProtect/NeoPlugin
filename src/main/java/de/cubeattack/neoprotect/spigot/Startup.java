@@ -13,12 +13,12 @@ import java.util.Objects;
 
 public class Startup {
 
-    public Startup(NeoProtectSpigot instance){
+    public Startup(NeoProtectSpigot instance) {
         register(instance);
         new ProxyProtocol(instance);
     }
 
-    private void register(NeoProtectSpigot instance){
+    private void register(NeoProtectSpigot instance) {
         PluginManager pm = Bukkit.getPluginManager();
         Objects.requireNonNull(instance.getCommand("neoprotect")).setExecutor(new NeoProtectCommand(instance));
         Objects.requireNonNull(instance.getCommand("neoprotect")).setTabCompleter(new NeoProtectTabCompleter(instance));

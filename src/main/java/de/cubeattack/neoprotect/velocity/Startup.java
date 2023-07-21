@@ -12,12 +12,12 @@ import de.cubeattack.neoprotect.velocity.proxyprotocol.ProxyProtocol;
 
 public class Startup {
 
-    public Startup(NeoProtectVelocity instance){
+    public Startup(NeoProtectVelocity instance) {
         register(instance);
         new ProxyProtocol(instance);
     }
 
-    private void register(NeoProtectVelocity instance){
+    private void register(NeoProtectVelocity instance) {
         EventManager em = instance.getProxy().getEventManager();
         CommandManager cm = instance.getProxy().getCommandManager();
 

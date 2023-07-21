@@ -53,13 +53,13 @@ public class ProxyProtocol {
 
                         initChannelMethod.invoke(bungeeChannelInitializer, channel);
 
-                        if(channel.localAddress().toString().startsWith("local:")){
+                        if (channel.localAddress().toString().startsWith("local:")) {
                             instance.getCore().debug("Detected bedrock player (return)");
                             return;
                         }
 
                         if (instance.getCore().isSetup() && instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
-                                contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
+                                contains(((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress())) {
                             channel.close();
                             instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
                             return;
@@ -85,13 +85,13 @@ public class ProxyProtocol {
             Field serverChild = PipelineUtils.class.getField("SERVER_CHILD");
             serverChild.setAccessible(true);
 
-            if(JavaUtils.javaVersionCheck() == 8){
+            if (JavaUtils.javaVersionCheck() == 8) {
                 Field modifiersField = Field.class.getDeclaredField("modifiers");
                 modifiersField.setAccessible(true);
                 modifiersField.setInt(serverChild, serverChild.getModifiers() & ~Modifier.FINAL);
 
                 serverChild.set(PipelineUtils.class, channelInitializer);
-            }else {
+            } else {
                 Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
                 unsafeField.setAccessible(true);
 
@@ -106,7 +106,7 @@ public class ProxyProtocol {
         }
     }
 
-    public void addProxyProtocolHandler(Channel channel, AtomicReference<InetSocketAddress> inetAddress){
+    public void addProxyProtocolHandler(Channel channel, AtomicReference<InetSocketAddress> inetAddress) {
         channel.pipeline().names().forEach((n) -> {
             if (n.equals("HAProxyMessageDecoder#0"))
                 channel.pipeline().remove("HAProxyMessageDecoder#0");
@@ -127,7 +127,7 @@ public class ProxyProtocol {
         });
     }
 
-    public void addKeepAlivePacketHandler(Channel channel, AtomicReference<InetSocketAddress> inetAddress, NeoProtectPlugin instance){
+    public void addKeepAlivePacketHandler(Channel channel, AtomicReference<InetSocketAddress> inetAddress, NeoProtectPlugin instance) {
         channel.pipeline().addAfter(PipelineUtils.PACKET_DECODER, "neo-keep-alive-handler", new ChannelInboundHandlerAdapter() {
             @Override
             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -141,7 +141,7 @@ public class ProxyProtocol {
                 }
 
                 KeepAlive keepAlive = (KeepAlive) ((PacketWrapper) msg).packet;
-                ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap =  instance.getCore().getPingMap();
+                ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap = instance.getCore().getPingMap();
 
                 instance.getCore().debug("Received KeepAlivePackets (" + keepAlive.getRandomId() + ")");
 
@@ -177,7 +177,7 @@ public class ProxyProtocol {
 
                         ConcurrentHashMap<String, ArrayList<DebugPingResponse>> map = instance.getCore().getDebugPingResponses();
 
-                        if(!map.containsKey(player.getName())) {
+                        if (!map.containsKey(player.getName())) {
                             instance.getCore().getDebugPingResponses().put(player.getName(), new ArrayList<>());
                         }
 

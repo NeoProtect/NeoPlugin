@@ -43,25 +43,30 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     public void sendMessage(Object receiver, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         TextComponent msg = new TextComponent(core.getPrefix() + text);
 
-        if(clickAction != null) msg.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
-        if(hoverAction != null) msg.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverAction), new ComponentBuilder(hoverMsg).create()));
-        if(receiver instanceof ConsoleCommandSender) ((ConsoleCommandSender) receiver).sendMessage(msg.toLegacyText());
-        if(receiver instanceof Player) ((Player) receiver).spigot().sendMessage(msg);
+        if (clickAction != null)
+            msg.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickAction), clickMsg));
+        if (hoverAction != null)
+            msg.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverAction), new ComponentBuilder(hoverMsg).create()));
+        if (receiver instanceof ConsoleCommandSender) ((ConsoleCommandSender) receiver).sendMessage(msg.toLegacyText());
+        if (receiver instanceof Player) ((Player) receiver).spigot().sendMessage(msg);
     }
 
     @Override
     public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         getServer().getOnlinePlayers().forEach(pp -> {
-            if(pp.hasPermission("neoprotect.admin") || pp.hasPermission(permission.value))
+            if (pp.hasPermission("neoprotect.admin") || pp.hasPermission(permission.value))
                 sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);
         });
     }
 
     @Override
-    public void sendKeepAliveMessage(Object sender, long id) {}
+    public void sendKeepAliveMessage(Object sender, long id) {
+    }
 
     @Override
-    public long sendKeepAliveMessage(long id) {return id;}
+    public long sendKeepAliveMessage(long id) {
+        return id;
+    }
 
     @Override
     public String getVersion() {

@@ -60,7 +60,7 @@ public final class SessionChatListener {
         try {
             player.ensureAndGetCurrentServer().ensureConnected();
             return true;
-        } catch(final IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             return false;
         }
     }

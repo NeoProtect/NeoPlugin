@@ -22,170 +22,171 @@ import java.util.logging.Level;
  */
 public class ProxyProtocol {
 
-	// Looking up ServerConnection
-	private final Class<Object> minecraftServerClass = Reflection.getUntypedClass("{nms}.MinecraftServer");
-	private final Class<Object> serverConnectionClass = Reflection.getUntypedClass("{nms}" + (Reflection.isNewerPackage() ? ".network" : "") + ".ServerConnection");
-	private final Reflection.FieldAccessor<Object> getMinecraftServer = Reflection.getField("{obc}.CraftServer", minecraftServerClass, 0);
-	private final Reflection.FieldAccessor<Object> getServerConnection = Reflection.getField(minecraftServerClass, serverConnectionClass, 0);
-	private final Reflection.MethodInvoker getNetworkMarkers = !Reflection.isNewerPackage() && !Reflection.VERSION.contains("16") ? Reflection.getTypedMethod(serverConnectionClass, null, List.class, serverConnectionClass) : null;
-	private final Reflection.FieldAccessor<List> networkManagersFieldAccessor = Reflection.isNewerPackage() || Reflection.VERSION.contains("16") ? Reflection.getField(serverConnectionClass, List.class, 0) : null;
-	private final Class<Object> networkManager = Reflection.getUntypedClass(Reflection.isNewerPackage() ? "net.minecraft.network.NetworkManager" : "{nms}.NetworkManager");
-	private final Reflection.FieldAccessor<SocketAddress> socketAddressFieldAccessor = Reflection.getField(networkManager, SocketAddress.class, 0);
+    // Looking up ServerConnection
+    private final Class<Object> minecraftServerClass = Reflection.getUntypedClass("{nms}.MinecraftServer");
+    private final Class<Object> serverConnectionClass = Reflection.getUntypedClass("{nms}" + (Reflection.isNewerPackage() ? ".network" : "") + ".ServerConnection");
+    private final Reflection.FieldAccessor<Object> getMinecraftServer = Reflection.getField("{obc}.CraftServer", minecraftServerClass, 0);
+    private final Reflection.FieldAccessor<Object> getServerConnection = Reflection.getField(minecraftServerClass, serverConnectionClass, 0);
+    private final Reflection.MethodInvoker getNetworkMarkers = !Reflection.isNewerPackage() && !Reflection.VERSION.contains("16") ? Reflection.getTypedMethod(serverConnectionClass, null, List.class, serverConnectionClass) : null;
+    private final Reflection.FieldAccessor<List> networkManagersFieldAccessor = Reflection.isNewerPackage() || Reflection.VERSION.contains("16") ? Reflection.getField(serverConnectionClass, List.class, 0) : null;
+    private final Class<Object> networkManager = Reflection.getUntypedClass(Reflection.isNewerPackage() ? "net.minecraft.network.NetworkManager" : "{nms}.NetworkManager");
+    private final Reflection.FieldAccessor<SocketAddress> socketAddressFieldAccessor = Reflection.getField(networkManager, SocketAddress.class, 0);
 
-	private List<Object> networkManagers;
-	private ServerChannelInitializer serverChannelHandler;
-	private ChannelInitializer<Channel> beginInitProtocol;
-	private ChannelInitializer<Channel> endInitProtocol;
+    private List<Object> networkManagers;
+    private ServerChannelInitializer serverChannelHandler;
+    private ChannelInitializer<Channel> beginInitProtocol;
+    private ChannelInitializer<Channel> endInitProtocol;
 
-	protected NeoProtectSpigot instance;
+    protected NeoProtectSpigot instance;
 
-	/**
-	 * Construct a new instance of TinyProtocol, and start intercepting packets for all connected clients and future clients.
-	 * <p>
-	 * You can construct multiple instances per plugin.
-	 * 
-	 * @param instance - the plugin.
-	 */
-	public ProxyProtocol(NeoProtectSpigot instance) {
-		this.instance = instance;
+    /**
+     * Construct a new instance of TinyProtocol, and start intercepting packets for all connected clients and future clients.
+     * <p>
+     * You can construct multiple instances per plugin.
+     *
+     * @param instance - the plugin.
+     */
+    public ProxyProtocol(NeoProtectSpigot instance) {
+        this.instance = instance;
 
-		try {
-			instance.getLogger().info("Proceeding with the server channel injection...");
-			registerChannelHandler();
-		} catch (IllegalArgumentException ex) {
-			// Damn you, late bind
-			instance.getLogger().info("Delaying server channel injection due to late bind.");
+        try {
+            instance.getLogger().info("Proceeding with the server channel injection...");
+            registerChannelHandler();
+        } catch (IllegalArgumentException ex) {
+            // Damn you, late bind
+            instance.getLogger().info("Delaying server channel injection due to late bind.");
 
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					registerChannelHandler();
-					instance.getLogger().info("Late bind injection successful.");
-				}
-			}.runTask(instance);
-		}
-	}
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    registerChannelHandler();
+                    instance.getLogger().info("Late bind injection successful.");
+                }
+            }.runTask(instance);
+        }
+    }
 
-	private void createServerChannelHandler() {
-		// Handle connected channels
-		endInitProtocol = new ChannelInitializer<Channel>() {
-			@Override
-			protected void initChannel(Channel channel) {
+    private void createServerChannelHandler() {
+        // Handle connected channels
+        endInitProtocol = new ChannelInitializer<Channel>() {
+            @Override
+            protected void initChannel(Channel channel) {
 
-				if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
-					instance.getCore().debug("Plugin is not setup / ProxyProtocol is off (return)");
-					return;
-				}
+                if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
+                    instance.getCore().debug("Plugin is not setup / ProxyProtocol is off (return)");
+                    return;
+                }
 
-				if (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
-						contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
-					instance.getCore().debug("Player connected over IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (warning)");
-					return;
-				}
+                if (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
+                        contains(((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress())) {
+                    instance.getCore().debug("Player connected over IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (warning)");
+                    return;
+                }
 
-				try {
-					instance.getCore().debug("Adding Handler...");
-					synchronized (networkManagers) {
-						// Adding the decoder to the pipeline
-						channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
-						// Adding the proxy message handler to the pipeline too
-						channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", HAPROXY_MESSAGE_HANDLER);
-					}
+                try {
+                    instance.getCore().debug("Adding Handler...");
+                    synchronized (networkManagers) {
+                        // Adding the decoder to the pipeline
+                        channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
+                        // Adding the proxy message handler to the pipeline too
+                        channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", HAPROXY_MESSAGE_HANDLER);
+                    }
 
-					instance.getCore().debug("Connecting finished");
+                    instance.getCore().debug("Connecting finished");
 
-				} catch (Exception ex) {
-					instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
-				}
-			}
+                } catch (Exception ex) {
+                    instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
+                }
+            }
 
-		};
+        };
 
-		// This is executed before Minecraft's channel handler
-		beginInitProtocol = new ChannelInitializer<Channel>() {
+        // This is executed before Minecraft's channel handler
+        beginInitProtocol = new ChannelInitializer<Channel>() {
 
-			@Override
-			protected void initChannel(Channel channel) {
-				channel.pipeline().addLast(endInitProtocol);
-			}
+            @Override
+            protected void initChannel(Channel channel) {
+                channel.pipeline().addLast(endInitProtocol);
+            }
 
-		};
+        };
 
-		serverChannelHandler = new ServerChannelInitializer();
-	}
+        serverChannelHandler = new ServerChannelInitializer();
+    }
 
-	@SuppressWarnings("unchecked")
-	private void registerChannelHandler() {
-		Object mcServer = getMinecraftServer.get(Bukkit.getServer());
-		Object serverConnection = getServerConnection.get(mcServer);
-		boolean looking = true;
+    @SuppressWarnings("unchecked")
+    private void registerChannelHandler() {
+        Object mcServer = getMinecraftServer.get(Bukkit.getServer());
+        Object serverConnection = getServerConnection.get(mcServer);
+        boolean looking = true;
 
-		// We need to synchronize against this list
-		networkManagers = Reflection.isNewerPackage() || Reflection.VERSION.contains("16") ? networkManagersFieldAccessor.get(serverConnection) : (List<Object>) getNetworkMarkers.invoke(null, serverConnection);
-		createServerChannelHandler();
+        // We need to synchronize against this list
+        networkManagers = Reflection.isNewerPackage() || Reflection.VERSION.contains("16") ? networkManagersFieldAccessor.get(serverConnection) : (List<Object>) getNetworkMarkers.invoke(null, serverConnection);
+        createServerChannelHandler();
 
-		// Find the correct list, or implicitly throw an exception
-		for (int i = 0; looking; i++) {
-			List<Object> list = Reflection.getField(serverConnection.getClass(), List.class, i).get(serverConnection);
+        // Find the correct list, or implicitly throw an exception
+        for (int i = 0; looking; i++) {
+            List<Object> list = Reflection.getField(serverConnection.getClass(), List.class, i).get(serverConnection);
 
-			for (Object item : list) {
-				if (!(item instanceof ChannelFuture))
-					break;
+            for (Object item : list) {
+                if (!(item instanceof ChannelFuture))
+                    break;
 
-				// Channel future that contains the server connection
-				Channel serverChannel = ((ChannelFuture) item).channel();
+                // Channel future that contains the server connection
+                Channel serverChannel = ((ChannelFuture) item).channel();
 
 
-				serverChannel.pipeline().addFirst(serverChannelHandler);
-				looking = false;
+                serverChannel.pipeline().addFirst(serverChannelHandler);
+                looking = false;
 
-				this.instance.getLogger().info("Found the server channel and added the handler. Injection successfully!");
-			}
-		}
-	}
+                this.instance.getLogger().info("Found the server channel and added the handler. Injection successfully!");
+            }
+        }
+    }
 
-	private final HAProxyMessageHandler HAPROXY_MESSAGE_HANDLER = new HAProxyMessageHandler();
+    private final HAProxyMessageHandler HAPROXY_MESSAGE_HANDLER = new HAProxyMessageHandler();
 
-	@ChannelHandler.Sharable
-	 public class HAProxyMessageHandler extends ChannelInboundHandlerAdapter {
-		@Override
-		public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-			if(!(msg instanceof HAProxyMessage)){
-				super.channelRead(ctx, msg);
-				return;
-			}
+    @ChannelHandler.Sharable
+    public class HAProxyMessageHandler extends ChannelInboundHandlerAdapter {
+        @Override
+        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+            if (!(msg instanceof HAProxyMessage)) {
+                super.channelRead(ctx, msg);
+                return;
+            }
 
-			try {
-				final HAProxyMessage message = (HAProxyMessage) msg;
+            try {
+                final HAProxyMessage message = (HAProxyMessage) msg;
 
-				// Set the SocketAddress field of the NetworkManager ("packet_handler" handler) to the client address
-				socketAddressFieldAccessor.set(ctx.channel().pipeline().get("packet_handler"), new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
-			}catch (Exception exception){
-				// Closing the channel because we do not want people on the server with a proxy ip
-				ctx.channel().close();
+                // Set the SocketAddress field of the NetworkManager ("packet_handler" handler) to the client address
+                socketAddressFieldAccessor.set(ctx.channel().pipeline().get("packet_handler"), new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
+            } catch (Exception exception) {
+                // Closing the channel because we do not want people on the server with a proxy ip
+                ctx.channel().close();
 
-				// Logging for the lovely server admins :)
-				instance.getLogger().warning("Error: The server was unable to set the IP address from the 'HAProxyMessage'. Therefore we closed the channel.");
-				exception.printStackTrace();
-			}
-		}
-	}
-	@ChannelHandler.Sharable
-	class ServerChannelInitializer extends ChannelInboundHandlerAdapter {
-		@Override
-		public void channelRead(ChannelHandlerContext ctx, Object msg) {
-			Channel channel = (Channel) msg;
+                // Logging for the lovely server admins :)
+                instance.getLogger().warning("Error: The server was unable to set the IP address from the 'HAProxyMessage'. Therefore we closed the channel.");
+                exception.printStackTrace();
+            }
+        }
+    }
 
-			instance.getCore().debug("Open channel (" + channel.remoteAddress().toString() + ")");
+    @ChannelHandler.Sharable
+    class ServerChannelInitializer extends ChannelInboundHandlerAdapter {
+        @Override
+        public void channelRead(ChannelHandlerContext ctx, Object msg) {
+            Channel channel = (Channel) msg;
 
-			if(channel.localAddress().toString().startsWith("local:")){
-				instance.getCore().debug("Detected bedrock player (return)");
-				return;
-			}
+            instance.getCore().debug("Open channel (" + channel.remoteAddress().toString() + ")");
 
-			// Prepare to initialize ths channel
-			channel.pipeline().addFirst(beginInitProtocol);
-			ctx.fireChannelRead(msg);
-		}
-	}
+            if (channel.localAddress().toString().startsWith("local:")) {
+                instance.getCore().debug("Detected bedrock player (return)");
+                return;
+            }
+
+            // Prepare to initialize ths channel
+            channel.pipeline().addFirst(beginInitProtocol);
+            ctx.fireChannelRead(msg);
+        }
+    }
 }
