@@ -3,6 +3,7 @@ package de.cubeattack.neoprotect.bungee.proxyprotocol;
 import de.cubeattack.api.util.JavaUtils;
 import de.cubeattack.neoprotect.bungee.NeoProtectBungee;
 import de.cubeattack.neoprotect.core.Config;
+import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.model.debugtool.DebugPingResponse;
 import de.cubeattack.neoprotect.core.model.debugtool.KeepAliveResponseKey;
 import io.netty.channel.Channel;
@@ -57,12 +58,7 @@ public class ProxyProtocol {
                             return;
                         }
 
-                        if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
-                            instance.getCore().debug("Plugin is not setup / ProxyProtocol is off (return)");
-                            return;
-                        }
-
-                        if (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
+                        if (instance.getCore().isSetup() && instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
                                 contains(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress())) {
                             channel.close();
                             instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
@@ -71,91 +67,18 @@ public class ProxyProtocol {
 
                         instance.getCore().debug("Adding Handler...");
 
-                        channel.pipeline().names().forEach((n) -> {
-                            if (n.equals("HAProxyMessageDecoder#0"))
-                                channel.pipeline().remove("HAProxyMessageDecoder#0");
-                        });
+                        if (instance.getCore().isSetup() && Config.isProxyProtocol()) {
+                            instance.getCore().debug("Plugin is setup & ProxyProtocol is on (addProxyProtocolHandler)");
+                            addProxyProtocolHandler(channel, inetAddress);
+                        }
 
-                        channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
-                        channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {
-                            @Override
-                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                if (msg instanceof HAProxyMessage) {
-                                    HAProxyMessage message = (HAProxyMessage) msg;
-                                    inetAddress.set(new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
-                                    channelWrapperAccessor.get(channel.pipeline().get(HandlerBoss.class)).setRemoteAddress(inetAddress.get());
-                                } else {
-                                    super.channelRead(ctx, msg);
-                                }
-                            }
-                        });
+                        addKeepAlivePacketHandler(channel, inetAddress, instance);
 
-                        channel.pipeline().addAfter(PipelineUtils.PACKET_DECODER, "neo-keep-alive-handler", new ChannelInboundHandlerAdapter() {
-                            @Override
-                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                super.channelRead(ctx, msg);
+                        instance.getCore().debug("Connecting finished");
 
-                                if (!(msg instanceof PacketWrapper)) {
-                                    return;
-                                }
-                                if (!(((PacketWrapper) msg).packet instanceof KeepAlive)) {
-                                    return;
-                                }
-
-                                KeepAlive keepAlive = (KeepAlive) ((PacketWrapper) msg).packet;
-                                ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap =  instance.getCore().getPingMap();
-
-                                instance.getCore().debug("Received KeepAlivePackets (" + keepAlive.getRandomId() + ")");
-
-                                for (KeepAliveResponseKey keepAliveResponseKey : pingMap.keySet()) {
-
-                                    if (!keepAliveResponseKey.getAddress().equals(inetAddress.get()) || !(keepAliveResponseKey.getId() == keepAlive.getRandomId())) {
-                                        continue;
-                                    }
-
-                                    instance.getCore().debug("KeepAlivePackets matched to DebugKeepAlivePacket");
-
-                                    for (ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
-
-                                        if (!(player).getPendingConnection().getSocketAddress().equals(inetAddress.get())) {
-                                            continue;
-                                        }
-
-                                        instance.getCore().debug("Player matched to DebugKeepAlivePacket (loading data...)");
-
-                                        EpollTcpInfo tcpInfo = ((EpollSocketChannel) channel).tcpInfo();
-                                        EpollTcpInfo tcpInfoBackend = ((EpollSocketChannel) ((UserConnection) player).getServer().getCh().getHandle()).tcpInfo();
-
-                                        long ping = System.currentTimeMillis() - pingMap.get(keepAliveResponseKey);
-                                        long neoRTT = 0;
-                                        long backendRTT = 0;
-
-                                        if (tcpInfo != null) {
-                                            neoRTT = tcpInfo.rtt() / 1000;
-                                        }
-                                        if (tcpInfoBackend != null) {
-                                            backendRTT = tcpInfoBackend.rtt() / 1000;
-                                        }
-
-                                        ConcurrentHashMap<String, ArrayList<DebugPingResponse>> map = instance.getCore().getDebugPingResponses();
-
-                                        if(!map.containsKey(player.getName())) {
-                                            instance.getCore().getDebugPingResponses().put(player.getName(), new ArrayList<>());
-                                        }
-
-                                        map.get(player.getName()).add(new DebugPingResponse(ping, neoRTT, backendRTT, inetAddress.get(), channel.remoteAddress()));
-
-                                        instance.getCore().debug("Loading completed");
-                                        instance.getCore().debug(" ");
-                                    }
-                                    instance.getCore().getPingMap().remove(keepAliveResponseKey);
-                                }
-                            }
-                        });
                     } catch (Exception ex) {
                         instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
                     }
-                    instance.getCore().debug("Connecting finished");
                 }
             };
 
@@ -181,5 +104,91 @@ public class ProxyProtocol {
         } catch (Exception ex) {
             instance.getLogger().log(Level.SEVERE, "An unknown error has occurred", ex);
         }
+    }
+
+    public void addProxyProtocolHandler(Channel channel, AtomicReference<InetSocketAddress> inetAddress){
+        channel.pipeline().names().forEach((n) -> {
+            if (n.equals("HAProxyMessageDecoder#0"))
+                channel.pipeline().remove("HAProxyMessageDecoder#0");
+        });
+
+        channel.pipeline().addFirst("haproxy-decoder", new HAProxyMessageDecoder());
+        channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {
+            @Override
+            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                if (msg instanceof HAProxyMessage) {
+                    HAProxyMessage message = (HAProxyMessage) msg;
+                    inetAddress.set(new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
+                    channelWrapperAccessor.get(channel.pipeline().get(HandlerBoss.class)).setRemoteAddress(inetAddress.get());
+                } else {
+                    super.channelRead(ctx, msg);
+                }
+            }
+        });
+    }
+
+    public void addKeepAlivePacketHandler(Channel channel, AtomicReference<InetSocketAddress> inetAddress, NeoProtectPlugin instance){
+        channel.pipeline().addAfter(PipelineUtils.PACKET_DECODER, "neo-keep-alive-handler", new ChannelInboundHandlerAdapter() {
+            @Override
+            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                super.channelRead(ctx, msg);
+
+                if (!(msg instanceof PacketWrapper)) {
+                    return;
+                }
+                if (!(((PacketWrapper) msg).packet instanceof KeepAlive)) {
+                    return;
+                }
+
+                KeepAlive keepAlive = (KeepAlive) ((PacketWrapper) msg).packet;
+                ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap =  instance.getCore().getPingMap();
+
+                instance.getCore().debug("Received KeepAlivePackets (" + keepAlive.getRandomId() + ")");
+
+                for (KeepAliveResponseKey keepAliveResponseKey : pingMap.keySet()) {
+
+                    if (!keepAliveResponseKey.getAddress().equals(inetAddress.get()) || !(keepAliveResponseKey.getId() == keepAlive.getRandomId())) {
+                        continue;
+                    }
+
+                    instance.getCore().debug("KeepAlivePackets matched to DebugKeepAlivePacket");
+
+                    for (ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
+
+                        if (!(player).getPendingConnection().getSocketAddress().equals(inetAddress.get())) {
+                            continue;
+                        }
+
+                        instance.getCore().debug("Player matched to DebugKeepAlivePacket (loading data...)");
+
+                        EpollTcpInfo tcpInfo = ((EpollSocketChannel) channel).tcpInfo();
+                        EpollTcpInfo tcpInfoBackend = ((EpollSocketChannel) ((UserConnection) player).getServer().getCh().getHandle()).tcpInfo();
+
+                        long ping = System.currentTimeMillis() - pingMap.get(keepAliveResponseKey);
+                        long neoRTT = 0;
+                        long backendRTT = 0;
+
+                        if (tcpInfo != null) {
+                            neoRTT = tcpInfo.rtt() / 1000;
+                        }
+                        if (tcpInfoBackend != null) {
+                            backendRTT = tcpInfoBackend.rtt() / 1000;
+                        }
+
+                        ConcurrentHashMap<String, ArrayList<DebugPingResponse>> map = instance.getCore().getDebugPingResponses();
+
+                        if(!map.containsKey(player.getName())) {
+                            instance.getCore().getDebugPingResponses().put(player.getName(), new ArrayList<>());
+                        }
+
+                        map.get(player.getName()).add(new DebugPingResponse(ping, neoRTT, backendRTT, inetAddress.get(), channel.remoteAddress()));
+
+                        instance.getCore().debug("Loading completed");
+                        instance.getCore().debug(" ");
+                    }
+                    instance.getCore().getPingMap().remove(keepAliveResponseKey);
+                }
+            }
+        });
     }
 }
