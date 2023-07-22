@@ -41,6 +41,10 @@ public class LoginListener implements Listener {
                             "OPEN_URL", result.getReleaseUrl(), null, null);
                 }
 
+                if (result.getVersionStatus().equals(VersionUtils.VersionStatus.REQUIRED_RESTART)) {
+                    instance.sendMessage(player, localization.get("plugin.restart-required.message", result.getCurrentVersion(), result.getLatestVersion()));
+                }
+
                 if (!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()) {
                     instance.sendMessage(player, localization.get("setup.required.first"));
                     instance.sendMessage(player, localization.get("setup.required.second"));
