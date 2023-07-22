@@ -37,7 +37,6 @@ public class RestAPIManager {
         }
     }
 
-
     protected Response callRequest(Request request) {
         try {
             return client.newCall(request).execute();

@@ -25,7 +25,7 @@ public class ResponseManager extends JSONObject {
     private String getBody(Response response) {
         try (ResponseBody body = response.body()) {
             return body.string();
-        } catch (NullPointerException | SocketTimeoutException | JSONException ignored) {
+        } catch (NullPointerException | SocketTimeoutException ignored) {
             return "{}";
         } catch (IOException ex) {
             ex.printStackTrace();
