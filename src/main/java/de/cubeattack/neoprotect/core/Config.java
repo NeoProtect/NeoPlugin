@@ -2,6 +2,9 @@ package de.cubeattack.neoprotect.core;
 
 import de.cubeattack.api.util.FileUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 @SuppressWarnings("unused")
 public class Config {
 
@@ -98,12 +101,13 @@ public class Config {
         BackendID = id;
     }
 
-    public static void addAutoUpdater(boolean activate) {
+    public static void addAutoUpdater(boolean basicPlan) {
 
-        if (!activate) {
+        if (basicPlan) {
             fileUtils.remove("AutoUpdater");
         } else if (!fileUtils.getConfig().isSet("AutoUpdater")) {
             fileUtils.getConfig().set("AutoUpdater", true);
+            fileUtils.getConfig().setInLineComments("AutoUpdater", new ArrayList<>(Collections.singleton("This setting is only for paid costumer and allow you to disable the AutoUpdater")));
         }
 
         fileUtils.save();

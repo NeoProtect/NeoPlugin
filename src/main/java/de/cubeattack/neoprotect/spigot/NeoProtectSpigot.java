@@ -79,11 +79,6 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     }
 
     @Override
-    public String getPluginFile() {
-        return getFile().getAbsolutePath();
-    }
-
-    @Override
     public String getProxyName() {
         return null;
     }

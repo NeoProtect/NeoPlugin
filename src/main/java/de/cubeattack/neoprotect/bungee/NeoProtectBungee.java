@@ -82,11 +82,6 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     }
 
     @Override
-    public String getPluginFile() {
-        return getFile().getAbsolutePath();
-    }
-
-    @Override
     public String getProxyName() {
         return getProxy().getName();
     }

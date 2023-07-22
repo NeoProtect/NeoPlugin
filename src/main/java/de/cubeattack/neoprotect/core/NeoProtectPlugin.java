@@ -21,8 +21,6 @@ public interface NeoProtectPlugin {
 
     String getVersion();
 
-    String getPluginFile();
-
     String getProxyName();
 
     String getProxyVersion();

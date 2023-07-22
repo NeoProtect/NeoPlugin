@@ -107,11 +107,6 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     }
 
     @Override
-    public String getPluginFile() {
-        return proxy.getPluginManager().ensurePluginContainer(this).getDescription().getSource().orElseThrow(null).toFile().getAbsolutePath();
-    }
-
-    @Override
     public String getProxyName() {
         return proxy.getVersion().getName();
     }

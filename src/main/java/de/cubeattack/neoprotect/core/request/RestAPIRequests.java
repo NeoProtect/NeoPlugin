@@ -104,7 +104,7 @@ public class RestAPIRequests {
         this.setup = true;
         setProxyProtocol(Config.isProxyProtocol());
 
-        Config.addAutoUpdater(!getPlan().equalsIgnoreCase("Basic"));
+        Config.addAutoUpdater(getPlan().equalsIgnoreCase("Basic"));
     }
 
     public boolean togglePanicMode() {
@@ -187,7 +187,7 @@ public class RestAPIRequests {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getVersion(), Config.isAutoUpdater(), core.getPlugin().getPluginFile()));
+                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getVersion(), Config.isAutoUpdater()));
             }
         }, 1000 * 15, 1000 * 60 * 3);
     }
