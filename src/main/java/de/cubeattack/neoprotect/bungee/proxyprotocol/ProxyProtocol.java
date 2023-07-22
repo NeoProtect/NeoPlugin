@@ -58,8 +58,8 @@ public class ProxyProtocol {
                             return;
                         }
 
-                        if (instance.getCore().isSetup() && instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
-                                contains(((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress())) {
+                        if (instance.getCore().isSetup() && (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
+                                contains(((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress()))) {
                             channel.close();
                             instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
                             return;
