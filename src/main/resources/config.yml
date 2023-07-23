@@ -1,5 +1,5 @@
 # Don't change anything here if you don't know what you're doing
-APIKey: '' # The APIKEY is set automatically during setup
+APIKey: '' # The API-KEY is set automatically during setup
 ProxyProtocol: true # Needed to forward the player's IP through the NeoProtect Proxy
 Language: en-US # en-US or de-DE (Add new file to /language for more available language https://www.oracle.com/java/technologies/javase/jdk8-jre8-suported-locales.html)
 gameshield:
