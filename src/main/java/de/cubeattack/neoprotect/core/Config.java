@@ -1,9 +1,10 @@
 package de.cubeattack.neoprotect.core;
 
 import de.cubeattack.api.util.FileUtils;
+import de.cubeattack.api.util.VersionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class Config {
@@ -15,7 +16,7 @@ public class Config {
     private static String BackendID;
     private static boolean updateIP;
     private static boolean debugMode;
-    private static boolean autoUpdater = true;
+    private static String updateSetting;
 
     private static Core core;
     private static FileUtils fileUtils;
@@ -79,8 +80,8 @@ public class Config {
         return debugMode;
     }
 
-    public static boolean isAutoUpdater() {
-        return autoUpdater;
+    public static VersionUtils.UpdateSetting isAutoUpdater() {
+        return VersionUtils.UpdateSetting.getByNameOrDefault(updateSetting);
     }
 
     public static void setAPIKey(String key) {
@@ -106,12 +107,19 @@ public class Config {
         if (basicPlan) {
             fileUtils.remove("AutoUpdater");
         } else if (!fileUtils.getConfig().isSet("AutoUpdater")) {
-            fileUtils.getConfig().set("AutoUpdater", true);
-            fileUtils.getConfig().setInLineComments("AutoUpdater", new ArrayList<>(Collections.singleton("This setting is only for paid costumer and allow you to disable the AutoUpdater")));
+            fileUtils.getConfig().set("AutoUpdater", "ENABLED");
         }
 
+        List<String> description = new ArrayList<>();
+        description.add("This setting is only for paid costumer and allow you to disable the AutoUpdater");
+        description.add("'ENABLED'  (Recommended/Default) Update/Downgrade plugin to the current version  ");
+        description.add("'DISABLED' AutoUpdater just disabled");
+        description.add("'DEV'      Only update to the latest version (Please never use this)");
+
+        fileUtils.getConfig().setComments("AutoUpdater", description);
+
         fileUtils.save();
-        autoUpdater = fileUtils.getBoolean("AutoUpdater", true);
+        updateSetting = fileUtils.getString("AutoUpdater", "ENABLED");
     }
 }
 
