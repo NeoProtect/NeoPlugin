@@ -32,7 +32,9 @@ Install Instructions:
 2) Now join the server while having the permission "neoprotect.admin" when joining
    and you should now see a message in the chat telling you how to proceed.
 
-## Permissions
+# Permissions
+
+You have to set the permission ``neoprotect.admin`` before you can start the setup.
 
 | Command / Feature    | Description                                                 | Permission                             |
 |:---------------------|-------------------------------------------------------------|----------------------------------------|
@@ -46,6 +48,8 @@ Install Instructions:
 
 ## Take a look at the config.yml
 
+With the /neoprotect setup command, all config settings, apart from 'Language:' and 'autoUpdateIP:', are set automatically and should not normally be changed yourself.
+
 ```
 # Don't change anything here if you don't know what you're doing
 APIKey: '' # The API-KEY is set automatically during setup
@@ -55,4 +59,10 @@ gameshield:
   serverId: '' # The serverID is set automatically during setup
   backendId: '' # The backendID is set automatically during setup
   autoUpdateIP: false # This setting automatically sets the IP of the NeoProtect backend every 10 seconds
+DebugMode: false # IMPORTANT Please ensure that you activate this option solely upon receiving a prompt from a NeoProtect maintainer.
+# This setting is only for paid costumer and allow you to disable the AutoUpdater
+# 'ENABLED'  (Recommended/Default) Update/Downgrade plugin to the current version  
+# 'DISABLED' AutoUpdater just disabled
+# 'DEV'      Only update to the latest version (Please never use this)
+AutoUpdater: ENABLED
 ```
