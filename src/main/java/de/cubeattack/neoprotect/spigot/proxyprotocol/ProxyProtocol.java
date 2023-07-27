@@ -11,7 +11,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Represents a very tiny alternative to ProtocolLib.
@@ -50,17 +49,17 @@ public class ProxyProtocol {
         this.instance = instance;
 
         try {
-            instance.getLogger().info("Proceeding with the server channel injection...");
+            instance.getCore().info("Proceeding with the server channel injection...");
             registerChannelHandler();
         } catch (IllegalArgumentException ex) {
             // Damn you, late bind
-            instance.getLogger().info("Delaying server channel injection due to late bind.");
+            instance.getCore().info("Delaying server channel injection due to late bind.");
 
             new BukkitRunnable() {
                 @Override
                 public void run() {
                     registerChannelHandler();
-                    instance.getLogger().info("Late bind injection successful.");
+                    instance.getCore().info("Late bind injection successful.");
                 }
             }.runTask(instance);
         }
@@ -95,7 +94,7 @@ public class ProxyProtocol {
                     instance.getCore().debug("Connecting finished");
 
                 } catch (Exception ex) {
-                    instance.getLogger().log(Level.SEVERE, "Cannot inject incoming channel " + channel, ex);
+                    instance.getCore().severe("Cannot inject incoming channel " + channel, ex);
                 }
             }
 
@@ -139,7 +138,7 @@ public class ProxyProtocol {
                 serverChannel.pipeline().addFirst(serverChannelHandler);
                 looking = false;
 
-                this.instance.getLogger().info("Found the server channel and added the handler. Injection successfully!");
+                this.instance.getCore().info("Found the server channel and added the handler. Injection successfully!");
             }
         }
     }
@@ -165,8 +164,7 @@ public class ProxyProtocol {
                 ctx.channel().close();
 
                 // Logging for the lovely server admins :)
-                instance.getLogger().warning("Error: The server was unable to set the IP address from the 'HAProxyMessage'. Therefore we closed the channel.");
-                exception.printStackTrace();
+                instance.getCore().severe("Error: The server was unable to set the IP address from the 'HAProxyMessage'. Therefore we closed the channel.", exception);
             }
         }
     }
@@ -188,5 +186,36 @@ public class ProxyProtocol {
             channel.pipeline().addFirst(beginInitProtocol);
             ctx.fireChannelRead(msg);
         }
+    }
+
+    public static boolean isIPInRange(String ipAddress, String ipRange) {
+        long targetIntAddress = ipToDecimal(ipAddress);
+
+        int range = Integer.parseInt(ipRange.split("/")[1]);
+        String startIP = ipRange.split("/")[0];
+
+        long startIntAddress = ipToDecimal(startIP);
+
+        return targetIntAddress <= (startIntAddress + (long) (32 - range) * (32 - range)) && targetIntAddress >= startIntAddress;
+    }
+
+
+
+    public static long ipToDecimal(String ipAddress) throws IllegalArgumentException {
+        String[] parts = ipAddress.split("\\.");
+        if (parts.length != 4) {
+            return -1;
+        }
+
+        long decimal = 0;
+        for (int i = 0; i < 4; i++) {
+            int octet = Integer.parseInt(parts[i]);
+            if (octet < 0 || octet > 255) {
+                return -1;
+            }
+            decimal += (long) (octet * Math.pow(256, 3 - i));
+        }
+
+        return decimal;
     }
 }
