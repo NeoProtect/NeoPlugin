@@ -63,8 +63,8 @@ public class ProxyProtocol {
                             return;
                         }
 
-                        if (instance.getCore().isSetup() && (instance.getCore().getRestAPI().getNeoServerIPs() == null || !instance.getCore().getRestAPI().getNeoServerIPs().toList().
-                                contains(((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress()))) {
+                        if (instance.getCore().isSetup() && (instance.getCore().getRestAPI().getNeoServerIPs() == null ||
+                                instance.getCore().getRestAPI().getNeoServerIPs().toList().stream().noneMatch(ipRange -> isIPInRange((String) ipRange, ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress())))) {
                             channel.close();
                             instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
                             return;
@@ -187,5 +187,38 @@ public class ProxyProtocol {
                 }
             }
         });
+    }
+
+    public static boolean isIPInRange(String ipAddress, String ipRange) {
+        if(!ipRange.contains("/")){
+            ipRange = ipRange + "/32";
+        }
+
+        long targetIntAddress = ipToDecimal(ipAddress);
+
+        int range = Integer.parseInt(ipRange.split("/")[1]);
+        String startIP = ipRange.split("/")[0];
+
+        long startIntAddress = ipToDecimal(startIP);
+
+        return targetIntAddress <= (startIntAddress + (long) (32 - range) * (32 - range)) && targetIntAddress >= startIntAddress;
+    }
+
+    public static long ipToDecimal(String ipAddress) throws IllegalArgumentException {
+        String[] parts = ipAddress.split("\\.");
+        if (parts.length != 4) {
+            return -1;
+        }
+
+        long decimal = 0;
+        for (int i = 0; i < 4; i++) {
+            int octet = Integer.parseInt(parts[i]);
+            if (octet < 0 || octet > 255) {
+                return -1;
+            }
+            decimal += (long) (octet * Math.pow(256, 3 - i));
+        }
+
+        return decimal;
     }
 }
