@@ -84,6 +84,11 @@ public class NeoProtectExecutor {
                 break;
             }
 
+            case "whitelist": case "blacklist":  {
+                firewall(args);
+                break;
+            }
+
             case "debugtool": {
                 debugTool(args);
                 break;
@@ -154,13 +159,60 @@ public class NeoProtectExecutor {
                 return;
             }
 
+            if (response == -1) {
+                instance.sendMessage(sender, "§cCan not found setting '" + args[1] + "'");
+                return;
+            }
+
             instance.sendMessage(sender, localization.get("command.toggle", args[1],
                     localization.get(response == 1 ? "utils.activated" : "utils.deactivated")));
         }
     }
 
+    private void firewall(String[] args) {
+        if (args.length == 1) {
+            instance.sendMessage(sender, "§7§l----- §bFirewall (" + args[0].toUpperCase() + ")§7§l -----");
+            instance.getCore().getRestAPI().getFirewall(args[0]).forEach((firewall ->
+                    instance.sendMessage(sender, "IP: " + firewall.getIp() + " ID(" + firewall.getId() + ")")));
+        } else if (args.length == 3) {
+            String ip = args[2];
+            String action = args[1];
+            String mode =  args[0].toUpperCase();
+            int response = instance.getCore().getRestAPI().updateFirewall(ip, action, mode);
+
+            if (response == -1) {
+                instance.sendMessage(sender, localization.get("usage.firewall"));
+                return;
+            }
+
+            if (response == 0) {
+                instance.sendMessage(sender, localization.get("command.firewall.notfound", ip, mode));
+                return;
+            }
+
+            if (response == 400) {
+                instance.sendMessage(sender, localization.get("command.firewall.ip-invalid", ip));
+                return;
+            }
+
+            if (response == 403) {
+                instance.sendMessage(sender, localization.get("err.upgrade-plan"));
+                return;
+            }
+
+            if (response == 429) {
+                instance.sendMessage(sender, localization.get("err.rate-limit"));
+                return;
+            }
+
+            instance.sendMessage(sender, (action.equalsIgnoreCase("add") ? "Added '" : "Removed '") + ip + "' to firewall (" + mode + ")");
+        } else {
+            instance.sendMessage(sender, localization.get("usage.firewall"));
+        }
+    }
+
     private void analytics() {
-        instance.sendMessage(sender, "§7§l-------- §bAnalytics §7§l--------");
+        instance.sendMessage(sender, "§7§l--------- §bAnalytics §7§l---------");
         JSONObject analytics = instance.getCore().getRestAPI().getAnalytics();
         instance.getCore().getRestAPI().getAnalytics().keySet().forEach(ak -> {
             if (ak.equals("bandwidth")) {
@@ -330,8 +382,8 @@ public class NeoProtectExecutor {
                         instance.sendMessage(sender, localization.get("debug.finished.first") + " (took " + (System.currentTimeMillis() - startTime) + "ms)");
                         instance.sendMessage(sender, localization.get("debug.finished.second") + file.getAbsolutePath() + " " + localization.get("utils.copy"), "COPY_TO_CLIPBOARD", file.getAbsolutePath(), null, null);
                         instance.getCore().setDebugRunning(false);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception ex) {
+                        instance.getCore().severe(ex.getMessage(), ex);
                     }
                 });
             }
@@ -399,6 +451,8 @@ public class NeoProtectExecutor {
         instance.sendMessage(sender, " - /np ipanic");
         instance.sendMessage(sender, " - /np analytics");
         instance.sendMessage(sender, " - /np toggle (option)");
+        instance.sendMessage(sender, " - /np whitelist (add/remove) (ip)");
+        instance.sendMessage(sender, " - /np blacklist (add/remove) (ip)");
         instance.sendMessage(sender, " - /np debugTool (cancel / amount)");
         instance.sendMessage(sender, " - /np setgameshield");
         instance.sendMessage(sender, " - /np setbackend");

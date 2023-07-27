@@ -34,6 +34,11 @@ public class NeoProtectTabCompleter implements TabCompleter {
             return completorList;
         }
 
+        if (args.length >= 2 && (args[0].equalsIgnoreCase("whitelist") || args[0].equalsIgnoreCase("blacklist"))) {
+            completorList.add("add");
+            completorList.add("remove");
+        }
+
         if (args.length != 1) {
             return completorList;
         }
@@ -41,11 +46,13 @@ public class NeoProtectTabCompleter implements TabCompleter {
         list.add("setup");
 
         if (instance.getCore().isSetup()) {
-            list.add("ipanic");
-            list.add("toggle");
-            list.add("analytics");
             list.add("setgameshield");
             list.add("setbackend");
+            list.add("analytics");
+            list.add("whitelist");
+            list.add("blacklist");
+            list.add("ipanic");
+            list.add("toggle");
         }
 
         for (String tab : list) {

@@ -11,6 +11,7 @@ import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.JsonBuilder;
 import de.cubeattack.neoprotect.core.Permission;
 import de.cubeattack.neoprotect.core.model.Backend;
+import de.cubeattack.neoprotect.core.model.Firewall;
 import de.cubeattack.neoprotect.core.model.Gameshield;
 
 import java.util.ArrayList;
@@ -126,6 +127,9 @@ public class RestAPIRequests {
 
     public int toggle(String mode) {
         JSONObject settings = rest.request(RequestType.GET_GAMESHIELD_INFO, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldSettings");
+
+        if(!settings.has(mode)) return -1;
+
         boolean mitigationSensitivity = settings.getBoolean(mode);
 
         if (mitigationSensitivity) {
@@ -168,6 +172,34 @@ public class RestAPIRequests {
         return list;
     }
 
+    public List<Firewall> getFirewall(String mode) {
+        List<Firewall> list = new ArrayList<>();
+        JSONArray firewalls = rest.request(RequestType.GET_FIREWALLS, null, Config.getGameShieldID(), mode.toUpperCase()).getResponseBodyArray();
+
+        for (Object object : firewalls) {
+            JSONObject firewallJSON = (JSONObject) object;
+            list.add(new Firewall(firewallJSON.getString("ip"), firewallJSON.get("id").toString()));
+        }
+
+        return list;
+    }
+
+    public int updateFirewall(String ip, String action, String mode) {
+        if(action.equalsIgnoreCase("REMOVE")){
+            Firewall firewall = getFirewall(mode).stream().filter(f -> f.getIp().equals(ip)).findFirst().orElse(null);
+
+            if(firewall == null){
+                return 0;
+            }
+
+            return rest.request(RequestType.DELETE_FIREWALL, null, Config.getGameShieldID(), firewall.getId()).getCode();
+        }else if(action.equalsIgnoreCase("ADD")){
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("entry", ip).build().toString());
+            return rest.request(RequestType.POST_FIREWALL_CREATE, requestBody, Config.getGameShieldID(), mode).getCode();
+        }
+        return -1;
+    }
+
     private void neoServerIPsUpdateSchedule() {
 
         core.info("NeoServerIPsUpdate scheduler started");
@@ -187,7 +219,7 @@ public class RestAPIRequests {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getVersion(), Config.isAutoUpdater()));
+                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getVersion(), Config.getAutoUpdaterSettings()));
             }
         }, 1000 * 10, 1000 * 60 * 3);
     }
@@ -236,9 +268,9 @@ public class RestAPIRequests {
                 if (ip == null) return;
                 if (ip.equals(backend.getIp())) return;
 
-                RequestBody formBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("ipv4", ip).build().toString());
+                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("ipv4", ip).build().toString());
 
-                if (!updateBackend(formBody)) {
+                if (!updateBackend(requestBody)) {
                     core.warn("Update backendserver ID '" + Config.getBackendID() + "' to IP '" + ip + "' failed");
                 } else {
                     core.info("Update backendserver ID '" + Config.getBackendID() + "' to IP '" + ip + "' success");

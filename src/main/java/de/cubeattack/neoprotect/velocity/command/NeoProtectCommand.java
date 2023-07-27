@@ -50,36 +50,42 @@ public class NeoProtectCommand implements SimpleCommand {
             if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("debugtool")) {
                     for (int i = 10; i <= 100; i = i + 10) {
-                        completorList.add(String.valueOf(i));
+                        list.add(String.valueOf(i));
                     }
-                    completorList.add("cancel");
+                    list.add("cancel");
                 }
+
+                if ((args[0].equalsIgnoreCase("whitelist") || args[0].equalsIgnoreCase("blacklist"))) {
+                    list.add("add");
+                    list.add("remove");
+                }
+
                 if (args[0].equalsIgnoreCase("toggle")) {
-                    completorList.add("antiVPN");
-                    completorList.add("anycast");
-                    completorList.add("motdCache");
-                    completorList.add("blockForge");
-                    completorList.add("ipWhitelist");
-                    completorList.add("ipBlacklist");
-                    completorList.add("secureProfiles");
-                    completorList.add("advancedAntiBot");
+                    list.add("antiVPN");
+                    list.add("anycast");
+                    list.add("motdCache");
+                    list.add("blockForge");
+                    list.add("ipWhitelist");
+                    list.add("ipBlacklist");
+                    list.add("secureProfiles");
+                    list.add("advancedAntiBot");
                 }
-                return completorList;
             }
 
-            if (args.length > 1) {
-                return completorList;
-            }
+            if (args.length <= 1) {
 
-            list.add("setup");
+                list.add("setup");
 
-            if (instance.getCore().isSetup()) {
-                list.add("setgameshield");
-                list.add("setbackend");
-                list.add("analytics");
-                list.add("debugTool");
-                list.add("ipanic");
-                list.add("toggle");
+                if (instance.getCore().isSetup()) {
+                    list.add("setgameshield");
+                    list.add("setbackend");
+                    list.add("analytics");
+                    list.add("debugTool");
+                    list.add("whitelist");
+                    list.add("blacklist");
+                    list.add("ipanic");
+                    list.add("toggle");
+                }
             }
 
             for (String tab : list) {

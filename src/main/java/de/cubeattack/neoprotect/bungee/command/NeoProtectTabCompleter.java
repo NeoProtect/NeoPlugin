@@ -26,24 +26,32 @@ public class NeoProtectTabCompleter implements Listener {
         ArrayList<String> commands = new ArrayList<>();
         ArrayList<String> tabListOne = new ArrayList<>();
         ArrayList<String> tabListTwo = new ArrayList<>();
+        ArrayList<String> tabListThree = new ArrayList<>();
 
         commands.add("/np");
         commands.add("/neoprotect");
         tabListOne.add("setup");
 
         if (instance.getCore().isSetup()) {
-            tabListOne.add("ipanic");
-            tabListOne.add("toggle");
-            tabListOne.add("debugtool");
-            tabListOne.add("analytics");
             tabListOne.add("setgameshield");
             tabListOne.add("setbackend");
+            tabListOne.add("analytics");
+            tabListOne.add("debugTool");
+            tabListOne.add("whitelist");
+            tabListOne.add("blacklist");
+            tabListOne.add("ipanic");
+            tabListOne.add("toggle");
 
             if (cursorSplit.length >= 2 && cursorSplit[1].equalsIgnoreCase("debugTool")) {
                 for (int i = 10; i <= 90; i = i + 10) {
                     tabListTwo.add(String.valueOf(i));
                 }
                 tabListTwo.add("cancel");
+            }
+
+            if (cursorSplit.length >= 2 && (cursorSplit[1].equalsIgnoreCase("whitelist") || cursorSplit[1].equalsIgnoreCase("blacklist"))) {
+                tabListTwo.add("add");
+                tabListTwo.add("remove");
             }
 
             if (cursorSplit.length >= 2 && cursorSplit[1].equalsIgnoreCase("toggle")) {
@@ -58,7 +66,7 @@ public class NeoProtectTabCompleter implements Listener {
             }
         }
 
-        event.getSuggestions().addAll(completer(true, cursor, commands, tabListOne, tabListTwo));
+        event.getSuggestions().addAll(completer(true, cursor, commands, tabListOne, tabListTwo, tabListThree));
     }
 
 

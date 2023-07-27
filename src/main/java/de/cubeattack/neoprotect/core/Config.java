@@ -38,11 +38,11 @@ public class Config {
             core.severe("Failed to load API-Key. Key is null or not valid");
             return;
         }
-        if (GameShieldID.equals("")) {
+        if (GameShieldID.isEmpty()) {
             core.severe("Failed to load GameshieldID. ID is null");
             return;
         }
-        if (BackendID.equals("")) {
+        if (BackendID.isEmpty()) {
             core.severe("Failed to load BackendID. ID is null");
             return;
         }
@@ -80,7 +80,7 @@ public class Config {
         return debugMode;
     }
 
-    public static VersionUtils.UpdateSetting isAutoUpdater() {
+    public static VersionUtils.UpdateSetting getAutoUpdaterSettings() {
         return VersionUtils.UpdateSetting.getByNameOrDefault(updateSetting);
     }
 

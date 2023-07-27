@@ -67,6 +67,9 @@ public class Core {
     public void severe(String output) {
         LogManager.getLogger().error(output);
     }
+    public void severe(String output, Throwable t) {
+        LogManager.getLogger().error(output, t);
+    }
 
     public String getPrefix() {
         return prefix;
