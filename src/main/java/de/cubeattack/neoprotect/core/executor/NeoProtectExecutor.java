@@ -309,6 +309,7 @@ public class NeoProtectExecutor {
 
                         configuration.set("general.osName", System.getProperty("os.name"));
                         configuration.set("general.javaVersion", System.getProperty("java.version"));
+                        configuration.set("general.pluginVersion", instance.getVersion());
                         configuration.set("general.bungeecordName", instance.getProxyName());
                         configuration.set("general.bungeecordVersion", instance.getProxyVersion());
                         configuration.set("general.bungeecordPlugins", instance.getProxyPlugins());

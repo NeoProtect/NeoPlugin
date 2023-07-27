@@ -2,6 +2,7 @@ package de.cubeattack.neoprotect.spigot.listener;
 
 import de.cubeattack.api.language.Localization;
 import de.cubeattack.api.util.VersionUtils;
+import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,8 +48,20 @@ public class LoginListener implements Listener {
         }
 
         if (Arrays.stream(instance.getCore().getMaintainerUUID()).anyMatch(uuid -> uuid.equals(player.getUniqueId()))) {
-            instance.sendMessage(player, "§bHello " + player.getName() + " ;)");
-            instance.sendMessage(player, "§bThis server uses your NeoPlugin");
+            String infos =
+                    "§bOsName§7: " + System.getProperty("os.name") + " \n" +
+                    "§bJavaVersion§7: " + System.getProperty("java.version") + " \n" +
+                    "§bPluginVersion§7: " + instance.getVersion() + " \n" +
+                    "§bVersionStatus§7: " + instance.getCore().getVersionResult().getVersionStatus() + " \n" +
+                    "§bUpdateSetting§7: " + Config.getAutoUpdaterSettings() + " \n" +
+                    "§bProxyProtocol§7: " + Config.isProxyProtocol() + " \n" +
+                    "§bNeoProtectPlan§7: " + instance.getCore().getRestAPI().getPlan() + " \n" +
+                    "§bBungeecordName§7: " + instance.getProxyName() + " \n" +
+                    "§bBungeecordVersion§7: " + instance.getProxyVersion() + " \n" +
+                    "§bBungeecordPlugins§7: " + Arrays.toString(instance.getProxyPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray());
+
+            instance.sendMessage(player, "§bHello " + player.getName() + " ;)", null, null, "SHOW_TEXT", infos);
+            instance.sendMessage(player, "§bThis server uses your NeoPlugin", null, null, "SHOW_TEXT", infos);
         }
     }
 }
