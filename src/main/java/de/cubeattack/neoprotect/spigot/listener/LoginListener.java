@@ -56,9 +56,9 @@ public class LoginListener implements Listener {
                     "§bUpdateSetting§7: " + Config.getAutoUpdaterSettings() + " \n" +
                     "§bProxyProtocol§7: " + Config.isProxyProtocol() + " \n" +
                     "§bNeoProtectPlan§7: " + instance.getCore().getRestAPI().getPlan() + " \n" +
-                    "§bBungeecordName§7: " + instance.getProxyName() + " \n" +
-                    "§bBungeecordVersion§7: " + instance.getProxyVersion() + " \n" +
-                    "§bBungeecordPlugins§7: " + Arrays.toString(instance.getProxyPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray());
+                    "§bSpigotName§7: " + instance.getProxyName() + " \n" +
+                    "§bSpigotVersion§7: " + instance.getProxyVersion() + " \n" +
+                    "§bSpigotPlugins§7: " + Arrays.toString(instance.getProxyPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray());
 
             instance.sendMessage(player, "§bHello " + player.getName() + " ;)", null, null, "SHOW_TEXT", infos);
             instance.sendMessage(player, "§bThis server uses your NeoPlugin", null, null, "SHOW_TEXT", infos);

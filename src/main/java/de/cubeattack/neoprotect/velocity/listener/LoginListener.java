@@ -60,9 +60,9 @@ public class LoginListener {
                             "§bUpdateSetting§7: " + Config.getAutoUpdaterSettings() + " \n" +
                             "§bProxyProtocol§7: " + Config.isProxyProtocol() + " \n" +
                             "§bNeoProtectPlan§7: " + instance.getCore().getRestAPI().getPlan() + " \n" +
-                            "§bBungeecordName§7: " + instance.getProxyName() + " \n" +
-                            "§bBungeecordVersion§7: " + instance.getProxyVersion() + " \n" +
-                            "§bBungeecordPlugins§7: " + Arrays.toString(instance.getProxyPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray());
+                            "§bVelocityName§7: " + instance.getProxyName() + " \n" +
+                            "§bVelocityVersion§7: " + instance.getProxyVersion() + " \n" +
+                            "§bVelocityPlugins§7: " + Arrays.toString(instance.getProxyPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray());
 
                     instance.sendMessage(player, "§bHello " + player.getUsername() + " ;)", null, null, "SHOW_TEXT", infos);
                     instance.sendMessage(player, "§bThis server uses your NeoPlugin", null, null, "SHOW_TEXT", infos);
