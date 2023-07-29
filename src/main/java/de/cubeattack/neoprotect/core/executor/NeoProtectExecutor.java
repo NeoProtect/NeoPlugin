@@ -79,8 +79,18 @@ public class NeoProtectExecutor {
                 break;
             }
 
+            case "directconnectwhitelist": {
+                directConnectWhitelist(args);
+                break;
+            }
+
             case "toggle": {
                 toggle(args);
+                break;
+            }
+
+            case "analytics": {
+                analytics();
                 break;
             }
 
@@ -91,11 +101,6 @@ public class NeoProtectExecutor {
 
             case "debugtool": {
                 debugTool(args);
-                break;
-            }
-
-            case "analytics": {
-                analytics();
                 break;
             }
 
@@ -143,6 +148,15 @@ public class NeoProtectExecutor {
         }
     }
 
+    private void directConnectWhitelist(String[] args) {
+        if (args.length == 2) {
+            instance.getCore().getDirectConnectWhitelist().add(args[1]);
+            instance.sendMessage(sender, localization.get("command.directconnectwhitelist", args[1]));
+        } else {
+            instance.sendMessage(sender, localization.get("usage.directconnectwhitelist"));
+        }
+    }
+
     private void toggle(String[] args) {
         if (args.length != 2) {
             instance.sendMessage(sender, localization.get("usage.toggle"));
@@ -167,6 +181,40 @@ public class NeoProtectExecutor {
             instance.sendMessage(sender, localization.get("command.toggle", args[1],
                     localization.get(response == 1 ? "utils.activated" : "utils.deactivated")));
         }
+    }
+
+    private void analytics() {
+        instance.sendMessage(sender, "§7§l--------- §bAnalytics §7§l---------");
+        JSONObject analytics = instance.getCore().getRestAPI().getAnalytics();
+        instance.getCore().getRestAPI().getAnalytics().keySet().forEach(ak -> {
+            if (ak.equals("bandwidth")) {
+                return;
+            }
+
+            if (ak.equals("traffic")) {
+                instance.sendMessage(sender, ak.replace("traffic", "bandwidth") + ": " +
+                        new DecimalFormat("#.####").format((float) analytics.getInt(ak) * 8 / (1000 * 1000)) + " mbit/s");
+                JSONObject traffic = instance.getCore().getRestAPI().getTraffic();
+
+                AtomicReference<String> trafficUsed = new AtomicReference<>();
+                AtomicReference<String> trafficAvailable = new AtomicReference<>();
+                traffic.keySet().forEach(bk -> {
+                    if (bk.equals("used")) {
+                        trafficUsed.set(traffic.getFloat(bk) / (1000 * 1000 * 1000) + " gb");
+                    }
+                    if (bk.equals("available")) {
+                        trafficAvailable.set(String.valueOf(traffic.getLong(bk)).equals("999999999") ? "unlimited" : traffic.getLong(bk) + " gb");
+                    }
+                });
+                instance.sendMessage(sender, "bandwidth used" + ": " + trafficUsed.get() + "/" + trafficAvailable.get());
+
+                return;
+            }
+
+            instance.sendMessage(sender, ak
+                    .replace("onlinePlayers", "online players")
+                    .replace("cps", "connections/s") + ": " + analytics.get(ak));
+        });
     }
 
     private void firewall(String[] args) {
@@ -209,40 +257,6 @@ public class NeoProtectExecutor {
         } else {
             instance.sendMessage(sender, localization.get("usage.firewall"));
         }
-    }
-
-    private void analytics() {
-        instance.sendMessage(sender, "§7§l--------- §bAnalytics §7§l---------");
-        JSONObject analytics = instance.getCore().getRestAPI().getAnalytics();
-        instance.getCore().getRestAPI().getAnalytics().keySet().forEach(ak -> {
-            if (ak.equals("bandwidth")) {
-                return;
-            }
-
-            if (ak.equals("traffic")) {
-                instance.sendMessage(sender, ak.replace("traffic", "bandwidth") + ": " +
-                        new DecimalFormat("#.####").format((float) analytics.getInt(ak) * 8 / (1000 * 1000)) + " mbit/s");
-                JSONObject traffic = instance.getCore().getRestAPI().getTraffic();
-
-                AtomicReference<String> trafficUsed = new AtomicReference<>();
-                AtomicReference<String> trafficAvailable = new AtomicReference<>();
-                traffic.keySet().forEach(bk -> {
-                    if (bk.equals("used")) {
-                        trafficUsed.set(traffic.getFloat(bk) / (1000 * 1000 * 1000) + " gb");
-                    }
-                    if (bk.equals("available")) {
-                        trafficAvailable.set(String.valueOf(traffic.getLong(bk)).equals("999999999") ? "unlimited" : traffic.getLong(bk) + " gb");
-                    }
-                });
-                instance.sendMessage(sender, "bandwidth used" + ": " + trafficUsed.get() + "/" + trafficAvailable.get());
-
-                return;
-            }
-
-            instance.sendMessage(sender, ak
-                    .replace("onlinePlayers", "online players")
-                    .replace("cps", "connections/s") + ": " + analytics.get(ak));
-        });
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -381,7 +395,7 @@ public class NeoProtectExecutor {
                         configuration.save(file);
                         instance.getCore().getDebugPingResponses().clear();
                         instance.sendMessage(sender, localization.get("debug.finished.first") + " (took " + (System.currentTimeMillis() - startTime) + "ms)");
-                        instance.sendMessage(sender, localization.get("debug.finished.second") + file.getAbsolutePath() + " " + localization.get("utils.copy"), "COPY_TO_CLIPBOARD", file.getAbsolutePath(), null, null);
+                        instance.sendMessage(sender, localization.get("debug.finished.second") + file.getAbsolutePath() + localization.get("utils.copy"), "COPY_TO_CLIPBOARD", file.getAbsolutePath(), null, null);
                         instance.getCore().setDebugRunning(false);
                     } catch (Exception ex) {
                         instance.getCore().severe(ex.getMessage(), ex);
@@ -455,6 +469,7 @@ public class NeoProtectExecutor {
         instance.sendMessage(sender, " - /np whitelist (add/remove) (ip)");
         instance.sendMessage(sender, " - /np blacklist (add/remove) (ip)");
         instance.sendMessage(sender, " - /np debugTool (cancel / amount)");
+        instance.sendMessage(sender, " - /np directConnectWhitelist (ip)");
         instance.sendMessage(sender, " - /np setgameshield");
         instance.sendMessage(sender, " - /np setbackend");
     }

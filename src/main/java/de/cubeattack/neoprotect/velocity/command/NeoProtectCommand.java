@@ -77,6 +77,7 @@ public class NeoProtectCommand implements SimpleCommand {
                 list.add("setup");
 
                 if (instance.getCore().isSetup()) {
+                    list.add("directConnectWhitelist");
                     list.add("setgameshield");
                     list.add("setbackend");
                     list.add("analytics");

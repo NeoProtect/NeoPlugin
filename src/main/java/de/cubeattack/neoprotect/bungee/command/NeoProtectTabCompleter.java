@@ -33,6 +33,7 @@ public class NeoProtectTabCompleter implements Listener {
         tabListOne.add("setup");
 
         if (instance.getCore().isSetup()) {
+            tabListOne.add("directConnectWhitelist");
             tabListOne.add("setgameshield");
             tabListOne.add("setbackend");
             tabListOne.add("analytics");

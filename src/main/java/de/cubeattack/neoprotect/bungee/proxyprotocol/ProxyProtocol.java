@@ -49,8 +49,6 @@ public class ProxyProtocol {
 
                         instance.getCore().debug("Open channel (" + channel.remoteAddress().toString() + ")");
 
-                        AtomicReference<InetSocketAddress> inetAddress = new AtomicReference<>();
-
                         initChannelMethod.invoke(bungeeChannelInitializer, channel);
 
                         if (channel.localAddress().toString().startsWith("local:")) {
@@ -58,21 +56,27 @@ public class ProxyProtocol {
                             return;
                         }
 
-                        if (instance.getCore().isSetup() && (instance.getCore().getRestAPI().getNeoServerIPs() == null ||
-                                instance.getCore().getRestAPI().getNeoServerIPs().toList().stream().noneMatch(ipRange -> isIPInRange((String) ipRange, ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress())))) {
-                            channel.close();
-                            instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
-                            return;
+                        AtomicReference<InetSocketAddress> playerAddress = new AtomicReference<>();
+                        String sourceAddress = ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
+
+                        if (!instance.getCore().getDirectConnectWhitelist().contains(sourceAddress)) {
+                            if (instance.getCore().isSetup() && (instance.getCore().getRestAPI().getNeoServerIPs() == null ||
+                                    instance.getCore().getRestAPI().getNeoServerIPs().toList().stream().noneMatch(ipRange -> isIPInRange((String) ipRange, sourceAddress)))) {
+                                channel.close();
+                                instance.getCore().debug("Close connection IP (" + channel.remoteAddress() + ") doesn't match to Neo-IPs (close / return)");
+                                return;
+                            }
+
+                            instance.getCore().debug("Adding handler...");
+
+                            if (instance.getCore().isSetup() && Config.isProxyProtocol()) {
+                                addProxyProtocolHandler(channel, playerAddress);
+                                instance.getCore().debug("Plugin is setup & ProxyProtocol is on (Added proxyProtocolHandler)");
+                            }
+
+                            addKeepAlivePacketHandler(channel, playerAddress, instance);
+                            instance.getCore().debug("Added KeepAlivePacketHandler");
                         }
-
-                        instance.getCore().debug("Adding Handler...");
-
-                        if (instance.getCore().isSetup() && Config.isProxyProtocol()) {
-                            instance.getCore().debug("Plugin is setup & ProxyProtocol is on (addProxyProtocolHandler)");
-                            addProxyProtocolHandler(channel, inetAddress);
-                        }
-
-                        addKeepAlivePacketHandler(channel, inetAddress, instance);
 
                         instance.getCore().debug("Connecting finished");
 
@@ -193,7 +197,7 @@ public class ProxyProtocol {
     }
 
     public static boolean isIPInRange(String ipAddress, String ipRange) {
-        if(!ipRange.contains("/")){
+        if (!ipRange.contains("/")) {
             ipRange = ipRange + "/32";
         }
 

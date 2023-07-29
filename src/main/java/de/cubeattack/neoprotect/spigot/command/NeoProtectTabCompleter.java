@@ -46,6 +46,7 @@ public class NeoProtectTabCompleter implements TabCompleter {
         list.add("setup");
 
         if (instance.getCore().isSetup()) {
+            list.add("directConnectWhitelist");
             list.add("setgameshield");
             list.add("setbackend");
             list.add("analytics");

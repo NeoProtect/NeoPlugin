@@ -28,6 +28,7 @@ public class Core {
     private final NeoProtectPlugin plugin;
     private final Localization localization;
     private final List<Object> PLAYER_IN_SETUP = new ArrayList<>();
+    private final List<String> directConnectWhitelist= new ArrayList<>();
     private final ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, Timestamp> timestampsMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, ArrayList<DebugPingResponse>> debugPingResponses = new ConcurrentHashMap<>();
@@ -105,6 +106,10 @@ public class Core {
 
     public List<Object> getPlayerInSetup() {
         return PLAYER_IN_SETUP;
+    }
+
+    public List<String> getDirectConnectWhitelist() {
+        return directConnectWhitelist;
     }
 
     public ConcurrentHashMap<KeepAliveResponseKey, Long> getPingMap() {

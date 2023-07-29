@@ -71,8 +71,8 @@ public class ProxyProtocol {
             @Override
             protected void initChannel(Channel channel) {
 
-                if (!Config.isProxyProtocol() | !instance.getCore().isSetup()) {
-                    instance.getCore().debug("Plugin is not setup / ProxyProtocol is off (return)");
+                if (!Config.isProxyProtocol() | !instance.getCore().isSetup() | instance.getCore().getDirectConnectWhitelist().contains(((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress())) {
+                    instance.getCore().debug("Plugin is not setup / ProxyProtocol is off / Player is on DirectConnectWhitelist (return)");
                     return;
                 }
 
