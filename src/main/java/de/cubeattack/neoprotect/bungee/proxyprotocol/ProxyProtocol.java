@@ -207,8 +207,8 @@ public class ProxyProtocol {
         String startIP = ipRange.split("/")[0];
 
         long startIntAddress = ipToDecimal(startIP);
-
-        return targetIntAddress <= (startIntAddress + (long) (32 - range) * (32 - range)) && targetIntAddress >= startIntAddress;
+        Math.pow(2, (32 - range));
+        return targetIntAddress <= (startIntAddress + (long) Math.pow(2, (32 - range))) && targetIntAddress >= startIntAddress;
     }
 
     public static long ipToDecimal(String ipAddress) throws IllegalArgumentException {
