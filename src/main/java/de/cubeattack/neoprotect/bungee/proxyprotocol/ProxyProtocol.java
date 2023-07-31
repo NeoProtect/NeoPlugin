@@ -207,7 +207,7 @@ public class ProxyProtocol {
         String startIP = ipRange.split("/")[0];
 
         long startIntAddress = ipToDecimal(startIP);
-        Math.pow(2, (32 - range));
+
         return targetIntAddress <= (startIntAddress + (long) Math.pow(2, (32 - range))) && targetIntAddress >= startIntAddress;
     }
 
