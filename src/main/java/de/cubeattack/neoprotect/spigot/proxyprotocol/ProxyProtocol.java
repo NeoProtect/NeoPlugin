@@ -178,7 +178,7 @@ public class ProxyProtocol {
 
             instance.getCore().debug("Open channel (" + channel.remoteAddress().toString() + ")");
 
-            if (channel.localAddress().toString().startsWith("local:")) {
+            if (channel.localAddress().toString().startsWith("local:") || ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress().equals(Config.getGeyserServerIP())) {
                 instance.getCore().debug("Detected bedrock player (return)");
                 return;
             }

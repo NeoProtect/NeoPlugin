@@ -16,6 +16,7 @@ public class Config {
     private static String BackendID;
     private static boolean updateIP;
     private static boolean debugMode;
+    private static String geyserServerIP;
     private static String updateSetting;
 
     private static Core core;
@@ -33,6 +34,7 @@ public class Config {
         BackendID = config.getString("gameshield.backendId", "");
         updateIP = config.getBoolean("gameshield.autoUpdateIP", false);
         debugMode = config.getBoolean("DebugMode", false);
+        geyserServerIP = config.getString("geyserServerIP", "127.0.0.1");
 
         if (APIKey.length() != 64) {
             core.severe("Failed to load API-Key. Key is null or not valid");
@@ -78,6 +80,10 @@ public class Config {
 
     public static boolean isDebugMode() {
         return debugMode;
+    }
+
+    public static String getGeyserServerIP() {
+        return geyserServerIP;
     }
 
     public static VersionUtils.UpdateSetting getAutoUpdaterSettings() {

@@ -56,13 +56,13 @@ public class ProxyProtocol {
                         initChannelMethod.getMethod().setAccessible(true);
                         initChannelMethod.invoke(oldInitializer, channel);
 
-                        if (channel.localAddress().toString().startsWith("local:")) {
+                        AtomicReference<InetSocketAddress> playerAddress = new AtomicReference<>();
+                        String sourceAddress = ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
+
+                        if (channel.localAddress().toString().startsWith("local:") || sourceAddress.equals(Config.getGeyserServerIP())) {
                             instance.getCore().debug("Detected bedrock player (return)");
                             return;
                         }
-
-                        AtomicReference<InetSocketAddress> playerAddress = new AtomicReference<>();
-                        String sourceAddress = ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
 
                         if (!instance.getCore().getDirectConnectWhitelist().contains(sourceAddress)) {
                             if (instance.getCore().isSetup() && (instance.getCore().getRestAPI().getNeoServerIPs() == null ||
