@@ -43,7 +43,10 @@ public class RestAPIRequests {
     }
 
     private String getIpv4() {
-        return new ResponseManager(rest.callRequest(new Request.Builder().url(ipGetter).build())).getResponseBodyObject().getString("ip");
+        try {
+            return new ResponseManager(rest.callRequest(new Request.Builder().url(ipGetter).build())).getResponseBodyObject().getString("ip");
+        }catch (Exception ignore){}
+        return null;
     }
 
     private JSONArray getNeoIPs() {
