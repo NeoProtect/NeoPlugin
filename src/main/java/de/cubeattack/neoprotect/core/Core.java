@@ -45,6 +45,8 @@ public class Core {
         FileUtils config = new FileUtils(Core.class.getResourceAsStream("/config.yml"), "plugins/NeoProtect", "config.yml", false);
         FileUtils languageEN = new FileUtils(Core.class.getResourceAsStream("/language_en.properties"), "plugins/NeoProtect/languages", "language_en.properties", true);
         FileUtils languageDE = new FileUtils(Core.class.getResourceAsStream("/language_de.properties"), "plugins/NeoProtect/languages", "language_de.properties", true);
+        FileUtils languageRU = new FileUtils(Core.class.getResourceAsStream("/language_ru.properties"), "plugins/NeoProtect/languages", "language_ru.properties", true);
+        FileUtils languageUA = new FileUtils(Core.class.getResourceAsStream("/language_ua.properties"), "plugins/NeoProtect/languages", "language_ua.properties", true);
 
         Config.loadConfig(this, config);
 
