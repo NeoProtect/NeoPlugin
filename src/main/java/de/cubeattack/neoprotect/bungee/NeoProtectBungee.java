@@ -1,5 +1,6 @@
 package de.cubeattack.neoprotect.bungee;
 
+import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.Permission;
@@ -13,6 +14,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.protocol.packet.KeepAlive;
 import org.bstats.bungeecord.Metrics;
+import org.bstats.charts.SimplePie;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +25,8 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
 
     @Override
     public void onLoad() {
-        new Metrics(this, 18726);
+        Metrics metrics = new Metrics(this, 18726);
+        metrics.addCustomChart(new SimplePie("language", Config::getLanguage));
     }
 
     @Override

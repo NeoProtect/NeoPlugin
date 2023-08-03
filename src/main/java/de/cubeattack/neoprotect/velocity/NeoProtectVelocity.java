@@ -8,6 +8,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.KeepAlive;
+import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.Permission;
@@ -16,6 +17,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import org.bstats.charts.SimplePie;
 import org.bstats.velocity.Metrics;
 
 import java.util.ArrayList;
@@ -38,7 +40,8 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        metricsFactory.make(this, 18727);
+        Metrics metrics = metricsFactory.make(this, 18727);
+        metrics.addCustomChart(new SimplePie("language", Config::getLanguage));
         core = new Core(this);
         new Startup(this);
     }
