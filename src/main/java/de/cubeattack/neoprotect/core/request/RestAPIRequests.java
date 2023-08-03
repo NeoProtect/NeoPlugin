@@ -212,7 +212,7 @@ public class RestAPIRequests {
             public void run() {
                 neoServerIPs = getNeoIPs();
             }
-        }, 0, 1000 * 10);
+        }, 0, 1000 * 30);
     }
 
     private void versionCheckSchedule() {
@@ -250,7 +250,7 @@ public class RestAPIRequests {
                     attackRunning[0] = true;
                 }
             }
-        }, 1000 * 3, 1000 * 3);
+        }, 1000 * 5, 1000 * 5);
     }
 
     private void backendServerIPUpdater() {
@@ -280,7 +280,7 @@ public class RestAPIRequests {
                     backend.setIp(ip);
                 }
             }
-        }, 1000, 1000 * 10);
+        }, 1000, 1000 * 15);
     }
 
     public JSONArray getNeoServerIPs() {
