@@ -25,6 +25,7 @@ public class ChatListener implements Listener {
         event.setCancelled(true);
 
         new NeoProtectExecutor.ExecutorBuilder()
+                .local(player.locale())
                 .neoProtectPlugin(instance)
                 .sender(event.getPlayer())
                 .msg(event.getMessage())

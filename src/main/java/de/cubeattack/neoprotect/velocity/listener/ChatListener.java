@@ -25,6 +25,7 @@ public class ChatListener {
         event.setResult(PlayerChatEvent.ChatResult.denied());
 
         new NeoProtectExecutor.ExecutorBuilder()
+                .local(player.getEffectiveLocale())
                 .neoProtectPlugin(instance)
                 .sender(event.getPlayer())
                 .msg(event.getMessage())

@@ -21,11 +21,11 @@ public interface NeoProtectPlugin {
 
     String getVersion();
 
-    String getProxyName();
+    String getServerName();
 
-    String getProxyVersion();
+    String getServerVersion();
 
-    ArrayList<String> getProxyPlugins();
+    ArrayList<String> getPlugins();
 
     PluginType getPluginType();
 

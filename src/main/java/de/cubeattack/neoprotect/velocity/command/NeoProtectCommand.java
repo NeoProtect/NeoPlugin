@@ -8,6 +8,7 @@ import de.cubeattack.neoprotect.velocity.NeoProtectVelocity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 public class NeoProtectCommand implements SimpleCommand {
@@ -24,11 +25,12 @@ public class NeoProtectCommand implements SimpleCommand {
     public void execute(Invocation invocation) {
 
         if (!(invocation.source() instanceof Player)) {
-            instance.sendMessage(invocation.source(), localization.get("console.command"));
+            instance.sendMessage(invocation.source(), localization.get(Locale.getDefault(), "console.command"));
             return;
         }
 
         new NeoProtectExecutor.ExecutorBuilder()
+                .local(((Player) invocation.source()).getEffectiveLocale())
                 .neoProtectPlugin(instance)
                 .sender(invocation.source())
                 .args(invocation.arguments())

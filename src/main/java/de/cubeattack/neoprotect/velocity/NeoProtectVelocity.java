@@ -107,17 +107,17 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     }
 
     @Override
-    public String getProxyName() {
+    public String getServerName() {
         return proxy.getVersion().getName();
     }
 
     @Override
-    public String getProxyVersion() {
+    public String getServerVersion() {
         return proxy.getVersion().getVersion();
     }
 
     @Override
-    public ArrayList<String> getProxyPlugins() {
+    public ArrayList<String> getPlugins() {
         ArrayList<String> plugins = new ArrayList<>();
         getProxy().getPluginManager().getPlugins().forEach(p -> plugins.add(p.getDescription().getName().orElseThrow(null)));
         return plugins;

@@ -5,6 +5,7 @@ import de.cubeattack.api.util.VersionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @SuppressWarnings("unused")
 public class Config {
@@ -28,7 +29,7 @@ public class Config {
         fileUtils = config;
 
         APIKey = config.getString("APIKey", "");
-        language = config.getString("Language", "en-US");
+        language = config.getString("defaultLanguage", Locale.getDefault().toLanguageTag());
         proxyProtocol = config.getBoolean("ProxyProtocol", true);
         GameShieldID = config.getString("gameshield.serverId", "");
         BackendID = config.getString("gameshield.backendId", "");

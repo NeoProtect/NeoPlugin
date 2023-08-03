@@ -82,17 +82,17 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     }
 
     @Override
-    public String getProxyName() {
+    public String getServerName() {
         return getProxy().getName();
     }
 
     @Override
-    public String getProxyVersion() {
+    public String getServerVersion() {
         return getProxy().getVersion();
     }
 
     @Override
-    public ArrayList<String> getProxyPlugins() {
+    public ArrayList<String> getPlugins() {
         ArrayList<String> plugins = new ArrayList<>();
         getProxy().getPluginManager().getPlugins().forEach(p -> plugins.add(p.getDescription().getName()));
         return plugins;

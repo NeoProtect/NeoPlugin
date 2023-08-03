@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
 
@@ -79,17 +80,19 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     }
 
     @Override
-    public String getProxyName() {
-        return null;
+    public String getServerName() {
+        return getServer().getName();
     }
 
     @Override
-    public String getProxyVersion() {
-        return null;
+    public String getServerVersion() {
+        return getServer().getVersion();
     }
 
     @Override
-    public ArrayList<String> getProxyPlugins() {
-        return null;
+    public ArrayList<String> getPlugins() {
+        ArrayList<String> plugins = new ArrayList<>();
+        Arrays.stream(getServer().getPluginManager().getPlugins()).forEach(p -> plugins.add(p.getName()));
+        return plugins;
     }
 }

@@ -13,10 +13,7 @@ import de.cubeattack.neoprotect.core.model.debugtool.DebugPingResponse;
 import java.io.File;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class NeoProtectExecutor {
@@ -26,6 +23,7 @@ public class NeoProtectExecutor {
     private Localization localization;
 
     private Object sender;
+    private Locale locale;
     private String msg;
     private String[] args;
 
@@ -34,6 +32,7 @@ public class NeoProtectExecutor {
         this.localization = instance.getCore().getLocalization();
 
         this.sender = executeBuilder.getSender();
+        this.locale = executeBuilder.getLocal();
         this.args = executeBuilder.getArgs();
         this.msg = executeBuilder.getMsg();
     }
@@ -42,13 +41,13 @@ public class NeoProtectExecutor {
         initials(executorBuilder);
 
         if (instance.getCore().getRestAPI().isAPIInvalid(msg)) {
-            instance.sendMessage(sender, localization.get("apikey.invalid"));
+            instance.sendMessage(sender, localization.get(locale, "apikey.invalid"));
             return;
         }
 
         Config.setAPIKey(msg);
 
-        instance.sendMessage(sender, localization.get("apikey.valid"));
+        instance.sendMessage(sender, localization.get(locale, "apikey.valid"));
 
         gameshieldSelector();
     }
@@ -63,7 +62,7 @@ public class NeoProtectExecutor {
         }
 
         if (!instance.getCore().isSetup() & !args[0].equals("setup") & !args[0].equals("setgameshield") & !args[0].equals("setbackend")) {
-            instance.sendMessage(sender, localization.get("setup.command.required"));
+            instance.sendMessage(sender, localization.get(locale, "setup.command.required"));
             return;
         }
 
@@ -94,7 +93,8 @@ public class NeoProtectExecutor {
                 break;
             }
 
-            case "whitelist": case "blacklist":  {
+            case "whitelist":
+            case "blacklist": {
                 firewall(args);
                 break;
             }
@@ -110,7 +110,7 @@ public class NeoProtectExecutor {
                 } else if (args.length == 2) {
                     setGameshield(args);
                 } else {
-                    instance.sendMessage(sender, localization.get("usage.setgameshield"));
+                    instance.sendMessage(sender, localization.get(locale, "usage.setgameshield"));
                 }
                 break;
             }
@@ -121,7 +121,7 @@ public class NeoProtectExecutor {
                 } else if (args.length == 2) {
                     setBackend(args);
                 } else {
-                    instance.sendMessage(sender, localization.get("usage.setbackend"));
+                    instance.sendMessage(sender, localization.get(locale, "usage.setbackend"));
                 }
                 break;
             }
@@ -134,42 +134,42 @@ public class NeoProtectExecutor {
 
     private void setup() {
         instance.getCore().getPlayerInSetup().add(sender);
-        instance.sendMessage(sender, localization.get("command.setup") + localization.get("utils.click"),
+        instance.sendMessage(sender, localization.get(locale, "command.setup") + localization.get(locale, "utils.click"),
                 "OPEN_URL", "https://panel.neoprotect.net/profile",
-                "SHOW_TEXT", localization.get("apikey.find"));
+                "SHOW_TEXT", localization.get(locale, "apikey.find"));
     }
 
     private void iPanic(String[] args) {
         if (args.length != 1) {
-            instance.sendMessage(sender, localization.get("usage.ipanic"));
+            instance.sendMessage(sender, localization.get(locale, "usage.ipanic"));
         } else {
-            instance.sendMessage(sender, localization.get("command.ipanic",
-                    localization.get(instance.getCore().getRestAPI().togglePanicMode() ? "utils.activated" : "utils.deactivated")));
+            instance.sendMessage(sender, localization.get(locale, "command.ipanic",
+                    localization.get(locale, instance.getCore().getRestAPI().togglePanicMode() ? "utils.activated" : "utils.deactivated")));
         }
     }
 
     private void directConnectWhitelist(String[] args) {
         if (args.length == 2) {
             instance.getCore().getDirectConnectWhitelist().add(args[1]);
-            instance.sendMessage(sender, localization.get("command.directconnectwhitelist", args[1]));
+            instance.sendMessage(sender, localization.get(locale, "command.directconnectwhitelist", args[1]));
         } else {
-            instance.sendMessage(sender, localization.get("usage.directconnectwhitelist"));
+            instance.sendMessage(sender, localization.get(locale, "usage.directconnectwhitelist"));
         }
     }
 
     private void toggle(String[] args) {
         if (args.length != 2) {
-            instance.sendMessage(sender, localization.get("usage.toggle"));
+            instance.sendMessage(sender, localization.get(locale, "usage.toggle"));
         } else {
             int response = instance.getCore().getRestAPI().toggle(args[1]);
 
             if (response == 403) {
-                instance.sendMessage(sender, localization.get("err.upgrade-plan"));
+                instance.sendMessage(sender, localization.get(locale, "err.upgrade-plan"));
                 return;
             }
 
             if (response == 429) {
-                instance.sendMessage(sender, localization.get("err.rate-limit"));
+                instance.sendMessage(sender, localization.get(locale, "err.rate-limit"));
                 return;
             }
 
@@ -178,8 +178,8 @@ public class NeoProtectExecutor {
                 return;
             }
 
-            instance.sendMessage(sender, localization.get("command.toggle", args[1],
-                    localization.get(response == 1 ? "utils.activated" : "utils.deactivated")));
+            instance.sendMessage(sender, localization.get(locale, "command.toggle", args[1],
+                    localization.get(locale, response == 1 ? "utils.activated" : "utils.deactivated")));
         }
     }
 
@@ -225,37 +225,37 @@ public class NeoProtectExecutor {
         } else if (args.length == 3) {
             String ip = args[2];
             String action = args[1];
-            String mode =  args[0].toUpperCase();
+            String mode = args[0].toUpperCase();
             int response = instance.getCore().getRestAPI().updateFirewall(ip, action, mode);
 
             if (response == -1) {
-                instance.sendMessage(sender, localization.get("usage.firewall"));
+                instance.sendMessage(sender, localization.get(locale, "usage.firewall"));
                 return;
             }
 
             if (response == 0) {
-                instance.sendMessage(sender, localization.get("command.firewall.notfound", ip, mode));
+                instance.sendMessage(sender, localization.get(locale, "command.firewall.notfound", ip, mode));
                 return;
             }
 
             if (response == 400) {
-                instance.sendMessage(sender, localization.get("command.firewall.ip-invalid", ip));
+                instance.sendMessage(sender, localization.get(locale, "command.firewall.ip-invalid", ip));
                 return;
             }
 
             if (response == 403) {
-                instance.sendMessage(sender, localization.get("err.upgrade-plan"));
+                instance.sendMessage(sender, localization.get(locale, "err.upgrade-plan"));
                 return;
             }
 
             if (response == 429) {
-                instance.sendMessage(sender, localization.get("err.rate-limit"));
+                instance.sendMessage(sender, localization.get(locale, "err.rate-limit"));
                 return;
             }
 
             instance.sendMessage(sender, (action.equalsIgnoreCase("add") ? "Added '" : "Removed '") + ip + "' to firewall (" + mode + ")");
         } else {
-            instance.sendMessage(sender, localization.get("usage.firewall"));
+            instance.sendMessage(sender, localization.get(locale, "usage.firewall"));
         }
     }
 
@@ -263,7 +263,7 @@ public class NeoProtectExecutor {
     private void debugTool(String[] args) {
 
         if (instance.getPluginType() == NeoProtectPlugin.PluginType.SPIGOT) {
-            instance.sendMessage(sender, localization.get("debug.spigot"));
+            instance.sendMessage(sender, localization.get(locale, "debug.spigot"));
             return;
         }
 
@@ -271,23 +271,23 @@ public class NeoProtectExecutor {
             if (args[1].equals("cancel")) {
                 debugTimer.cancel();
                 instance.getCore().setDebugRunning(false);
-                instance.sendMessage(sender, localization.get("debug.cancelled"));
+                instance.sendMessage(sender, localization.get(locale, "debug.cancelled"));
                 return;
             }
 
             if (!isInteger(args[1])) {
-                instance.sendMessage(sender, localization.get("usage.debug"));
+                instance.sendMessage(sender, localization.get(locale, "usage.debug"));
                 return;
             }
         }
 
         if (instance.getCore().isDebugRunning()) {
-            instance.sendMessage(sender, localization.get("debug.running"));
+            instance.sendMessage(sender, localization.get(locale, "debug.running"));
             return;
         }
 
         instance.getCore().setDebugRunning(true);
-        instance.sendMessage(sender, localization.get("debug.starting"));
+        instance.sendMessage(sender, localization.get(locale, "debug.starting"));
 
         int amount = args.length == 2 ? (Integer.parseInt(args[1]) <= 0 ? 1 : Integer.parseInt(args[1])) : 5;
 
@@ -300,7 +300,7 @@ public class NeoProtectExecutor {
             public void run() {
                 counter++;
                 instance.getCore().getTimestampsMap().put(instance.sendKeepAliveMessage(new Random().nextInt(90) * 10000 + 1337), new Timestamp(System.currentTimeMillis()));
-                instance.sendMessage(sender, localization.get("debug.sendingPackets") + " (" + counter + "/" + amount + ")");
+                instance.sendMessage(sender, localization.get(locale, "debug.sendingPackets") + " (" + counter + "/" + amount + ")");
                 if (counter >= amount) this.cancel();
             }
         }, 500, 2000);
@@ -324,9 +324,9 @@ public class NeoProtectExecutor {
                         configuration.set("general.osName", System.getProperty("os.name"));
                         configuration.set("general.javaVersion", System.getProperty("java.version"));
                         configuration.set("general.pluginVersion", instance.getVersion());
-                        configuration.set("general.bungeecordName", instance.getProxyName());
-                        configuration.set("general.bungeecordVersion", instance.getProxyVersion());
-                        configuration.set("general.bungeecordPlugins", instance.getProxyPlugins());
+                        configuration.set("general.bungeecordName", instance.getServerName());
+                        configuration.set("general.bungeecordVersion", instance.getServerVersion());
+                        configuration.set("general.bungeecordPlugins", instance.getPlugins());
 
                         instance.getCore().getDebugPingResponses().keySet().forEach((playerName -> {
                             List<DebugPingResponse> list = instance.getCore().getDebugPingResponses().get(playerName);
@@ -394,8 +394,8 @@ public class NeoProtectExecutor {
 
                         configuration.save(file);
                         instance.getCore().getDebugPingResponses().clear();
-                        instance.sendMessage(sender, localization.get("debug.finished.first") + " (took " + (System.currentTimeMillis() - startTime) + "ms)");
-                        instance.sendMessage(sender, localization.get("debug.finished.second") + file.getAbsolutePath() + localization.get("utils.copy"), "COPY_TO_CLIPBOARD", file.getAbsolutePath(), null, null);
+                        instance.sendMessage(sender, localization.get(locale, "debug.finished.first") + " (took " + (System.currentTimeMillis() - startTime) + "ms)");
+                        instance.sendMessage(sender, localization.get(locale, "debug.finished.second") + file.getAbsolutePath() + localization.get(locale, "utils.copy"), "COPY_TO_CLIPBOARD", file.getAbsolutePath(), null, null);
                         instance.getCore().setDebugRunning(false);
                     } catch (Exception ex) {
                         instance.getCore().severe(ex.getMessage(), ex);
@@ -406,62 +406,62 @@ public class NeoProtectExecutor {
     }
 
     private void gameshieldSelector() {
-        instance.sendMessage(sender, localization.get("select.gameshield"));
+        instance.sendMessage(sender, localization.get(locale, "select.gameshield"));
 
         List<Gameshield> gameshieldList = instance.getCore().getRestAPI().getGameshields();
 
         for (Gameshield gameshield : gameshieldList) {
-            instance.sendMessage(sender, "§5" + gameshield.getName() + localization.get("utils.click"),
+            instance.sendMessage(sender, "§5" + gameshield.getName() + localization.get(locale, "utils.click"),
                     "RUN_COMMAND", "/np setgameshield " + gameshield.getId(),
-                    "SHOW_TEXT", localization.get("hover.gameshield", gameshield.getName(), gameshield.getId()));
+                    "SHOW_TEXT", localization.get(locale, "hover.gameshield", gameshield.getName(), gameshield.getId()));
         }
     }
 
     private void setGameshield(String[] args) {
 
         if (instance.getCore().getRestAPI().isGameshieldInvalid(args[1])) {
-            instance.sendMessage(sender, localization.get("invalid.gameshield", args[1]));
+            instance.sendMessage(sender, localization.get(locale, "invalid.gameshield", args[1]));
             return;
         }
 
         Config.setGameShieldID(args[1]);
-        instance.sendMessage(sender, localization.get("set.gameshield", args[1]));
+        instance.sendMessage(sender, localization.get(locale, "set.gameshield", args[1]));
 
         backendSelector();
     }
 
 
     private void backendSelector() {
-        instance.sendMessage(sender, localization.get("select.backend"));
+        instance.sendMessage(sender, localization.get(locale, "select.backend"));
 
         List<Backend> backendList = instance.getCore().getRestAPI().getBackends();
 
         for (Backend backend : backendList) {
-            instance.sendMessage(sender, "§5" + backend.getIp() + ":" + backend.getPort() + localization.get("utils.click"),
+            instance.sendMessage(sender, "§5" + backend.getIp() + ":" + backend.getPort() + localization.get(locale, "utils.click"),
                     "RUN_COMMAND", "/np setbackend " + backend.getId(),
-                    "SHOW_TEXT", localization.get("hover.backend", backend.getIp(), backend.getPort(), backend.getId()));
+                    "SHOW_TEXT", localization.get(locale, "hover.backend", backend.getIp(), backend.getPort(), backend.getId()));
         }
     }
 
     private void setBackend(String[] args) {
 
         if (instance.getCore().getRestAPI().isBackendInvalid(args[1])) {
-            instance.sendMessage(sender, localization.get("invalid.backend", args[1]));
+            instance.sendMessage(sender, localization.get(locale, "invalid.backend", args[1]));
             return;
         }
 
         Config.setBackendID(args[1]);
-        instance.sendMessage(sender, localization.get("set.backend", args[1]));
+        instance.sendMessage(sender, localization.get(locale, "set.backend", args[1]));
 
         if (instance.getCore().getPlayerInSetup().remove(sender)) {
-            instance.sendMessage(sender, localization.get("setup.finished"));
+            instance.sendMessage(sender, localization.get(locale, "setup.finished"));
         }
 
         instance.getCore().getRestAPI().testCredentials();
     }
 
     private void showHelp() {
-        instance.sendMessage(sender, localization.get("available.commands"));
+        instance.sendMessage(sender, localization.get(locale, "available.commands"));
         instance.sendMessage(sender, " - /np setup");
         instance.sendMessage(sender, " - /np ipanic");
         instance.sendMessage(sender, " - /np analytics");
@@ -478,6 +478,7 @@ public class NeoProtectExecutor {
         private NeoProtectPlugin instance;
         private Object sender;
         private String[] args;
+        private Locale local;
         private String msg;
 
         public ExecutorBuilder neoProtectPlugin(NeoProtectPlugin instance) {
@@ -490,15 +491,21 @@ public class NeoProtectExecutor {
             return this;
         }
 
+        public ExecutorBuilder args(String[] args) {
+            this.args = args;
+            return this;
+        }
+
+        public ExecutorBuilder local(Locale local) {
+            this.local = local;
+            return this;
+        }
+
         public ExecutorBuilder msg(String msg) {
             this.msg = msg;
             return this;
         }
 
-        public ExecutorBuilder args(String[] args) {
-            this.args = args;
-            return this;
-        }
 
         public void executeChatEvent() {
             API.getExecutorService().submit(() -> new NeoProtectExecutor().chatEvent(this));
@@ -518,6 +525,10 @@ public class NeoProtectExecutor {
 
         public String[] getArgs() {
             return args;
+        }
+
+        public Locale getLocal() {
+            return local;
         }
 
         public String getMsg() {

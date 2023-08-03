@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class LoginListener implements Listener {
 
@@ -26,39 +27,40 @@ public class LoginListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onLogin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        Locale locale = Locale.forLanguageTag(player.getLocale());
 
         if (!player.hasPermission("neoprotect.admin") && Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId())))
             return;
 
         VersionUtils.Result result = instance.getCore().getVersionResult();
         if (result.getVersionStatus().equals(VersionUtils.VersionStatus.OUTDATED)) {
-            instance.sendMessage(player, localization.get("plugin.outdated.message", result.getCurrentVersion(), result.getLatestVersion()));
+            instance.sendMessage(player, localization.get(locale, "plugin.outdated.message", result.getCurrentVersion(), result.getLatestVersion()));
             instance.sendMessage(player, MessageFormat.format("§7-> §b{0}",
                             result.getReleaseUrl().replace("/NeoPlugin", "").replace("/releases/tag", "")),
                     "OPEN_URL", result.getReleaseUrl(), null, null);
         }
 
         if (result.getVersionStatus().equals(VersionUtils.VersionStatus.REQUIRED_RESTART)) {
-            instance.sendMessage(player, localization.get("plugin.restart-required.message", result.getCurrentVersion(), result.getLatestVersion()));
+            instance.sendMessage(player, localization.get(locale, "plugin.restart-required.message", result.getCurrentVersion(), result.getLatestVersion()));
         }
 
         if (!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()) {
-            instance.sendMessage(player, localization.get("setup.required.first"));
-            instance.sendMessage(player, localization.get("setup.required.second"));
+            instance.sendMessage(player, localization.get(locale, "setup.required.first"));
+            instance.sendMessage(player, localization.get(locale, "setup.required.second"));
         }
 
         if (Arrays.stream(instance.getCore().getMaintainerUUID()).anyMatch(uuid -> uuid.equals(player.getUniqueId()))) {
             String infos =
                     "§bOsName§7: " + System.getProperty("os.name") + " \n" +
-                    "§bJavaVersion§7: " + System.getProperty("java.version") + " \n" +
-                    "§bPluginVersion§7: " + instance.getVersion() + " \n" +
-                    "§bVersionStatus§7: " + instance.getCore().getVersionResult().getVersionStatus() + " \n" +
-                    "§bUpdateSetting§7: " + Config.getAutoUpdaterSettings() + " \n" +
-                    "§bProxyProtocol§7: " + Config.isProxyProtocol() + " \n" +
-                    "§bNeoProtectPlan§7: " + instance.getCore().getRestAPI().getPlan() + " \n" +
-                    "§bSpigotName§7: " + instance.getProxyName() + " \n" +
-                    "§bSpigotVersion§7: " + instance.getProxyVersion() + " \n" +
-                    "§bSpigotPlugins§7: " + Arrays.toString(instance.getProxyPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray());
+                            "§bJavaVersion§7: " + System.getProperty("java.version") + " \n" +
+                            "§bPluginVersion§7: " + instance.getVersion() + " \n" +
+                            "§bVersionStatus§7: " + instance.getCore().getVersionResult().getVersionStatus() + " \n" +
+                            "§bUpdateSetting§7: " + Config.getAutoUpdaterSettings() + " \n" +
+                            "§bProxyProtocol§7: " + Config.isProxyProtocol() + " \n" +
+                            "§bNeoProtectPlan§7: " + (instance.getCore().isSetup() ? instance.getCore().getRestAPI().getPlan() : "§cNOT CONNECTED") + " \n" +
+                            "§bSpigotName§7: " + instance.getServerName() + " \n" +
+                            "§bSpigotVersion§7: " + instance.getServerVersion() + " \n" +
+                            "§bSpigotPlugins§7: " + Arrays.toString(instance.getPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray());
 
             instance.sendMessage(player, "§bHello " + player.getName() + " ;)", null, null, "SHOW_TEXT", infos);
             instance.sendMessage(player, "§bThis server uses your NeoPlugin", null, null, "SHOW_TEXT", infos);

@@ -7,6 +7,8 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.util.Locale;
+
 public class NeoProtectCommand extends Command {
 
     private final NeoProtectPlugin instance;
@@ -22,11 +24,12 @@ public class NeoProtectCommand extends Command {
     public void execute(CommandSender sender, String[] args) {
 
         if (!(sender instanceof ProxiedPlayer)) {
-            instance.sendMessage(sender, localization.get("console.command"));
+            instance.sendMessage(sender, localization.get(Locale.getDefault(), "console.command"));
             return;
         }
 
         new NeoProtectExecutor.ExecutorBuilder()
+                .local(((ProxiedPlayer) sender).getLocale())
                 .neoProtectPlugin(instance)
                 .sender(sender)
                 .args(args)
