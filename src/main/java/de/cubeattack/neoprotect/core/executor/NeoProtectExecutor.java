@@ -117,9 +117,20 @@ public class NeoProtectExecutor {
 
             case "setbackend": {
                 if (args.length == 1) {
-                    backendSelector();
+                    javaBackendSelector();
                 } else if (args.length == 2) {
-                    setBackend(args);
+                    setJavaBackend(args);
+                } else {
+                    instance.sendMessage(sender, localization.get(locale, "usage.setbackend"));
+                }
+                break;
+            }
+
+            case "setgeyserbackend": {
+                if (args.length == 1) {
+                    bedrockBackendSelector();
+                } else if (args.length == 2) {
+                    setBedrockBackend(args);
                 } else {
                     instance.sendMessage(sender, localization.get(locale, "usage.setbackend"));
                 }
@@ -427,37 +438,67 @@ public class NeoProtectExecutor {
         Config.setGameShieldID(args[1]);
         instance.sendMessage(sender, localization.get(locale, "set.gameshield", args[1]));
 
-        backendSelector();
+        javaBackendSelector();
     }
 
 
-    private void backendSelector() {
-        instance.sendMessage(sender, localization.get(locale, "select.backend"));
-
+    private void javaBackendSelector() {
         List<Backend> backendList = instance.getCore().getRestAPI().getBackends();
 
+        instance.sendMessage(sender, localization.get(locale, "select.backend", "java"));
+
         for (Backend backend : backendList) {
+            if(backend.isGeyser())continue;
             instance.sendMessage(sender, "§5" + backend.getIp() + ":" + backend.getPort() + localization.get(locale, "utils.click"),
                     "RUN_COMMAND", "/np setbackend " + backend.getId(),
                     "SHOW_TEXT", localization.get(locale, "hover.backend", backend.getIp(), backend.getPort(), backend.getId()));
         }
     }
 
-    private void setBackend(String[] args) {
+    private void setJavaBackend(String[] args) {
 
         if (instance.getCore().getRestAPI().isBackendInvalid(args[1])) {
-            instance.sendMessage(sender, localization.get(locale, "invalid.backend", args[1]));
+            instance.sendMessage(sender, localization.get(locale, "invalid.backend", "java", args[1]));
             return;
         }
 
         Config.setBackendID(args[1]);
-        instance.sendMessage(sender, localization.get(locale, "set.backend", args[1]));
+
+        instance.sendMessage(sender, localization.get(locale, "set.backend", "java", args[1]));
+        instance.getCore().getRestAPI().testCredentials();
+
+        bedrockBackendSelector();
+    }
+
+    private void bedrockBackendSelector() {
+        List<Backend> backendList = instance.getCore().getRestAPI().getBackends();
+
+        if(backendList.stream().noneMatch(Backend::isGeyser))return;
+
+        instance.sendMessage(sender, localization.get(locale, "select.backend", "geyser"));
+
+        for (Backend backend : backendList) {
+            if(!backend.isGeyser())continue;
+            instance.sendMessage(sender, "§5" + backend.getIp() + ":" + backend.getPort() + localization.get(locale, "utils.click"),
+                    "RUN_COMMAND", "/np setgeyserbackend " + backend.getId(),
+                    "SHOW_TEXT", localization.get(locale, "hover.backend", backend.getIp(), backend.getPort(), backend.getId()));
+        }
+    }
+
+    private void setBedrockBackend(String[] args) {
+
+        if (instance.getCore().getRestAPI().isBackendInvalid(args[1])) {
+            instance.sendMessage(sender, localization.get(locale, "invalid.backend", "geyser",  args[1]));
+            return;
+        }
+
+        Config.setGeyserBackendID(args[1]);
+        instance.sendMessage(sender, localization.get(locale, "set.backend","geyser",  args[1]));
 
         if (instance.getCore().getPlayerInSetup().remove(sender)) {
             instance.sendMessage(sender, localization.get(locale, "setup.finished"));
         }
 
-        instance.getCore().getRestAPI().testCredentials();
     }
 
     private void showHelp() {

@@ -13,8 +13,9 @@ public class Config {
     private static String APIKey;
     private static String language;
     private static boolean proxyProtocol;
-    private static String GameShieldID;
-    private static String BackendID;
+    private static String gameShieldID;
+    private static String backendID;
+    private static String geyserBackendID;
     private static boolean updateIP;
     private static boolean debugMode;
     private static String geyserServerIP;
@@ -31,8 +32,9 @@ public class Config {
         APIKey = config.getString("APIKey", "");
         language = config.getString("defaultLanguage", Locale.getDefault().toLanguageTag());
         proxyProtocol = config.getBoolean("ProxyProtocol", true);
-        GameShieldID = config.getString("gameshield.serverId", "");
-        BackendID = config.getString("gameshield.backendId", "");
+        gameShieldID = config.getString("gameshield.serverId", "");
+        backendID = config.getString("gameshield.backendId", "");
+        geyserBackendID = config.getString("gameshield.geyserBackendId", "");
         updateIP = config.getBoolean("gameshield.autoUpdateIP", false);
         debugMode = config.getBoolean("DebugMode", false);
         geyserServerIP = config.getString("geyserServerIP", "127.0.0.1");
@@ -41,18 +43,18 @@ public class Config {
             core.severe("Failed to load API-Key. Key is null or not valid");
             return;
         }
-        if (GameShieldID.isEmpty()) {
+        if (gameShieldID.isEmpty()) {
             core.severe("Failed to load GameshieldID. ID is null");
             return;
         }
-        if (BackendID.isEmpty()) {
+        if (backendID.isEmpty()) {
             core.severe("Failed to load BackendID. ID is null");
             return;
         }
 
         core.info("API-Key loaded successful '" + "******************************" + APIKey.substring(32) + "'");
-        core.info("GameshieldID loaded successful '" + GameShieldID + "'");
-        core.info("BackendID loaded successful '" + BackendID + "'");
+        core.info("GameshieldID loaded successful '" + gameShieldID + "'");
+        core.info("BackendID loaded successful '" + backendID + "'");
     }
 
     public static String getAPIKey() {
@@ -64,11 +66,15 @@ public class Config {
     }
 
     public static String getGameShieldID() {
-        return GameShieldID;
+        return gameShieldID;
     }
 
     public static String getBackendID() {
-        return BackendID;
+        return backendID;
+    }
+
+    public static String getGeyserBackendID() {
+        return geyserBackendID;
     }
 
     public static boolean isProxyProtocol() {
@@ -100,13 +106,19 @@ public class Config {
     public static void setGameShieldID(String id) {
         fileUtils.set("gameshield.serverId", id);
         fileUtils.save();
-        GameShieldID = id;
+        gameShieldID = id;
     }
 
     public static void setBackendID(String id) {
         fileUtils.set("gameshield.backendId", id);
         fileUtils.save();
-        BackendID = id;
+        backendID = id;
+    }
+
+    public static void setGeyserBackendID(String id) {
+        fileUtils.set("gameshield.geyserBackendId", id);
+        fileUtils.save();
+        geyserBackendID = id;
     }
 
     public static void addAutoUpdater(boolean basicPlan) {

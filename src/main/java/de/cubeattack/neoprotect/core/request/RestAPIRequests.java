@@ -73,8 +73,8 @@ public class RestAPIRequests {
         return rest.request(RequestType.GET_GAMESHIELD_PLAN, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldPlan").getJSONObject("options").getString("name");
     }
 
-    private boolean updateBackend(RequestBody formBody) {
-        return rest.request(RequestType.POST_GAMESHIELD_BACKEND_UPDATE, formBody, Config.getGameShieldID(), Config.getBackendID()).checkCode(200);
+    private boolean updateBackend(RequestBody formBody, String backendID) {
+        return rest.request(RequestType.POST_GAMESHIELD_BACKEND_UPDATE, formBody, Config.getGameShieldID(),backendID).checkCode(200);
     }
 
     public void setProxyProtocol(boolean setting) {
@@ -169,7 +169,7 @@ public class RestAPIRequests {
 
         for (Object object : backends) {
             JSONObject jsonObject = (JSONObject) object;
-            list.add(new Backend(jsonObject.getString("id"), jsonObject.getString("ipv4"), String.valueOf(jsonObject.getInt("port"))));
+            list.add(new Backend(jsonObject.getString("id"), jsonObject.getString("ipv4"), String.valueOf(jsonObject.getInt("port")), jsonObject.getBoolean("geyser")));
         }
 
         return list;
@@ -262,22 +262,38 @@ public class RestAPIRequests {
             @Override
             public void run() {
 
-                Backend backend = getBackends().stream().filter(unFilteredBackend -> unFilteredBackend.compareById(Config.getBackendID())).findAny().orElse(null);
+                if (!setup) return;
 
-                if (!setup | backend == null) return;
+                Backend javaBackend = getBackends().stream().filter(unFilteredBackend -> unFilteredBackend.compareById(Config.getBackendID())).findAny().orElse(null);
+                Backend geyserBackend = getBackends().stream().filter(unFilteredBackend -> unFilteredBackend.compareById(Config.getGeyserBackendID())).findAny().orElse(null);
 
                 String ip = getIpv4();
-
                 if (ip == null) return;
-                if (ip.equals(backend.getIp())) return;
 
-                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("ipv4", ip).build().toString());
+                if (javaBackend != null) {
+                    if (!ip.equals(javaBackend.getIp())) {
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("ipv4", ip).build().toString());
 
-                if (!updateBackend(requestBody)) {
-                    core.warn("Update backendserver ID '" + Config.getBackendID() + "' to IP '" + ip + "' failed");
-                } else {
-                    core.info("Update backendserver ID '" + Config.getBackendID() + "' to IP '" + ip + "' success");
-                    backend.setIp(ip);
+                        if (!updateBackend(requestBody, Config.getBackendID())) {
+                            core.warn("Update java backendserver ID '" + Config.getBackendID() + "' to IP '" + ip + "' failed");
+                        } else {
+                            core.info("Update java backendserver ID '" + Config.getBackendID() + "' to IP '" + ip + "' success");
+                            javaBackend.setIp(ip);
+                        }
+                    }
+                }
+
+                if (geyserBackend != null) {
+                    if (!ip.equals(geyserBackend.getIp())) {
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("ipv4", ip).build().toString());
+
+                        if (!updateBackend(requestBody, Config.getGeyserBackendID())) {
+                            core.warn("Update geyser backendserver ID '" + Config.getGeyserBackendID() + "' to IP '" + ip + "' failed");
+                        } else {
+                            core.info("Update geyser backendserver ID '" + Config.getGeyserBackendID() + "' to IP '" + ip + "' success");
+                            geyserBackend.setIp(ip);
+                        }
+                    }
                 }
             }
         }, 1000, 1000 * 15);
