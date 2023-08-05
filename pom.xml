@@ -119,7 +119,7 @@
         <dependency>
             <groupId>com.github.CubeAttack</groupId>
             <artifactId>EasyAPI</artifactId>
-            <version>3428f88158</version>
+            <version>ce8a355ca2</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>

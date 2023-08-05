@@ -1,7 +1,7 @@
 package de.cubeattack.neoprotect.bungee.listener;
 
 import de.cubeattack.api.language.Localization;
-import de.cubeattack.api.util.VersionUtils;
+import de.cubeattack.api.util.versioning.VersionUtils;
 import de.cubeattack.neoprotect.bungee.NeoProtectBungee;
 import de.cubeattack.neoprotect.core.Config;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -31,7 +31,7 @@ public class LoginListener implements Listener {
             @Override
             public void run() {
                 ProxiedPlayer player = event.getPlayer();
-                Locale locale = player.getLocale();
+                Locale locale = (player.getLocale() != null) ? player.getLocale() : Locale.ENGLISH;
 
                 if (!player.hasPermission("neoprotect.admin") && Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId())))
                     return;
@@ -48,12 +48,19 @@ public class LoginListener implements Listener {
                     instance.sendMessage(player, localization.get(locale, "plugin.restart-required.message", result.getCurrentVersion(), result.getLatestVersion()));
                 }
 
+               // System.out.println(locale);
+                //System.out.println(localization);
+
+
                 if (!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()) {
                     instance.sendMessage(player, localization.get(locale, "setup.required.first"));
                     instance.sendMessage(player, localization.get(locale, "setup.required.second"));
                 }
 
                 if (Arrays.stream(instance.getCore().getMaintainerUUID()).anyMatch(uuid -> uuid.equals(player.getUniqueId()))) {
+
+                    //System.out.println("4");
+
                     String infos =
                             "§bOsName§7: " + System.getProperty("os.name") + " \n" +
                                     "§bJavaVersion§7: " + System.getProperty("java.version") + " \n" +

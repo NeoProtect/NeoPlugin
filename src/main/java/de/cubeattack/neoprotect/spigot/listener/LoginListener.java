@@ -1,7 +1,7 @@
 package de.cubeattack.neoprotect.spigot.listener;
 
 import de.cubeattack.api.language.Localization;
-import de.cubeattack.api.util.VersionUtils;
+import de.cubeattack.api.util.versioning.VersionUtils;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
 import org.bukkit.entity.Player;

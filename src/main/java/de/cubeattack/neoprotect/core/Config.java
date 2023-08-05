@@ -1,7 +1,7 @@
 package de.cubeattack.neoprotect.core;
 
 import de.cubeattack.api.util.FileUtils;
-import de.cubeattack.api.util.VersionUtils;
+import de.cubeattack.api.util.versioning.VersionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
