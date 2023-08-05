@@ -210,7 +210,8 @@ public class RestAPIRequests {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                neoServerIPs = getNeoIPs();
+                JSONArray IPs = getNeoIPs();
+                neoServerIPs = IPs.isEmpty() ? neoServerIPs : IPs;
             }
         }, 0, 1000 * 30);
     }
