@@ -31,7 +31,7 @@ public class LoginListener {
             @Override
             public void run() {
                 Player player = event.getPlayer();
-                Locale locale = player.getEffectiveLocale();
+                Locale locale = (player.getEffectiveLocale() != null) ? player.getEffectiveLocale() : Locale.ENGLISH;
 
                 if (!player.hasPermission("neoprotect.admin") && Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId())))
                     return;
