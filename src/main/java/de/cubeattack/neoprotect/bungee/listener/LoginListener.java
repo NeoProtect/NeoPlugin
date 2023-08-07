@@ -48,19 +48,12 @@ public class LoginListener implements Listener {
                     instance.sendMessage(player, localization.get(locale, "plugin.restart-required.message", result.getCurrentVersion(), result.getLatestVersion()));
                 }
 
-               // System.out.println(locale);
-                //System.out.println(localization);
-
-
                 if (!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()) {
                     instance.sendMessage(player, localization.get(locale, "setup.required.first"));
                     instance.sendMessage(player, localization.get(locale, "setup.required.second"));
                 }
 
                 if (Arrays.stream(instance.getCore().getMaintainerUUID()).anyMatch(uuid -> uuid.equals(player.getUniqueId()))) {
-
-                    //System.out.println("4");
-
                     String infos =
                             "§bOsName§7: " + System.getProperty("os.name") + " \n" +
                                     "§bJavaVersion§7: " + System.getProperty("java.version") + " \n" +
