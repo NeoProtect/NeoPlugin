@@ -33,7 +33,7 @@ public class LoginListener implements Listener {
                 ProxiedPlayer player = event.getPlayer();
                 Locale locale = (player.getLocale() != null) ? player.getLocale() : Locale.ENGLISH;
 
-                if (!player.hasPermission("neoprotect.admin") && Arrays.stream(instance.getCore().getMaintainerUUID()).noneMatch(uuid -> uuid.equals(player.getUniqueId())))
+                if (!player.hasPermission("neoprotect.admin") && instance.getCore().isPlayerMaintainer(player.getUniqueId(), instance.getProxy().getConfig().isOnlineMode()))
                     return;
 
                 VersionUtils.Result result = instance.getCore().getVersionResult();
@@ -53,7 +53,7 @@ public class LoginListener implements Listener {
                     instance.sendMessage(player, localization.get(locale, "setup.required.second"));
                 }
 
-                if (Arrays.stream(instance.getCore().getMaintainerUUID()).anyMatch(uuid -> uuid.equals(player.getUniqueId()))) {
+                if (instance.getCore().isPlayerMaintainer(player.getUniqueId(), instance.getProxy().getConfig().isOnlineMode())) {
                     String infos =
                             "§bOsName§7: " + System.getProperty("os.name") + " \n" +
                                     "§bJavaVersion§7: " + System.getProperty("java.version") + " \n" +
