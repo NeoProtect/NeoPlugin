@@ -1,6 +1,7 @@
 package de.cubeattack.neoprotect.spigot.command;
 
 import de.cubeattack.api.language.Localization;
+import de.cubeattack.api.util.JavaUtils;
 import de.cubeattack.neoprotect.core.executor.NeoProtectExecutor;
 import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
 import org.bukkit.command.Command;
@@ -31,7 +32,7 @@ public class NeoProtectCommand implements CommandExecutor {
         }
 
         new NeoProtectExecutor.ExecutorBuilder()
-                .local(((Player) sender).locale())
+                .local((JavaUtils.javaVersionCheck() != 8 ? Locale.forLanguageTag(((Player)sender).getLocale()) : Locale.ENGLISH))
                 .neoProtectPlugin(instance)
                 .sender(sender)
                 .args(args)

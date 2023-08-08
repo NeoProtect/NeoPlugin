@@ -1,6 +1,7 @@
 package de.cubeattack.neoprotect.spigot.listener;
 
 import de.cubeattack.api.language.Localization;
+import de.cubeattack.api.util.JavaUtils;
 import de.cubeattack.api.util.versioning.VersionUtils;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
@@ -27,7 +28,7 @@ public class LoginListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onLogin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        Locale locale = Locale.forLanguageTag(player.getLocale());
+        Locale locale = JavaUtils.javaVersionCheck() != 8 ? Locale.forLanguageTag(player.getLocale()) : Locale.ENGLISH;
 
         if (!player.hasPermission("neoprotect.admin") && instance.getCore().isPlayerMaintainer(player.getUniqueId(), instance.getServer().getOnlineMode()))
             return;
