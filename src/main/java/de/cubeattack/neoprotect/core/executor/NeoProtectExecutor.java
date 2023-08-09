@@ -11,6 +11,7 @@ import de.cubeattack.neoprotect.core.model.Gameshield;
 import de.cubeattack.neoprotect.core.model.debugtool.DebugPingResponse;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -402,11 +403,19 @@ public class NeoProtectExecutor {
                             configuration.set("players." + playerName + ".ping.min.PlayerToNeoLatenz", minPlayerToNeoLatenz);
 
                         }));
-
                         configuration.save(file);
+
+                        final String content = new String(Files.readAllBytes(file.toPath()));
+                        final String pasteKey = instance.getCore().getRestAPI().paste(content);
+
                         instance.getCore().getDebugPingResponses().clear();
                         instance.sendMessage(sender, localization.get(locale, "debug.finished.first") + " (took " + (System.currentTimeMillis() - startTime) + "ms)");
-                        instance.sendMessage(sender, localization.get(locale, "debug.finished.second") + file.getAbsolutePath() + localization.get(locale, "utils.copy"), "COPY_TO_CLIPBOARD", file.getAbsolutePath(), null, null);
+                        if(pasteKey != null) {
+                            final String url = "https://paste.neoprotect.net/" + pasteKey + ".yml";
+                            instance.sendMessage(sender, localization.get(locale, "debug.finished.url") + url + localization.get(locale, "utils.open"), "OPEN_URL", url, null, null);
+                        } else {
+                            instance.sendMessage(sender, localization.get(locale, "debug.finished.file") + file.getAbsolutePath() + localization.get(locale, "utils.copy"), "COPY_TO_CLIPBOARD", file.getAbsolutePath(), null, null);
+                        }
                         instance.getCore().setDebugRunning(false);
                     } catch (Exception ex) {
                         instance.getCore().severe(ex.getMessage(), ex);
