@@ -6,7 +6,7 @@
 
     <groupId>de.cubeattack</groupId>
     <artifactId>neoprotect</artifactId>
-    <version>1.2.4-Beta</version>
+    <version>1.2.5-Beta</version>
     <packaging>jar</packaging>
 
     <name>NeoProtect</name>
