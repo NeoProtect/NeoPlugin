@@ -13,6 +13,7 @@ import de.cubeattack.neoprotect.core.Permission;
 import de.cubeattack.neoprotect.core.model.Backend;
 import de.cubeattack.neoprotect.core.model.Firewall;
 import de.cubeattack.neoprotect.core.model.Gameshield;
+import de.cubeattack.neoprotect.core.model.Stats;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,10 @@ public class RestAPIRequests {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final String ipGetter = "https://api4.my-ip.io/ip.json";
+    @SuppressWarnings("FieldCanBeLocal")
+    private final String pasteServer = "https://paste.neoprotect.net/documents";
+    @SuppressWarnings("FieldCanBeLocal")
+    private final String statsServer = "https://metrics.einfachesache.de/api/stats/plugin";
     private JSONArray neoServerIPs = null;
     private boolean setup = false;
     private final Core core;
@@ -34,6 +39,7 @@ public class RestAPIRequests {
 
         testCredentials();
         attackCheckSchedule();
+        statsUpdateSchedule();
         versionCheckSchedule();
         neoServerIPsUpdateSchedule();
 
@@ -73,8 +79,12 @@ public class RestAPIRequests {
         return rest.request(RequestType.GET_GAMESHIELD_PLAN, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldPlan").getJSONObject("options").getString("name");
     }
 
-    private boolean updateBackend(RequestBody formBody, String backendID) {
-        return rest.request(RequestType.POST_GAMESHIELD_BACKEND_UPDATE, formBody, Config.getGameShieldID(),backendID).checkCode(200);
+    private boolean updateStats(RequestBody requestBody, String backendID) {
+        return new ResponseManager(rest.callRequest(new Request.Builder().url(statsServer).header("BackendID", backendID).post(requestBody).build())).checkCode(200);
+    }
+
+    private boolean updateBackend(RequestBody requestBody, String backendID) {
+        return rest.request(RequestType.POST_GAMESHIELD_BACKEND_UPDATE, requestBody, Config.getGameShieldID(),backendID).checkCode(200);
     }
 
     public void setProxyProtocol(boolean setting) {
@@ -109,6 +119,14 @@ public class RestAPIRequests {
         setProxyProtocol(Config.isProxyProtocol());
 
         Config.addAutoUpdater(getPlan().equalsIgnoreCase("Basic"));
+    }
+
+    public String paste(String content) {
+        try {
+            return new ResponseManager(rest.callRequest(new Request.Builder().url(pasteServer)
+                    .post(RequestBody.create(MediaType.parse("text/plain"), content)).build())).getResponseBodyObject().getString("key");
+        } catch (Exception ignore) {}
+        return null;
     }
 
     public boolean togglePanicMode() {
@@ -203,6 +221,25 @@ public class RestAPIRequests {
         return -1;
     }
 
+    private void statsUpdateSchedule() {
+
+        core.info("StatsUpdate scheduler started");
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+
+                if (!setup) return;
+
+                Stats stats = core.getPlugin().getStats();
+
+                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("playerAmount", stats.getPlayerAmount()).build().toString());
+                if(!updateStats(requestBody, Config.getBackendID()))
+                    core.debug("Request to Update stats failed");
+            }
+        }, 0, 1000 * 5);
+    }
+
     private void neoServerIPsUpdateSchedule() {
 
         core.info("NeoServerIPsUpdate scheduler started");
@@ -213,7 +250,7 @@ public class RestAPIRequests {
                 JSONArray IPs = getNeoIPs();
                 neoServerIPs = IPs.isEmpty() ? neoServerIPs : IPs;
             }
-        }, 0, 1000 * 30);
+        }, 0, 1000 * 60);
     }
 
     private void versionCheckSchedule() {
@@ -251,7 +288,7 @@ public class RestAPIRequests {
                     attackRunning[0] = true;
                 }
             }
-        }, 1000 * 5, 1000 * 5);
+        }, 1000 * 5, 1000 * 10);
     }
 
     private void backendServerIPUpdater() {
@@ -297,7 +334,7 @@ public class RestAPIRequests {
                     }
                 }
             }
-        }, 1000, 1000 * 15);
+        }, 1000, 1000 * 20);
     }
 
     public JSONArray getNeoServerIPs() {
