@@ -23,7 +23,6 @@ public class RestAPIRequests {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final String ipGetter = "https://api4.my-ip.io/ip.json";
-    private final String pasteServer = "https://paste.neoprotect.net/documents";
     private JSONArray neoServerIPs = null;
     private boolean setup = false;
     private final Core core;
@@ -41,14 +40,6 @@ public class RestAPIRequests {
         if (Config.isUpdateIP()) {
             backendServerIPUpdater();
         }
-    }
-
-    public String paste(String content) {
-        try {
-            return new ResponseManager(rest.callRequest(new Request.Builder().url(pasteServer)
-                    .post(RequestBody.create(MediaType.parse("text/plain"), content)).build())).getResponseBodyObject().getString("key");
-        } catch (Exception ignore) {}
-        return null;
     }
 
     private String getIpv4() {

@@ -1,5 +1,7 @@
 package de.cubeattack.neoprotect.core;
 
+import de.cubeattack.neoprotect.core.model.Stats;
+
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -16,6 +18,8 @@ public interface NeoProtectPlugin {
     void sendKeepAliveMessage(Object receiver, long id);
 
     Core getCore();
+
+    Stats getStats();
 
     Logger getLogger();
 

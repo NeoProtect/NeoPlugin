@@ -4,6 +4,7 @@ import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.Permission;
+import de.cubeattack.neoprotect.core.model.Stats;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -35,6 +36,11 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
 
     public Core getCore() {
         return core;
+    }
+
+    @Override
+    public Stats getStats() {
+        return new Stats(getServer().getOnlinePlayers().size());
     }
 
     @Override

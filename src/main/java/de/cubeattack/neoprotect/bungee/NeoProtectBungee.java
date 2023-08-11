@@ -4,6 +4,7 @@ import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.Permission;
+import de.cubeattack.neoprotect.core.model.Stats;
 import de.cubeattack.neoprotect.core.model.debugtool.KeepAliveResponseKey;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -37,6 +38,11 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
 
     public Core getCore() {
         return core;
+    }
+
+    @Override
+    public Stats getStats() {
+        return new Stats(getProxy().getOnlineCount());
     }
 
     @Override

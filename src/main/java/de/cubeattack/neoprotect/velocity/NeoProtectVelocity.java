@@ -12,6 +12,7 @@ import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.Permission;
+import de.cubeattack.neoprotect.core.model.Stats;
 import de.cubeattack.neoprotect.core.model.debugtool.KeepAliveResponseKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -48,6 +49,11 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
 
     public Core getCore() {
         return core;
+    }
+
+    @Override
+    public Stats getStats() {
+        return new Stats(proxy.getPlayerCount());
     }
 
     public ProxyServer getProxy() {
