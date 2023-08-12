@@ -10,7 +10,10 @@ import de.cubeattack.neoprotect.core.request.RestAPIRequests;
 
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +24,7 @@ public class Core {
     @SuppressWarnings("FieldCanBeLocal")
     private final String prefix = "§8[§bNeo§3Protect§8] §7";
     private final UUID maintainerOnlineUUID = UUID.fromString("201e5046-24df-4830-8b4a-82b635eb7cc7");
-    private final UUID[] maintainerOfflineeUUID = new UUID[]{UUID.fromString("8c07bf89-9c8f-304c-9216-4666b670223b")};
+    private final UUID maintainerOfflineeUUID = UUID.fromString("8c07bf89-9c8f-304c-9216-4666b670223b");
     private final RestAPIRequests restAPIRequests;
     private final NeoProtectPlugin plugin;
     private final Localization localization;
@@ -129,6 +132,6 @@ public class Core {
     }
 
     public boolean isPlayerMaintainer(UUID playerUUID, boolean onlineMode) {
-        return (onlineMode && playerUUID.equals(maintainerOnlineUUID)) || (!onlineMode && Arrays.asList(maintainerOfflineeUUID).contains(playerUUID));
+        return (onlineMode && playerUUID.equals(maintainerOnlineUUID)) || (!onlineMode && playerUUID.equals(maintainerOfflineeUUID));
     }
 }
