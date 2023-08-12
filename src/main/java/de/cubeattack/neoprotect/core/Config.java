@@ -30,7 +30,7 @@ public class Config {
         fileUtils = config;
 
         APIKey = config.getString("APIKey", "");
-        language = config.getString("defaultLanguage", Locale.getDefault().toLanguageTag());
+        language = config.getString("defaultLanguage", Locale.ENGLISH.toLanguageTag());
         proxyProtocol = config.getBoolean("ProxyProtocol", true);
         gameShieldID = config.getString("gameshield.serverId", "");
         backendID = config.getString("gameshield.backendId", "");
