@@ -57,13 +57,13 @@ public class LoginListener implements Listener {
                     String infos =
                             "§bOsName§7: " + System.getProperty("os.name") + " \n" +
                                     "§bJavaVersion§7: " + System.getProperty("java.version") + " \n" +
-                                    "§bPluginVersion§7: " + instance.getVersion() + " \n" +
+                                    "§bPluginVersion§7: " + instance.getStats().getPluginVersion() + " \n" +
                                     "§bVersionStatus§7: " + instance.getCore().getVersionResult().getVersionStatus() + " \n" +
                                     "§bUpdateSetting§7: " + Config.getAutoUpdaterSettings() + " \n" +
                                     "§bProxyProtocol§7: " + Config.isProxyProtocol() + " \n" +
                                     "§bNeoProtectPlan§7: " + (instance.getCore().isSetup() ? instance.getCore().getRestAPI().getPlan() : "§cNOT CONNECTED") + " \n" +
-                                    "§bBungeecordName§7: " + instance.getServerName() + " \n" +
-                                    "§bBungeecordVersion§7: " + instance.getServerVersion() + " \n" +
+                                    "§bBungeecordName§7: " + instance.getStats().getServerName() + " \n" +
+                                    "§bBungeecordVersion§7: " + instance.getStats().getServerVersion()+ " \n" +
                                     "§bBungeecordPlugins§7: " + Arrays.toString(instance.getPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray());
 
                     instance.sendMessage(player, "§bHello " + player.getName() + " ;)", null, null, "SHOW_TEXT", infos);

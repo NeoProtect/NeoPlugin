@@ -23,12 +23,6 @@ public interface NeoProtectPlugin {
 
     Logger getLogger();
 
-    String getVersion();
-
-    String getServerName();
-
-    String getServerVersion();
-
     ArrayList<String> getPlugins();
 
     PluginType getPluginType();

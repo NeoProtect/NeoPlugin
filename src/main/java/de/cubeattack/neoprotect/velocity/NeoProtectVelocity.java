@@ -53,7 +53,18 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
 
     @Override
     public Stats getStats() {
-        return new Stats(proxy.getPlayerCount());
+        return new Stats(
+                getProxy().getConfiguration().isOnlineMode(),
+                getProxy().getPlayerCount(),
+                getProxy().getAllServers().size(),
+                Runtime.getRuntime().availableProcessors(),
+                getProxy().getVersion().getVersion(),
+                getProxy().getVersion().getName(),
+                System.getProperty("java.version"),
+                System.getProperty("os.name"),
+                System.getProperty("os.arch"),
+                System.getProperty("os.version"),
+                proxy.getPluginManager().ensurePluginContainer(this).getDescription().getVersion().orElse(""));
     }
 
     public ProxyServer getProxy() {
@@ -108,21 +119,6 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     @Override
     public Logger getLogger() {
         return logger;
-    }
-
-    @Override
-    public String getVersion() {
-        return proxy.getPluginManager().ensurePluginContainer(this).getDescription().getVersion().orElse("");
-    }
-
-    @Override
-    public String getServerName() {
-        return proxy.getVersion().getName();
-    }
-
-    @Override
-    public String getServerVersion() {
-        return proxy.getVersion().getVersion();
     }
 
     @Override

@@ -42,7 +42,18 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
 
     @Override
     public Stats getStats() {
-        return new Stats(getProxy().getOnlineCount());
+        return new Stats(
+                getProxy().getConfig().isOnlineMode(),
+                getProxy().getOnlineCount(),
+                getProxy().getServers().size(),
+                Runtime.getRuntime().availableProcessors(),
+                getProxy().getName(),
+                getProxy().getVersion(),
+                System.getProperty("java.version"),
+                System.getProperty("os.name"),
+                System.getProperty("os.arch"),
+                System.getProperty("os.version"),
+                getDescription().getVersion());
     }
 
     @Override
@@ -83,21 +94,6 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
             sendKeepAliveMessage(player, id);
         }
         return id;
-    }
-
-    @Override
-    public String getVersion() {
-        return getDescription().getVersion();
-    }
-
-    @Override
-    public String getServerName() {
-        return getProxy().getName();
-    }
-
-    @Override
-    public String getServerVersion() {
-        return getProxy().getVersion();
     }
 
     @Override

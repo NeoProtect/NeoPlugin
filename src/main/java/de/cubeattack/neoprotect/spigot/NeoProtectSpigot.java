@@ -40,7 +40,18 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
 
     @Override
     public Stats getStats() {
-        return new Stats(getServer().getOnlinePlayers().size());
+        return new Stats(
+                getServer().getOnlineMode(),
+                getServer().getOnlinePlayers().size(),
+                0,
+                Runtime.getRuntime().availableProcessors(),
+                getServer().getName(),
+                getServer().getVersion(),
+                System.getProperty("java.version"),
+                System.getProperty("os.name"),
+                System.getProperty("os.arch"),
+                System.getProperty("os.version"),
+                getDescription().getVersion());
     }
 
     @Override
@@ -70,38 +81,23 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     }
 
     @Override
-    public void sendKeepAliveMessage(Object sender, long id) {
-    }
+    public void sendKeepAliveMessage(Object sender, long id) {}
 
     @Override
     public long sendKeepAliveMessage(long id) {
         return id;
     }
 
-    @Override
-    public String getVersion() {
-        return getDescription().getVersion();
-    }
-
-    @Override
-    public PluginType getPluginType() {
-        return PluginType.SPIGOT;
-    }
-
-    @Override
-    public String getServerName() {
-        return getServer().getName();
-    }
-
-    @Override
-    public String getServerVersion() {
-        return getServer().getVersion();
-    }
 
     @Override
     public ArrayList<String> getPlugins() {
         ArrayList<String> plugins = new ArrayList<>();
         Arrays.stream(getServer().getPluginManager().getPlugins()).forEach(p -> plugins.add(p.getName()));
         return plugins;
+    }
+
+    @Override
+    public PluginType getPluginType() {
+        return PluginType.SPIGOT;
     }
 }

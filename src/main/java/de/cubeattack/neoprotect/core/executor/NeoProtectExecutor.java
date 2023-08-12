@@ -335,10 +335,10 @@ public class NeoProtectExecutor {
 
                         configuration.set("general.osName", System.getProperty("os.name"));
                         configuration.set("general.javaVersion", System.getProperty("java.version"));
-                        configuration.set("general.pluginVersion", instance.getVersion());
-                        configuration.set("general.bungeecordName", instance.getServerName());
-                        configuration.set("general.bungeecordVersion", instance.getServerVersion());
-                        configuration.set("general.bungeecordPlugins", instance.getPlugins());
+                        configuration.set("general.pluginVersion", instance.getStats().getPluginVersion());
+                        configuration.set("general.ProxyName", instance.getStats().getServerName());
+                        configuration.set("general.ProxyVersion", instance.getStats().getServerVersion());
+                        configuration.set("general.ProxyPlugins", instance.getPlugins());
 
                         instance.getCore().getDebugPingResponses().keySet().forEach((playerName -> {
                             List<DebugPingResponse> list = instance.getCore().getDebugPingResponses().get(playerName);

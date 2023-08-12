@@ -1,5 +1,6 @@
 package de.cubeattack.neoprotect.core.request;
 
+import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
@@ -13,7 +14,6 @@ import de.cubeattack.neoprotect.core.Permission;
 import de.cubeattack.neoprotect.core.model.Backend;
 import de.cubeattack.neoprotect.core.model.Firewall;
 import de.cubeattack.neoprotect.core.model.Gameshield;
-import de.cubeattack.neoprotect.core.model.Stats;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -231,9 +231,7 @@ public class RestAPIRequests {
 
                 if (!setup) return;
 
-                Stats stats = core.getPlugin().getStats();
-
-                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("playerAmount", stats.getPlayerAmount()).build().toString());
+                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), new Gson().toJson(core.getPlugin().getStats()));
                 if(!updateStats(requestBody, Config.getBackendID()))
                     core.debug("Request to Update stats failed");
             }
@@ -260,7 +258,7 @@ public class RestAPIRequests {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getVersion(), Config.getAutoUpdaterSettings()));
+                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getStats().getPluginVersion(), Config.getAutoUpdaterSettings()));
             }
         }, 1000 * 10, 1000 * 60 * 5);
     }
