@@ -30,7 +30,7 @@ public class LoginListener implements Listener {
         Player player = event.getPlayer();
         Locale locale = JavaUtils.javaVersionCheck() != 8 ? Locale.forLanguageTag(player.getLocale()) : Locale.ENGLISH;
 
-        if (!player.hasPermission("neoprotect.admin") && instance.getCore().isPlayerMaintainer(player.getUniqueId(), instance.getServer().getOnlineMode()))
+        if (!player.hasPermission("neoprotect.admin") && !instance.getCore().isPlayerMaintainer(player.getUniqueId(), instance.getServer().getOnlineMode()))
             return;
 
         VersionUtils.Result result = instance.getCore().getVersionResult();

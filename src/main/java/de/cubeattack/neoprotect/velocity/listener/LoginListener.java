@@ -33,7 +33,7 @@ public class LoginListener {
                 Player player = event.getPlayer();
                 Locale locale = (player.getEffectiveLocale() != null) ? player.getEffectiveLocale() : Locale.ENGLISH;
 
-                if (!player.hasPermission("neoprotect.admin") && instance.getCore().isPlayerMaintainer(player.getUniqueId(), instance.getProxy().getConfiguration().isOnlineMode()))
+                if (!player.hasPermission("neoprotect.admin") && !instance.getCore().isPlayerMaintainer(player.getUniqueId(), instance.getProxy().getConfiguration().isOnlineMode()))
                     return;
 
                 VersionUtils.Result result = instance.getCore().getVersionResult();
