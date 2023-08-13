@@ -43,7 +43,8 @@ public class RestAPIManager {
         } catch (UnknownHostException | SocketTimeoutException | SocketException connectionException) {
             if(!request.url().toString().equals(core.getRestAPI().getStatsServer())) {
                 core.severe(request + " failed cause (" + connectionException + ")");
-            }
+            }else
+                core.debug(request + " failed cause (" + connectionException + ")");
         } catch (Exception exception) {
             core.severe(exception.getMessage(), exception);
         }
