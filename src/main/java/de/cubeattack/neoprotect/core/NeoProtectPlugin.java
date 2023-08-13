@@ -27,6 +27,8 @@ public interface NeoProtectPlugin {
 
     PluginType getPluginType();
 
+    String getPluginVersion();
+
     enum PluginType {
         SPIGOT,
         VELOCITY,

@@ -8,6 +8,7 @@ import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 import de.cubeattack.neoprotect.core.model.Backend;
 import de.cubeattack.neoprotect.core.model.Gameshield;
+import de.cubeattack.neoprotect.core.model.Stats;
 import de.cubeattack.neoprotect.core.model.debugtool.DebugPingResponse;
 
 import java.io.File;
@@ -323,6 +324,7 @@ public class NeoProtectExecutor {
                 API.getExecutorService().submit(() -> {
                     try {
                         long startTime = System.currentTimeMillis();
+                        Stats stats = instance.getStats();
                         File file = new File("plugins/NeoProtect/debug" + "/" + new Timestamp(System.currentTimeMillis()) + ".yml");
                         YamlConfiguration configuration = new YamlConfiguration();
 
@@ -335,9 +337,9 @@ public class NeoProtectExecutor {
 
                         configuration.set("general.osName", System.getProperty("os.name"));
                         configuration.set("general.javaVersion", System.getProperty("java.version"));
-                        configuration.set("general.pluginVersion", instance.getStats().getPluginVersion());
-                        configuration.set("general.ProxyName", instance.getStats().getServerName());
-                        configuration.set("general.ProxyVersion", instance.getStats().getServerVersion());
+                        configuration.set("general.pluginVersion", stats.getPluginVersion());
+                        configuration.set("general.ProxyName", stats.getServerName());
+                        configuration.set("general.ProxyVersion", stats.getServerVersion());
                         configuration.set("general.ProxyPlugins", instance.getPlugins());
 
                         instance.getCore().getDebugPingResponses().keySet().forEach((playerName -> {

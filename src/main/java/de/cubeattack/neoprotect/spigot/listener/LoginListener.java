@@ -4,6 +4,7 @@ import de.cubeattack.api.language.Localization;
 import de.cubeattack.api.util.JavaUtils;
 import de.cubeattack.api.util.versioning.VersionUtils;
 import de.cubeattack.neoprotect.core.Config;
+import de.cubeattack.neoprotect.core.model.Stats;
 import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -51,16 +52,17 @@ public class LoginListener implements Listener {
         }
 
         if (instance.getCore().isPlayerMaintainer(player.getUniqueId(), instance.getServer().getOnlineMode())) {
+            Stats stats = instance.getStats();
             String infos =
                     "§bOsName§7: " + System.getProperty("os.name") + " \n" +
                             "§bJavaVersion§7: " + System.getProperty("java.version") + " \n" +
-                            "§bPluginVersion§7: " + instance.getStats().getPluginVersion() + " \n" +
+                            "§bPluginVersion§7: " + stats.getPluginVersion() + " \n" +
                             "§bVersionStatus§7: " + instance.getCore().getVersionResult().getVersionStatus() + " \n" +
                             "§bUpdateSetting§7: " + Config.getAutoUpdaterSettings() + " \n" +
                             "§bProxyProtocol§7: " + Config.isProxyProtocol() + " \n" +
                             "§bNeoProtectPlan§7: " + (instance.getCore().isSetup() ? instance.getCore().getRestAPI().getPlan() : "§cNOT CONNECTED") + " \n" +
-                            "§bSpigotName§7: " + instance.getStats().getServerName() + " \n" +
-                            "§bSpigotVersion§7: " + instance.getStats().getServerVersion() + " \n" +
+                            "§bSpigotName§7: " + stats.getServerName() + " \n" +
+                            "§bSpigotVersion§7: " + stats.getServerVersion() + " \n" +
                             "§bSpigotPlugins§7: " + Arrays.toString(instance.getPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray());
 
             instance.sendMessage(player, "§bHello " + player.getName() + " ;)", null, null, "SHOW_TEXT", infos);

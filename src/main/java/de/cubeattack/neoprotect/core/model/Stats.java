@@ -3,12 +3,6 @@ package de.cubeattack.neoprotect.core.model;
 @SuppressWarnings("unused")
 public class Stats {
 
-    private final boolean onlineMode;
-
-    private final int playerAmount;
-    private final int managedServers;
-    private final int coreCount;
-
     private final String serverVersion;
     private final String serverName;
     private final String javaVersion;
@@ -16,12 +10,19 @@ public class Stats {
     private final String osArch;
     private final String osVersion;
     private final String pluginVersion;
+    private final String versionStatus;
+    private final String updateSetting;
+    private final String neoProtectPlan;
+    private final String serverPlugins;
 
-    public Stats(boolean onlineMode, int playerAmount, int managedServers, int coreCount, String serverVersion, String serverName, String javaVersion, String osName, String osArch, String osVersion, String pluginVersion) {
-        this.onlineMode = onlineMode;
-        this.playerAmount = playerAmount;
-        this.managedServers = managedServers;
-        this.coreCount = coreCount;
+    private final int playerAmount;
+    private final int managedServers;
+    private final int coreCount;
+
+    private final boolean onlineMode;
+    private final boolean proxyProtocol;
+
+    public Stats(String serverVersion, String serverName, String javaVersion, String osName, String osArch, String osVersion, String pluginVersion, String versionStatus, String updateSetting, String neoProtectPlan, String serverPlugins, int playerAmount, int managedServers, int coreCount, boolean onlineMode, boolean proxyProtocol) {
         this.serverVersion = serverVersion;
         this.serverName = serverName;
         this.javaVersion = javaVersion;
@@ -29,22 +30,15 @@ public class Stats {
         this.osArch = osArch;
         this.osVersion = osVersion;
         this.pluginVersion = pluginVersion;
-    }
-
-    public boolean isOnlineMode() {
-        return onlineMode;
-    }
-
-    public int getPlayerAmount() {
-        return playerAmount;
-    }
-
-    public int getManagedServers() {
-        return managedServers;
-    }
-
-    public int getCoreCount() {
-        return coreCount;
+        this.versionStatus = versionStatus;
+        this.updateSetting = updateSetting;
+        this.neoProtectPlan = neoProtectPlan;
+        this.serverPlugins = serverPlugins;
+        this.playerAmount = playerAmount;
+        this.managedServers = managedServers;
+        this.coreCount = coreCount;
+        this.onlineMode = onlineMode;
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getServerVersion() {
@@ -73,5 +67,41 @@ public class Stats {
 
     public String getPluginVersion() {
         return pluginVersion;
+    }
+
+    public String getVersionStatus() {
+        return versionStatus;
+    }
+
+    public String getUpdateSetting() {
+        return updateSetting;
+    }
+
+    public String getNeoProtectPlan() {
+        return neoProtectPlan;
+    }
+
+    public String getServerPlugins() {
+        return serverPlugins;
+    }
+
+    public int getPlayerAmount() {
+        return playerAmount;
+    }
+
+    public int getManagedServers() {
+        return managedServers;
+    }
+
+    public int getCoreCount() {
+        return coreCount;
+    }
+
+    public boolean isOnlineMode() {
+        return onlineMode;
+    }
+
+    public boolean isProxyProtocol() {
+        return proxyProtocol;
     }
 }

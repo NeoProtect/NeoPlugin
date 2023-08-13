@@ -41,17 +41,23 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     @Override
     public Stats getStats() {
         return new Stats(
-                getServer().getOnlineMode(),
-                getServer().getOnlinePlayers().size(),
-                0,
-                Runtime.getRuntime().availableProcessors(),
                 getServer().getVersion(),
                 getServer().getName(),
                 System.getProperty("java.version"),
                 System.getProperty("os.name"),
                 System.getProperty("os.arch"),
                 System.getProperty("os.version"),
-                getDescription().getVersion());
+                getPluginVersion(),
+                getCore().getVersionResult().getVersionStatus().toString(),
+                Config.getAutoUpdaterSettings().toString(),
+                getCore().isSetup() ? getCore().getRestAPI().getPlan() : "§cNOT CONNECTED",
+                Arrays.toString(getPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray()),
+                getServer().getOnlinePlayers().size(),
+                0,
+                Runtime.getRuntime().availableProcessors(),
+                getServer().getOnlineMode(),
+                Config.isProxyProtocol()
+        );
     }
 
     @Override
@@ -99,5 +105,10 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     @Override
     public PluginType getPluginType() {
         return PluginType.SPIGOT;
+    }
+
+    @Override
+    public String getPluginVersion() {
+        return getDescription().getVersion();
     }
 }

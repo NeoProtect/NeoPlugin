@@ -235,7 +235,7 @@ public class RestAPIRequests {
                 if(!updateStats(requestBody, Config.getBackendID()))
                     core.debug("Request to Update stats failed");
             }
-        }, 0, 1000 * 5);
+        }, 1000, 1000 * 5);
     }
 
     private void neoServerIPsUpdateSchedule() {
@@ -258,7 +258,7 @@ public class RestAPIRequests {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getStats().getPluginVersion(), Config.getAutoUpdaterSettings()));
+                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getPluginVersion(), Config.getAutoUpdaterSettings()));
             }
         }, 1000 * 10, 1000 * 60 * 5);
     }
@@ -337,6 +337,10 @@ public class RestAPIRequests {
 
     public JSONArray getNeoServerIPs() {
         return neoServerIPs;
+    }
+
+    public String getStatsServer() {
+        return statsServer;
     }
 
     public boolean isSetup() {

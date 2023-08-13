@@ -18,6 +18,7 @@ import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SimplePie;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
@@ -43,17 +44,23 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     @Override
     public Stats getStats() {
         return new Stats(
-                getProxy().getConfig().isOnlineMode(),
-                getProxy().getOnlineCount(),
-                getProxy().getServers().size(),
-                Runtime.getRuntime().availableProcessors(),
                 getProxy().getVersion(),
                 getProxy().getName(),
                 System.getProperty("java.version"),
                 System.getProperty("os.name"),
                 System.getProperty("os.arch"),
                 System.getProperty("os.version"),
-                getDescription().getVersion());
+                getDescription().getVersion(),
+                getCore().getVersionResult().getVersionStatus().toString(),
+                Config.getAutoUpdaterSettings().toString(),
+                getCore().isSetup() ? getCore().getRestAPI().getPlan() : "§cNOT CONNECTED",
+                Arrays.toString(getPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray()),
+                getProxy().getOnlineCount(),
+                getProxy().getServers().size(),
+                Runtime.getRuntime().availableProcessors(),
+                getProxy().getConfig().isOnlineMode(),
+                Config.isProxyProtocol()
+        );
     }
 
     @Override
@@ -106,5 +113,10 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     @Override
     public PluginType getPluginType() {
         return PluginType.BUNGEECORD;
+    }
+
+    @Override
+    public String getPluginVersion() {
+        return getDescription().getVersion();
     }
 }

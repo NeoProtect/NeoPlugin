@@ -22,6 +22,7 @@ import org.bstats.charts.SimplePie;
 import org.bstats.velocity.Metrics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -54,17 +55,23 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     @Override
     public Stats getStats() {
         return new Stats(
-                getProxy().getConfiguration().isOnlineMode(),
-                getProxy().getPlayerCount(),
-                getProxy().getAllServers().size(),
-                Runtime.getRuntime().availableProcessors(),
                 getProxy().getVersion().getVersion(),
                 getProxy().getVersion().getName(),
                 System.getProperty("java.version"),
                 System.getProperty("os.name"),
                 System.getProperty("os.arch"),
                 System.getProperty("os.version"),
-                proxy.getPluginManager().ensurePluginContainer(this).getDescription().getVersion().orElse(""));
+                getPluginVersion(),
+                getCore().getVersionResult().getVersionStatus().toString(),
+                Config.getAutoUpdaterSettings().toString(),
+                getCore().isSetup() ? getCore().getRestAPI().getPlan() : "§cNOT CONNECTED",
+                Arrays.toString(getPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray()),
+                getProxy().getPlayerCount(),
+                getProxy().getAllServers().size(),
+                Runtime.getRuntime().availableProcessors(),
+                getProxy().getConfiguration().isOnlineMode(),
+                Config.isProxyProtocol()
+        );
     }
 
     public ProxyServer getProxy() {
@@ -131,5 +138,10 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     @Override
     public PluginType getPluginType() {
         return PluginType.VELOCITY;
+    }
+
+    @Override
+    public String getPluginVersion() {
+        return proxy.getPluginManager().ensurePluginContainer(this).getDescription().getVersion().orElse("");
     }
 }

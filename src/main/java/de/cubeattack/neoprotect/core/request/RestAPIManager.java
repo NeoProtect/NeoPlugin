@@ -24,7 +24,7 @@ public class RestAPIManager {
     }
 
     {
-        client.setConnectTimeout(5, TimeUnit.SECONDS);
+        client.setConnectTimeout(2, TimeUnit.SECONDS);
     }
 
     protected ResponseManager request(RequestType type, RequestBody requestBody, Object... value) {
@@ -41,9 +41,11 @@ public class RestAPIManager {
         try {
             return client.newCall(request).execute();
         } catch (UnknownHostException | SocketTimeoutException | SocketException connectionException) {
-            core.severe(request + " failed cause (" + connectionException + ")");
+            if(!request.url().toString().equals(core.getRestAPI().getStatsServer())) {
+                core.severe(request + " failed cause (" + connectionException + ")");
+            }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            core.severe(exception.getMessage(), exception);
         }
         return null;
     }
