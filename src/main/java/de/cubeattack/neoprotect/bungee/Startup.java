@@ -1,7 +1,6 @@
 package de.cubeattack.neoprotect.bungee;
 
 import de.cubeattack.neoprotect.bungee.command.NeoProtectCommand;
-import de.cubeattack.neoprotect.bungee.command.NeoProtectTabCompleter;
 import de.cubeattack.neoprotect.bungee.listener.ChatListener;
 import de.cubeattack.neoprotect.bungee.listener.DisconnectListener;
 import de.cubeattack.neoprotect.bungee.listener.LoginListener;
@@ -23,6 +22,5 @@ public class Startup {
         pm.registerListener(instance, new ChatListener(instance));
         pm.registerListener(instance, new LoginListener(instance));
         pm.registerListener(instance, new DisconnectListener(instance));
-        pm.registerListener(instance, new NeoProtectTabCompleter(instance));
     }
 }
