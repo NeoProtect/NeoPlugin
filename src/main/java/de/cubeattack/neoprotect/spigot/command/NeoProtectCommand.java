@@ -1,6 +1,5 @@
 package de.cubeattack.neoprotect.spigot.command;
 
-import de.cubeattack.api.language.Localization;
 import de.cubeattack.api.util.JavaUtils;
 import de.cubeattack.neoprotect.core.executor.NeoProtectExecutor;
 import de.cubeattack.neoprotect.spigot.NeoProtectSpigot;
@@ -16,23 +15,17 @@ import java.util.Locale;
 public class NeoProtectCommand implements CommandExecutor {
 
     private final NeoProtectSpigot instance;
-    private final Localization localization;
 
     public NeoProtectCommand(NeoProtectSpigot instance) {
         this.instance = instance;
-        this.localization = instance.getCore().getLocalization();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
 
-        if (!(sender instanceof Player)) {
-            instance.sendMessage(sender, localization.get(Locale.getDefault(), "console.command"));
-            return true;
-        }
-
         new NeoProtectExecutor.ExecutorBuilder()
-                .local((JavaUtils.javaVersionCheck() != 8 ? Locale.forLanguageTag(((Player)sender).getLocale()) : Locale.ENGLISH))
+                .viaConsole(!(sender instanceof Player))
+                .local(JavaUtils.javaVersionCheck() != 8 ? ((sender instanceof Player) ? Locale.forLanguageTag(((Player) sender).getLocale()) : Locale.ENGLISH) : Locale.ENGLISH)
                 .neoProtectPlugin(instance)
                 .sender(sender)
                 .args(args)

@@ -28,6 +28,7 @@ public class NeoProtectExecutor {
     private Locale locale;
     private String msg;
     private String[] args;
+    private boolean isViaConsole;
 
     private void initials(ExecutorBuilder executeBuilder) {
         this.instance = executeBuilder.getInstance();
@@ -37,6 +38,7 @@ public class NeoProtectExecutor {
         this.locale = executeBuilder.getLocal();
         this.args = executeBuilder.getArgs();
         this.msg = executeBuilder.getMsg();
+        this.isViaConsole = executeBuilder.isViaConsole();
     }
 
     private void chatEvent(ExecutorBuilder executorBuilder) {
@@ -71,7 +73,11 @@ public class NeoProtectExecutor {
         switch (args[0].toLowerCase()) {
 
             case "setup": {
-                setup();
+                if (isViaConsole) {
+                    instance.sendMessage(sender, localization.get(Locale.getDefault(), "console.command"));
+                } else {
+                    setup();
+                }
                 break;
             }
 
@@ -107,7 +113,7 @@ public class NeoProtectExecutor {
             }
 
             case "setgameshield": {
-                if (args.length == 1) {
+                if (args.length == 1 && !isViaConsole) {
                     gameshieldSelector();
                 } else if (args.length == 2) {
                     setGameshield(args);
@@ -118,7 +124,7 @@ public class NeoProtectExecutor {
             }
 
             case "setbackend": {
-                if (args.length == 1) {
+                if (args.length == 1 && !isViaConsole) {
                     javaBackendSelector();
                 } else if (args.length == 2) {
                     setJavaBackend(args);
@@ -129,12 +135,12 @@ public class NeoProtectExecutor {
             }
 
             case "setgeyserbackend": {
-                if (args.length == 1) {
+                if (args.length == 1 && !isViaConsole) {
                     bedrockBackendSelector();
                 } else if (args.length == 2) {
                     setBedrockBackend(args);
                 } else {
-                    instance.sendMessage(sender, localization.get(locale, "usage.setbackend"));
+                    instance.sendMessage(sender, localization.get(locale, "usage.setgeyserbackend"));
                 }
                 break;
             }
@@ -522,8 +528,9 @@ public class NeoProtectExecutor {
         instance.sendMessage(sender, " - /np blacklist (add/remove) (ip)");
         instance.sendMessage(sender, " - /np debugTool (cancel / amount)");
         instance.sendMessage(sender, " - /np directConnectWhitelist (ip)");
-        instance.sendMessage(sender, " - /np setgameshield");
-        instance.sendMessage(sender, " - /np setbackend");
+        instance.sendMessage(sender, " - /np setgameshield [id]");
+        instance.sendMessage(sender, " - /np setbackend [id]");
+        instance.sendMessage(sender, " - /np setgeyserbackend [id]");
     }
 
     public static class ExecutorBuilder {
@@ -532,6 +539,7 @@ public class NeoProtectExecutor {
         private String[] args;
         private Locale local;
         private String msg;
+        private boolean viaConsole;
 
         public ExecutorBuilder neoProtectPlugin(NeoProtectPlugin instance) {
             this.instance = instance;
@@ -558,6 +566,10 @@ public class NeoProtectExecutor {
             return this;
         }
 
+        public ExecutorBuilder viaConsole(boolean viaConsole) {
+            this.viaConsole = viaConsole;
+            return this;
+        }
 
         public void executeChatEvent() {
             API.getExecutorService().submit(() -> new NeoProtectExecutor().chatEvent(this));
@@ -585,6 +597,10 @@ public class NeoProtectExecutor {
 
         public String getMsg() {
             return msg;
+        }
+
+        public boolean isViaConsole() {
+            return viaConsole;
         }
     }
 

@@ -2,7 +2,6 @@ package de.cubeattack.neoprotect.velocity.command;
 
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
-import de.cubeattack.api.language.Localization;
 import de.cubeattack.neoprotect.core.executor.NeoProtectExecutor;
 import de.cubeattack.neoprotect.velocity.NeoProtectVelocity;
 
@@ -14,23 +13,17 @@ import java.util.concurrent.CompletableFuture;
 public class NeoProtectCommand implements SimpleCommand {
 
     private final NeoProtectVelocity instance;
-    private final Localization localization;
 
     public NeoProtectCommand(NeoProtectVelocity instance) {
         this.instance = instance;
-        this.localization = instance.getCore().getLocalization();
     }
 
     @Override
     public void execute(Invocation invocation) {
 
-        if (!(invocation.source() instanceof Player)) {
-            instance.sendMessage(invocation.source(), localization.get(Locale.getDefault(), "console.command"));
-            return;
-        }
-
         new NeoProtectExecutor.ExecutorBuilder()
-                .local(((Player) invocation.source()).getEffectiveLocale())
+                .viaConsole(!(invocation.source() instanceof Player))
+                .local((invocation.source() instanceof Player) ? ((Player) invocation.source()).getEffectiveLocale() : Locale.ENGLISH)
                 .neoProtectPlugin(instance)
                 .sender(invocation.source())
                 .args(invocation.arguments())
