@@ -76,7 +76,10 @@ public class RestAPIRequests {
     }
 
     public String getPlan() {
-        return rest.request(RequestType.GET_GAMESHIELD_PLAN, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldPlan").getJSONObject("options").getString("name");
+        try {
+            return rest.request(RequestType.GET_GAMESHIELD_PLAN, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldPlan").getJSONObject("options").getString("name");
+        }catch (Exception ignore){}
+        return null;
     }
 
     private boolean updateStats(RequestBody requestBody, String backendID) {

@@ -24,7 +24,7 @@ public class RestAPIManager {
     }
 
     {
-        client.setConnectTimeout(2, TimeUnit.SECONDS);
+        client.setConnectTimeout(4, TimeUnit.SECONDS);
     }
 
     protected ResponseManager request(RequestType type, RequestBody requestBody, Object... value) {
