@@ -5,7 +5,7 @@ import de.cubeattack.neoprotect.core.NeoProtectPlugin;
 @SuppressWarnings("unused")
 public class Stats {
 
-    private final String mode;
+    private final String serverType;
     private final String serverVersion;
     private final String serverName;
     private final String javaVersion;
@@ -25,8 +25,8 @@ public class Stats {
     private final boolean onlineMode;
     private final boolean proxyProtocol;
 
-    public Stats(NeoProtectPlugin.PluginType mode, String serverVersion, String serverName, String javaVersion, String osName, String osArch, String osVersion, String pluginVersion, String versionStatus, String updateSetting, String neoProtectPlan, String serverPlugins, int playerAmount, int managedServers, int coreCount, boolean onlineMode, boolean proxyProtocol) {
-        this.mode = mode.name().toLowerCase();
+    public Stats(NeoProtectPlugin.PluginType serverType, String serverVersion, String serverName, String javaVersion, String osName, String osArch, String osVersion, String pluginVersion, String versionStatus, String updateSetting, String neoProtectPlan, String serverPlugins, int playerAmount, int managedServers, int coreCount, boolean onlineMode, boolean proxyProtocol) {
+        this.serverType = serverType.name().toLowerCase();
         this.serverVersion = serverVersion;
         this.serverName = serverName;
         this.javaVersion = javaVersion;
@@ -45,8 +45,8 @@ public class Stats {
         this.proxyProtocol = proxyProtocol;
     }
 
-    public String getMode() {
-        return mode;
+    public String getServerType() {
+        return serverType;
     }
 
     public String getServerVersion() {
