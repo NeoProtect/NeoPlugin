@@ -44,6 +44,7 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     @Override
     public Stats getStats() {
         return new Stats(
+                getPluginType(),
                 getProxy().getVersion(),
                 getProxy().getName(),
                 System.getProperty("java.version"),

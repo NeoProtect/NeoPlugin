@@ -55,6 +55,7 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     @Override
     public Stats getStats() {
         return new Stats(
+                getPluginType(),
                 getProxy().getVersion().getVersion(),
                 getProxy().getVersion().getName(),
                 System.getProperty("java.version"),

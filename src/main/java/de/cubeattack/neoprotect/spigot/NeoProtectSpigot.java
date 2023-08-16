@@ -41,6 +41,7 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     @Override
     public Stats getStats() {
         return new Stats(
+                getPluginType(),
                 getServer().getVersion(),
                 getServer().getName(),
                 System.getProperty("java.version"),
