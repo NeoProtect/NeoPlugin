@@ -342,8 +342,8 @@ public class RestAPIRequests {
         return neoServerIPs;
     }
 
-    public String getStatsServer() {
-        return statsServer;
+    public String getPasteServer() {
+        return pasteServer;
     }
 
     public boolean isSetup() {
