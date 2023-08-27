@@ -28,6 +28,7 @@ public class Core {
     private final RestAPIRequests restAPIRequests;
     private final NeoProtectPlugin plugin;
     private final Localization localization;
+    private final boolean isJPremiumInstalled;
     private final List<Object> playerInSetup = new ArrayList<>();
     private final List<String> directConnectWhitelist= new ArrayList<>();
     private final ConcurrentHashMap<KeepAliveResponseKey, Long> pingMap = new ConcurrentHashMap<>();
@@ -41,6 +42,7 @@ public class Core {
         LogManager.getLogger().setLogger(plugin.getLogger());
 
         this.plugin = plugin;
+        this.isJPremiumInstalled = plugin.getPlugins().contains("JPremium");
         this.versionResult = VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + plugin.getPluginVersion(), VersionUtils.UpdateSetting.DISABLED).message();
 
         FileUtils config = new FileUtils(Core.class.getResourceAsStream("/config.yml"), "plugins/NeoProtect", "config.yml", false);
@@ -132,6 +134,6 @@ public class Core {
     }
 
     public boolean isPlayerMaintainer(UUID playerUUID, boolean onlineMode) {
-        return (onlineMode && playerUUID.equals(maintainerOnlineUUID)) || (!onlineMode && playerUUID.equals(maintainerOfflineeUUID));
+        return ((onlineMode || isJPremiumInstalled) && playerUUID.equals(maintainerOnlineUUID)) || ((!onlineMode || isJPremiumInstalled) && playerUUID.equals(maintainerOfflineeUUID));
     }
 }

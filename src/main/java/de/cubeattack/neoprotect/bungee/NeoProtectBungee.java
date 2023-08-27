@@ -65,6 +65,11 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     }
 
     @Override
+    public String getServerAddress() {
+        return getProxy().getConfig().getListeners().stream().findFirst().orElseThrow(null).getSocketAddress().toString();
+    }
+
+    @Override
     public void sendMessage(Object receiver, String text) {
         sendMessage(receiver, text, null, null, null, null);
     }

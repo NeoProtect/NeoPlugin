@@ -15,10 +15,8 @@ import de.cubeattack.neoprotect.core.model.Backend;
 import de.cubeattack.neoprotect.core.model.Firewall;
 import de.cubeattack.neoprotect.core.model.Gameshield;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class RestAPIRequests {
 
@@ -82,12 +80,12 @@ public class RestAPIRequests {
         return null;
     }
 
-    private boolean updateStats(RequestBody requestBody, String gameshieldID, String backendID) {
-        return new ResponseManager(rest.callRequest(new Request.Builder().url(statsServer).header("GameshieldID", gameshieldID).header("BackendID", backendID).post(requestBody).build())).checkCode(200);
-    }
-
     private boolean updateBackend(RequestBody requestBody, String backendID) {
         return rest.request(RequestType.POST_GAMESHIELD_BACKEND_UPDATE, requestBody, Config.getGameShieldID(),backendID).checkCode(200);
+    }
+
+    public boolean updateStats(RequestBody requestBody, String identifier, String gameshieldID, String backendID) {
+        return new ResponseManager(rest.callRequest(new Request.Builder().url(statsServer).header("identifier", identifier).header("GameshieldID", gameshieldID).header("BackendID", backendID).post(requestBody).build())).checkCode(200);
     }
 
     public void setProxyProtocol(boolean setting) {
@@ -235,7 +233,7 @@ public class RestAPIRequests {
                 if (!setup) return;
 
                 RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), new Gson().toJson(core.getPlugin().getStats()));
-                if(!updateStats(requestBody, Config.getGameShieldID(),Config.getBackendID()))
+                if(!updateStats(requestBody, String.valueOf(UUID.nameUUIDFromBytes((Config.getGameShieldID() + ":" + Config.getBackendID() + ":" + core.getPlugin().getServerAddress()).getBytes(StandardCharsets.UTF_8))), Config.getGameShieldID(), Config.getBackendID()))
                     core.debug("Request to Update stats failed");
             }
         }, 1000, 1000 * 5);
@@ -344,6 +342,10 @@ public class RestAPIRequests {
 
     public String getPasteServer() {
         return pasteServer;
+    }
+
+    public String getStatsServer() {
+        return statsServer;
     }
 
     public boolean isSetup() {
