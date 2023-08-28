@@ -5,6 +5,7 @@ import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import de.cubeattack.api.libraries.org.json.JSONArray;
+import de.cubeattack.api.libraries.org.json.JSONException;
 import de.cubeattack.api.libraries.org.json.JSONObject;
 import de.cubeattack.api.util.versioning.VersionUtils;
 import de.cubeattack.neoprotect.core.Config;
@@ -76,8 +77,8 @@ public class RestAPIRequests {
     public String getPlan() {
         try {
             return rest.request(RequestType.GET_GAMESHIELD_PLAN, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldPlan").getJSONObject("options").getString("name");
-        }catch (Exception ignore){}
-        return null;
+        }catch (JSONException ignore){}
+        return "FAILED";
     }
 
     private boolean updateBackend(RequestBody requestBody, String backendID) {
