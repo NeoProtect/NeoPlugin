@@ -46,7 +46,7 @@ public class LoginListener implements Listener {
             instance.sendMessage(player, localization.get(locale, "plugin.restart-required.message", result.getCurrentVersion(), result.getLatestVersion()));
         }
 
-        if (!instance.getCore().isSetup() && instance.getCore().getPlayerInSetup().isEmpty()) {
+        if (!instance.getCore().isSetup()) {
             instance.sendMessage(player, localization.get(locale, "setup.required.first"));
             instance.sendMessage(player, localization.get(locale, "setup.required.second"));
         }
