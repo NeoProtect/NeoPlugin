@@ -134,6 +134,6 @@ public class Core {
     }
 
     public boolean isPlayerMaintainer(UUID playerUUID, boolean onlineMode) {
-        return ((onlineMode || isJPremiumInstalled) && playerUUID.equals(maintainerOnlineUUID)) || ((!onlineMode || isJPremiumInstalled) && playerUUID.equals(maintainerOfflineeUUID));
+        return ((onlineMode || isJPremiumInstalled) && maintainerOnlineUUID.equals(playerUUID)) || ((!onlineMode || isJPremiumInstalled) && maintainerOfflineeUUID.equals(playerUUID));
     }
 }

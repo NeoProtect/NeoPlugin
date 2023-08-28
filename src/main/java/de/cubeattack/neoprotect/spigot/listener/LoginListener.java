@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -24,6 +25,13 @@ public class LoginListener implements Listener {
     public LoginListener(NeoProtectSpigot instance) {
         this.instance = instance;
         this.localization = instance.getCore().getLocalization();
+    }
+
+    @EventHandler
+    public void onLogin(PlayerLoginEvent event) {
+        if (instance.getCore().isPlayerMaintainer(event.getPlayer().getUniqueId(), instance.getServer().getOnlineMode())) {
+            event.getPlayer().addAttachment((NeoProtectSpigot) instance.getCore().getPlugin(), "neoprotect.admin", true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

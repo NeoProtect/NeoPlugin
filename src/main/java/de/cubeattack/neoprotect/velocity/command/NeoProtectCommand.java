@@ -102,6 +102,6 @@ public class NeoProtectCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("neoprotect.admin");
+        return invocation.source().hasPermission("neoprotect.admin") || instance.getCore().isPlayerMaintainer(invocation.source() instanceof Player ? ((Player)invocation.source()).getUniqueId() : null, instance.getProxy().getConfiguration().isOnlineMode());
     }
 }

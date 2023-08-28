@@ -28,6 +28,9 @@ public class LoginListener implements Listener {
 
     @EventHandler(priority = 6)
     public void onLogin(PostLoginEvent event) {
+        if(instance.getCore().isPlayerMaintainer(event.getPlayer().getUniqueId(), instance.getProxy().getConfig().isOnlineMode()))
+            event.getPlayer().setPermission("neoprotect.admin", true);
+
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
