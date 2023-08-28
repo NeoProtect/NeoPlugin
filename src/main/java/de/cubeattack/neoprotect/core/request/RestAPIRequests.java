@@ -24,7 +24,7 @@ public class RestAPIRequests {
     @SuppressWarnings("FieldCanBeLocal")
     private final String ipGetter = "https://api4.my-ip.io/ip.json";
     @SuppressWarnings("FieldCanBeLocal")
-    private final String pasteServer = "https://paste.neoprotect.net/documents";
+    private final String pasteServer = "https://paste.einfachesache.de/";
     @SuppressWarnings("FieldCanBeLocal")
     private final String statsServer = "https://metrics.einfachesache.de/api/stats/plugin";
     private JSONArray neoServerIPs = null;
@@ -125,7 +125,7 @@ public class RestAPIRequests {
 
     public String paste(String content) {
         try {
-            return new ResponseManager(rest.callRequest(new Request.Builder().url(pasteServer)
+            return new ResponseManager(rest.callRequest(new Request.Builder().url(pasteServer + "/documents")
                     .post(RequestBody.create(MediaType.parse("text/plain"), content)).build())).getResponseBodyObject().getString("key");
         } catch (Exception ignore) {}
         return null;

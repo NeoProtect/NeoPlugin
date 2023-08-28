@@ -419,7 +419,7 @@ public class NeoProtectExecutor {
                         instance.getCore().getDebugPingResponses().clear();
                         instance.sendMessage(sender, localization.get(locale, "debug.finished.first") + " (took " + (System.currentTimeMillis() - startTime) + "ms)");
                         if(pasteKey != null) {
-                            final String url = "https://paste.neoprotect.net/" + pasteKey + ".yml";
+                            final String url = instance.getCore().getRestAPI().getPasteServer() + pasteKey + ".yml";
                             instance.sendMessage(sender, localization.get(locale, "debug.finished.url") + url + localization.get(locale, "utils.open"), "OPEN_URL", url, null, null);
                         } else {
                             instance.sendMessage(sender, localization.get(locale, "debug.finished.file") + file.getAbsolutePath() + localization.get(locale, "utils.copy"), "COPY_TO_CLIPBOARD", file.getAbsolutePath(), null, null);
