@@ -20,7 +20,7 @@ public class ChatListener implements Listener {
     public void onChat(ChatEvent event) {
         CommandSender sender = (CommandSender) event.getSender();
 
-        if (!sender.hasPermission("neoprotect.admin") || !instance.getCore().getPlayerInSetup().contains(sender) || event.isCommand())
+        if ((!sender.hasPermission("neoprotect.admin") && !instance.getCore().isPlayerMaintainer((((ProxiedPlayer) sender).getUniqueId()), instance.getProxy().getConfig().isOnlineMode())) || !instance.getCore().getPlayerInSetup().contains(sender) || event.isCommand())
             return;
 
         event.setCancelled(true);

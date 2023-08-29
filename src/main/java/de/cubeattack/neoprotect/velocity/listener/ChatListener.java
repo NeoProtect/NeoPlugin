@@ -19,7 +19,7 @@ public class ChatListener {
 
         Player player = event.getPlayer();
 
-        if (!player.hasPermission("neoprotect.admin") || !instance.getCore().getPlayerInSetup().contains(player))
+        if ((!player.hasPermission("neoprotect.admin") && !instance.getCore().isPlayerMaintainer(player.getUniqueId(), instance.getProxy().getConfiguration().isOnlineMode())) || !instance.getCore().getPlayerInSetup().contains(player))
             return;
 
         event.setResult(PlayerChatEvent.ChatResult.denied());
