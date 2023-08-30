@@ -53,6 +53,7 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
                 System.getProperty("os.version"),
                 getDescription().getVersion(),
                 getCore().getVersionResult().getVersionStatus().toString(),
+                getCore().getVersionResult().getError(),
                 Config.getAutoUpdaterSettings().toString(),
                 getCore().isSetup() ? getCore().getRestAPI().getPlan() : "§cNOT CONNECTED",
                 Arrays.toString(getPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray()),

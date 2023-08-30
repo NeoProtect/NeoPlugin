@@ -50,6 +50,7 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
                 System.getProperty("os.version"),
                 getPluginVersion(),
                 getCore().getVersionResult().getVersionStatus().toString(),
+                getCore().getVersionResult().getError(),
                 Config.getAutoUpdaterSettings().toString(),
                 getCore().isSetup() ? getCore().getRestAPI().getPlan() : "§cNOT CONNECTED",
                 Arrays.toString(getPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray()),
