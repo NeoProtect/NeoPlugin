@@ -1,4 +1,4 @@
-package de.cubeattack.neoprotect.velocity.messageunsign;
+package de.cubeattack.neoprotect.velocity.unsign.message;
 
 import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.proxy.Player;

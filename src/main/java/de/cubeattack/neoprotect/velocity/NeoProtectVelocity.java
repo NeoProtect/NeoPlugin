@@ -138,7 +138,7 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     @Override
     public ArrayList<String> getPlugins() {
         ArrayList<String> plugins = new ArrayList<>();
-        getProxy().getPluginManager().getPlugins().forEach(p -> plugins.add(p.getDescription().getName().orElseThrow(null)));
+        getProxy().getPluginManager().getPlugins().forEach(p -> plugins.add(p.getDescription().getName().orElse("NAME_NOT_FOUND:" + p.getDescription())));
         return plugins;
     }
 
@@ -149,6 +149,6 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
 
     @Override
     public String getPluginVersion() {
-        return proxy.getPluginManager().ensurePluginContainer(this).getDescription().getVersion().orElse("");
+        return proxy.getPluginManager().ensurePluginContainer(this).getDescription().getVersion().orElse("PLUGIN_VERSION_NOT_FOUND");
     }
 }

@@ -6,9 +6,11 @@ import de.cubeattack.neoprotect.velocity.command.NeoProtectCommand;
 import de.cubeattack.neoprotect.velocity.listener.ChatListener;
 import de.cubeattack.neoprotect.velocity.listener.DisconnectListener;
 import de.cubeattack.neoprotect.velocity.listener.LoginListener;
-import de.cubeattack.neoprotect.velocity.messageunsign.JoinListener;
-import de.cubeattack.neoprotect.velocity.messageunsign.SessionChatListener;
 import de.cubeattack.neoprotect.velocity.proxyprotocol.ProxyProtocol;
+import de.cubeattack.neoprotect.velocity.unsign.command.KeyedCommandListener;
+import de.cubeattack.neoprotect.velocity.unsign.command.SessionCommandListener;
+import de.cubeattack.neoprotect.velocity.unsign.message.JoinListener;
+import de.cubeattack.neoprotect.velocity.unsign.message.SessionChatListener;
 
 public class Startup {
 
@@ -28,5 +30,7 @@ public class Startup {
         em.register(instance, new LoginListener(instance));
         em.register(instance, new DisconnectListener(instance));
         em.register(instance, new SessionChatListener(instance));
+        em.register(instance, new KeyedCommandListener(instance));
+        em.register(instance, new SessionCommandListener(instance));
     }
 }

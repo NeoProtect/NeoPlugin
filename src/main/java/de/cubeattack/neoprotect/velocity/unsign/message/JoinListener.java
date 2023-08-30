@@ -1,4 +1,4 @@
-package de.cubeattack.neoprotect.velocity.messageunsign;
+package de.cubeattack.neoprotect.velocity.unsign.message;
 
 import com.velocitypowered.api.event.Continuation;
 import com.velocitypowered.api.event.EventTask;
