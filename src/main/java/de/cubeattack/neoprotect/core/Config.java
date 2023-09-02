@@ -121,9 +121,9 @@ public class Config {
         geyserBackendID = id;
     }
 
-    public static void addAutoUpdater(boolean basicPlan) {
+    public static void addAutoUpdater(String plan) {
 
-        if (basicPlan) {
+        if (plan.equals("Basic") || plan.equalsIgnoreCase("Premium")) {
             fileUtils.remove("AutoUpdater");
         } else if (!fileUtils.getConfig().isSet("AutoUpdater")) {
             fileUtils.getConfig().set("AutoUpdater", "ENABLED");
