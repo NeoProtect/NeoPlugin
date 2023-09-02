@@ -120,7 +120,7 @@ public class RestAPIRequests {
         this.setup = true;
         setProxyProtocol(Config.isProxyProtocol());
 
-        Config.addAutoUpdater(getPlan().equalsIgnoreCase("Basic"));
+        Config.addAutoUpdater(getPlan().equalsIgnoreCase("Basic") || getPlan().equalsIgnoreCase("Premium"));
     }
 
     public String paste(String content) {
