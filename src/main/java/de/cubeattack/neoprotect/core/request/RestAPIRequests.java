@@ -90,7 +90,8 @@ public class RestAPIRequests {
     }
 
     public void setProxyProtocol(boolean setting) {
-        rest.request(RequestType.POST_GAMESHIELD_UPDATE, RequestBody.create(MediaType.parse("application/json"), new JsonBuilder().appendField("proxyProtocol", String.valueOf(setting)).build().toString()), Config.getGameShieldID());
+        JSONObject settings = rest.request(RequestType.GET_GAMESHIELD_INFO, null, Config.getGameShieldID()).getResponseBodyObject().getJSONObject("gameShieldSettings");
+        rest.request(RequestType.POST_GAMESHIELD_UPDATE, RequestBody.create(MediaType.parse("application/json"), settings.put("proxyProtocol", String.valueOf(setting)).toString()), Config.getGameShieldID());
     }
 
     public JSONObject getAnalytics() {
