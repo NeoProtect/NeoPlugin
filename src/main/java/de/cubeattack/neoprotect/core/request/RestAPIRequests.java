@@ -260,9 +260,9 @@ public class RestAPIRequests {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getPluginVersion(), Config.getAutoUpdaterSettings()));
+                core.setVersionResult(VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + core.getPlugin().getPluginVersion(), Config.getAutoUpdaterSettings(), 0, null));
             }
-        }, 1000 * 10, 1000 * 60 * 5);
+        }, 1000 * 60 * 5, 1000 * 60 * 5);
     }
 
     private void attackCheckSchedule() {

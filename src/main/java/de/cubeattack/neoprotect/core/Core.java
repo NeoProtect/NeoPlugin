@@ -43,7 +43,7 @@ public class Core {
 
         this.plugin = plugin;
         this.isJPremiumInstalled = plugin.getPlugins().contains("JPremium");
-        this.versionResult = VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + plugin.getPluginVersion(), VersionUtils.UpdateSetting.DISABLED).message();
+        this.versionResult = VersionUtils.checkVersion("NeoProtect", "NeoPlugin", "v" + plugin.getPluginVersion(), VersionUtils.UpdateSetting.ENABLED, 10, result -> versionResult = result).message();
 
         FileUtils config = new FileUtils(Core.class.getResourceAsStream("/config.yml"), "plugins/NeoProtect", "config.yml", false);
         FileUtils languageEN = new FileUtils(Core.class.getResourceAsStream("/language_en.properties"), "plugins/NeoProtect/languages", "language_en.properties", true);
