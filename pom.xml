@@ -6,7 +6,7 @@
 
     <groupId>de.cubeattack</groupId>
     <artifactId>neoprotect</artifactId>
-    <version>1.2.9.4-Beta</version>
+    <version>1.2.9.5-Beta</version>
     <packaging>jar</packaging>
 
     <name>NeoProtect</name>
@@ -119,7 +119,7 @@
         <dependency>
             <groupId>com.github.CubeAttack</groupId>
             <artifactId>EasyAPI</artifactId>
-            <version>d07005b75d</version>
+            <version>fc2c381c82</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
