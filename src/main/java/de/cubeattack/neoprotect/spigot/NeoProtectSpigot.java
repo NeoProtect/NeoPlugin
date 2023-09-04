@@ -3,14 +3,12 @@ package de.cubeattack.neoprotect.spigot;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
-import de.cubeattack.neoprotect.core.Permission;
 import de.cubeattack.neoprotect.core.model.Stats;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SimplePie;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,8 +22,7 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
 
     @Override
     public void onLoad() {
-        Metrics metrics = new Metrics(this, 18725);
-        metrics.addCustomChart(new SimplePie("language", Config::getLanguage));
+        new Metrics(this, 18725);
     }
 
     @Override
@@ -86,9 +83,9 @@ public class NeoProtectSpigot extends JavaPlugin implements NeoProtectPlugin {
     }
 
     @Override
-    public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
+    public void sendAdminMessage(String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         getServer().getOnlinePlayers().forEach(pp -> {
-            if (pp.hasPermission("neoprotect.admin") || pp.hasPermission(permission.value))
+            if (pp.hasPermission("neoprotect.admin") || pp.hasPermission("neoprotect.notify"))
                 sendMessage(pp, text, clickAction, clickMsg, hoverAction, hoverMsg);
         });
     }

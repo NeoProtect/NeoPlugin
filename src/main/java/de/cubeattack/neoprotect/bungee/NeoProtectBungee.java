@@ -3,7 +3,6 @@ package de.cubeattack.neoprotect.bungee;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
-import de.cubeattack.neoprotect.core.Permission;
 import de.cubeattack.neoprotect.core.model.Stats;
 import de.cubeattack.neoprotect.core.model.debugtool.KeepAliveResponseKey;
 import net.md_5.bungee.api.CommandSender;
@@ -15,7 +14,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.protocol.packet.KeepAlive;
 import org.bstats.bungeecord.Metrics;
-import org.bstats.charts.SimplePie;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,8 +25,7 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
 
     @Override
     public void onLoad() {
-        Metrics metrics = new Metrics(this, 18726);
-        metrics.addCustomChart(new SimplePie("language", Config::getLanguage));
+        new Metrics(this, 18726);
     }
 
     @Override
@@ -87,9 +84,9 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
     }
 
     @Override
-    public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
+    public void sendAdminMessage(String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         getProxy().getPlayers().forEach(receiver -> {
-            if (receiver.hasPermission("neoprotect.admin") || receiver.hasPermission(permission.value))
+            if (receiver.hasPermission("neoprotect.admin") || receiver.hasPermission("neoprotect.notify"))
                 sendMessage(receiver, text, clickAction, clickMsg, hoverAction, hoverMsg);
         });
     }

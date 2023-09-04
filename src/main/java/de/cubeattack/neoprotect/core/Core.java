@@ -54,7 +54,7 @@ public class Core {
         Config.loadConfig(this, config);
 
         this.restAPIRequests = new RestAPIRequests(this);
-        this.localization = new Localization("language", Locale.forLanguageTag(Config.getLanguage()), new File("plugins/NeoProtect/languages/"));
+        this.localization = new Localization("language", Locale.US, new File("plugins/NeoProtect/languages/"));
 
         VersionUtils.updateToLatestVersion(versionResult, Config.getAutoUpdaterSettings(), 10, result -> versionResult = result);
     }

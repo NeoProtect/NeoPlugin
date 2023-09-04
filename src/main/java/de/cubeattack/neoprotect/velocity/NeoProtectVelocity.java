@@ -11,14 +11,12 @@ import com.velocitypowered.proxy.protocol.packet.KeepAlive;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.NeoProtectPlugin;
-import de.cubeattack.neoprotect.core.Permission;
 import de.cubeattack.neoprotect.core.model.Stats;
 import de.cubeattack.neoprotect.core.model.debugtool.KeepAliveResponseKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import org.bstats.charts.SimplePie;
 import org.bstats.velocity.Metrics;
 
 import java.util.ArrayList;
@@ -42,8 +40,7 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        Metrics metrics = metricsFactory.make(this, 18727);
-        metrics.addCustomChart(new SimplePie("language", Config::getLanguage));
+        metricsFactory.make(this, 18727);
         core = new Core(this);
         new Startup(this);
     }
@@ -105,9 +102,9 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
     }
 
     @Override
-    public void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
+    public void sendAdminMessage(String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg) {
         getProxy().getAllPlayers().forEach(receiver -> {
-            if (receiver.hasPermission("neoprotect.admin") || receiver.hasPermission(permission.value))
+            if (receiver.hasPermission("neoprotect.admin") || receiver.hasPermission("neoprotect.notify"))
                 sendMessage(receiver, text, clickAction, clickMsg, hoverAction, hoverMsg);
         });
     }

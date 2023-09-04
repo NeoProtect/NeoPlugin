@@ -11,7 +11,7 @@ public interface NeoProtectPlugin {
 
     void sendMessage(Object receiver, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg);
 
-    void sendAdminMessage(Permission permission, String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg);
+    void sendAdminMessage(String text, String clickAction, String clickMsg, String hoverAction, String hoverMsg);
 
     long sendKeepAliveMessage(long id);
 

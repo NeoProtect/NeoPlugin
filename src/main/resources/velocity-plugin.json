@@ -3,7 +3,7 @@
   "name":"NeoProtect",
   "version":"${project.version}:${buildNumber}",
   "authors":["EinfacheSache"],
-  "url":"https://einfachesache.de/discord",
+  "url":"https://discord.neoprotect.net/",
   "main":"de.cubeattack.neoprotect.velocity.NeoProtectVelocity",
   "description":"A Plugin for interact with the intern NeoProtect system"
 }

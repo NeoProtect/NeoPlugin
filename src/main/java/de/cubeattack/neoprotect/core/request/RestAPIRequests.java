@@ -11,7 +11,6 @@ import de.cubeattack.api.util.versioning.VersionUtils;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 import de.cubeattack.neoprotect.core.JsonBuilder;
-import de.cubeattack.neoprotect.core.Permission;
 import de.cubeattack.neoprotect.core.model.Backend;
 import de.cubeattack.neoprotect.core.model.Firewall;
 import de.cubeattack.neoprotect.core.model.Gameshield;
@@ -285,7 +284,7 @@ public class RestAPIRequests {
 
                 if (!attackRunning[0]) {
                     core.warn("Gameshield ID '" + Config.getGameShieldID() + "' is under attack");
-                    core.getPlugin().sendAdminMessage(Permission.NOTIFY, "Gameshield ID '" + Config.getGameShieldID() + "' is under attack", null, null, null, null);
+                    core.getPlugin().sendAdminMessage("Gameshield ID '" + Config.getGameShieldID() + "' is under attack", null, null, null, null);
                     attackRunning[0] = true;
                 }
             }
