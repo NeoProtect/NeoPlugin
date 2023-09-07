@@ -1,9 +1,6 @@
 package de.cubeattack.neoprotect.core.request;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+import com.squareup.okhttp.*;
 import de.cubeattack.neoprotect.core.Config;
 import de.cubeattack.neoprotect.core.Core;
 
@@ -45,6 +42,7 @@ public class RestAPIManager {
                 core.severe(request + " failed cause (" + connectionException + ")");
             }else
                 core.debug(request + " failed cause (" + connectionException + ")");
+            return new Response.Builder().request(request).protocol(Protocol.HTTP_2).code(500).message(connectionException.getMessage()).build();
         } catch (Exception exception) {
             core.severe(exception.getMessage(), exception);
         }
