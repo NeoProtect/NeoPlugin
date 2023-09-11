@@ -20,7 +20,6 @@ import net.kyori.adventure.text.event.HoverEvent;
 import org.bstats.velocity.Metrics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -64,7 +63,6 @@ public class NeoProtectVelocity implements NeoProtectPlugin {
                 getCore().getVersionResult().getError(),
                 Config.getAutoUpdaterSettings().toString(),
                 getCore().isSetup() ? getCore().getRestAPI().getPlan() : "§cNOT CONNECTED",
-                Arrays.toString(getPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray()),
                 getProxy().getPlayerCount(),
                 getProxy().getAllServers().size(),
                 Runtime.getRuntime().availableProcessors(),

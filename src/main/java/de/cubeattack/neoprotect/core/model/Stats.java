@@ -17,7 +17,6 @@ public class Stats {
     private final String versionError;
     private final String updateSetting;
     private final String neoProtectPlan;
-    private final String serverPlugins;
 
     private final int playerAmount;
     private final int managedServers;
@@ -26,7 +25,7 @@ public class Stats {
     private final boolean onlineMode;
     private final boolean proxyProtocol;
 
-    public Stats(NeoProtectPlugin.PluginType serverType, String serverVersion, String serverName, String javaVersion, String osName, String osArch, String osVersion, String pluginVersion, String versionStatus, String versionError, String updateSetting, String neoProtectPlan, String serverPlugins, int playerAmount, int managedServers, int coreCount, boolean onlineMode, boolean proxyProtocol) {
+    public Stats(NeoProtectPlugin.PluginType serverType, String serverVersion, String serverName, String javaVersion, String osName, String osArch, String osVersion, String pluginVersion, String versionStatus, String versionError, String updateSetting, String neoProtectPlan, int playerAmount, int managedServers, int coreCount, boolean onlineMode, boolean proxyProtocol) {
         this.serverType = serverType.name().toLowerCase();
         this.serverVersion = serverVersion;
         this.serverName = serverName;
@@ -39,7 +38,6 @@ public class Stats {
         this.versionError = versionError;
         this.updateSetting = updateSetting;
         this.neoProtectPlan = neoProtectPlan;
-        this.serverPlugins = serverPlugins;
         this.playerAmount = playerAmount;
         this.managedServers = managedServers;
         this.coreCount = coreCount;
@@ -93,10 +91,6 @@ public class Stats {
 
     public String getNeoProtectPlan() {
         return neoProtectPlan;
-    }
-
-    public String getServerPlugins() {
-        return serverPlugins;
     }
 
     public int getPlayerAmount() {

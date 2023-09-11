@@ -16,7 +16,6 @@ import net.md_5.bungee.protocol.packet.KeepAlive;
 import org.bstats.bungeecord.Metrics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
@@ -53,7 +52,6 @@ public final class NeoProtectBungee extends Plugin implements NeoProtectPlugin {
                 getCore().getVersionResult().getError(),
                 Config.getAutoUpdaterSettings().toString(),
                 getCore().isSetup() ? getCore().getRestAPI().getPlan() : "§cNOT CONNECTED",
-                Arrays.toString(getPlugins().stream().filter(p -> !p.startsWith("cmd_") && !p.equals("reconnect_yaml")).toArray()),
                 getProxy().getOnlineCount(),
                 getProxy().getServers().size(),
                 Runtime.getRuntime().availableProcessors(),
