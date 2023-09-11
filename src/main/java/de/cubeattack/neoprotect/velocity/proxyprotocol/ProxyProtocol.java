@@ -162,7 +162,11 @@ public class ProxyProtocol {
                         instance.getCore().debug("Player matched to DebugKeepAlivePacket (loading data...)");
 
                         EpollTcpInfo tcpInfo = ((EpollSocketChannel) channel).tcpInfo();
-                        EpollTcpInfo tcpInfoBackend = ((EpollSocketChannel) ((ConnectedPlayer) player).getConnection().getChannel()).tcpInfo();
+                        EpollTcpInfo tcpInfoBackend = null;
+
+                        if (((ConnectedPlayer) player).getConnectedServer() != null && ((ConnectedPlayer) player).getConnectedServer().getConnection() != null) {
+                            tcpInfoBackend = ((EpollSocketChannel) ((ConnectedPlayer) player).getConnectedServer().getConnection().getChannel()).tcpInfo();
+                        }
 
                         long ping = System.currentTimeMillis() - pingMap.get(keepAliveResponseKey);
                         long neoRTT = 0;
