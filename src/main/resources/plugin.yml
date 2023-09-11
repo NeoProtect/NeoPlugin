@@ -2,7 +2,7 @@ main: de.cubeattack.neoprotect.spigot.NeoProtectSpigot
 name: NeoProtect
 version: '${project.version}:${buildNumber}'
 api-version: 1.13
-author: CubeAttack
+author: EinfacheSache
 website: https://discord.neoprotect.net/
 description: A Plugin for interact with the intern NeoProtect system
 commands:
