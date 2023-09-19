@@ -490,15 +490,17 @@ public class NeoProtectExecutor {
     private void bedrockBackendSelector() {
         List<Backend> backendList = instance.getCore().getRestAPI().getBackends();
 
-        if(backendList.stream().noneMatch(Backend::isGeyser))return;
+        if(backendList.stream().anyMatch(Backend::isGeyser)) {
+            instance.sendMessage(sender, localization.get(locale, "select.backend", "geyser"));
 
-        instance.sendMessage(sender, localization.get(locale, "select.backend", "geyser"));
-
-        for (Backend backend : backendList) {
-            if(!backend.isGeyser())continue;
-            instance.sendMessage(sender, "§5" + backend.getIp() + ":" + backend.getPort() + localization.get(locale, "utils.click"),
-                    "RUN_COMMAND", "/np setgeyserbackend " + backend.getId(),
-                    "SHOW_TEXT", localization.get(locale, "hover.backend", backend.getIp(), backend.getPort(), backend.getId()));
+            for (Backend backend : backendList) {
+                if (!backend.isGeyser()) continue;
+                instance.sendMessage(sender, "§5" + backend.getIp() + ":" + backend.getPort() + localization.get(locale, "utils.click"),
+                        "RUN_COMMAND", "/np setgeyserbackend " + backend.getId(),
+                        "SHOW_TEXT", localization.get(locale, "hover.backend", backend.getIp(), backend.getPort(), backend.getId()));
+            }
+        }else if (instance.getCore().getPlayerInSetup().remove(sender)) {
+            instance.sendMessage(sender, localization.get(locale, "setup.finished"));
         }
     }
 
@@ -515,7 +517,6 @@ public class NeoProtectExecutor {
         if (instance.getCore().getPlayerInSetup().remove(sender)) {
             instance.sendMessage(sender, localization.get(locale, "setup.finished"));
         }
-
     }
 
     private void showHelp() {
