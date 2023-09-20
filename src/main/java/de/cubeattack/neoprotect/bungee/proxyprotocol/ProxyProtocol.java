@@ -132,6 +132,11 @@ public class ProxyProtocol {
     }
 
     public void addKeepAlivePacketHandler(Channel channel, AtomicReference<InetSocketAddress> inetAddress, NeoProtectPlugin instance) {
+        if (!channel.pipeline().names().contains(PipelineUtils.PACKET_DECODER)) {
+            instance.getCore().warn("Failed to add KeepAlivePacketHandler (packet-decoder can't be found)");
+            return;
+        }
+
         channel.pipeline().addAfter(PipelineUtils.PACKET_DECODER, "neo-keep-alive-handler", new ChannelInboundHandlerAdapter() {
             @Override
             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

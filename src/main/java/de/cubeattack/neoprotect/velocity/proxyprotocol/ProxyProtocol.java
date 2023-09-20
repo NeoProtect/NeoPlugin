@@ -130,6 +130,10 @@ public class ProxyProtocol {
     }
 
     public void addKeepAlivePacketHandler(Channel channel, AtomicReference<InetSocketAddress> inetAddress, VelocityServer velocityServer, NeoProtectPlugin instance) {
+        if (!channel.pipeline().names().contains("minecraft-decoder")) {
+            instance.getCore().warn("Failed to add KeepAlivePacketHandler (minecraft-decoder can't be found)");
+            return;
+        }
 
         channel.pipeline().addAfter("minecraft-decoder", "neo-keep-alive-handler", new ChannelInboundHandlerAdapter() {
             @Override
