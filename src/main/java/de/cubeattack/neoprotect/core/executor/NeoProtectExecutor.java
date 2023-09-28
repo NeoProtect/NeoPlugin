@@ -558,7 +558,7 @@ public class NeoProtectExecutor {
         }
 
         public ExecutorBuilder local(Locale local) {
-            this.local = local;
+            this.local =  local == null ? Locale.ENGLISH : local;
             return this;
         }
 
@@ -577,7 +577,7 @@ public class NeoProtectExecutor {
         }
 
         public void executeCommand() {
-            API.getExecutorService().submit(() -> new NeoProtectExecutor().command(this));
+            new NeoProtectExecutor().command(this);
         }
 
         public NeoProtectPlugin getInstance() {
