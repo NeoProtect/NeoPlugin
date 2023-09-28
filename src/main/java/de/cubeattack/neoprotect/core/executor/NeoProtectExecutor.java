@@ -577,7 +577,7 @@ public class NeoProtectExecutor {
         }
 
         public void executeCommand() {
-            new NeoProtectExecutor().command(this);
+            API.getExecutorService().submit(() -> new NeoProtectExecutor().command(this));
         }
 
         public NeoProtectPlugin getInstance() {
