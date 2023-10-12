@@ -1,6 +1,6 @@
-# NeoProtect plugin
+# NeoProtect plugin (DEPRECATED, DO NOT USE)
 
-Official NeoProtect plugin maintained by [EinfacheSache (aka CubeAttack)](https://github.com/EinfacheSache)
+A new plugin is currently in development and will be released here soon.
 
 ## Feature
 
